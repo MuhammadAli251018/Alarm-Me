@@ -3,7 +3,6 @@ package com.muhammadali.alarmme.feature.main.ui.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,9 +28,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.muhammadali.alarmme.common.ui.component.DaysRepeatPicker
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
-import com.muhammadali.alarmme.common.ui.theme.Calypso
 
+//todo fix repeat & actions & make overload function with bundle
 private object PreviewValues{
     val title = "title"
     val time = buildAnnotatedString {
@@ -81,7 +81,7 @@ fun AlarmItem(
             Text(
                 modifier= Modifier
                     .align(Alignment.Start)
-                    .weight(1f)
+                    .weight(.75f)
                 ,
                 text = state.alarmTitle,
                 fontSize = 15.sp,
@@ -91,12 +91,12 @@ fun AlarmItem(
 
 
             Text(
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1.25f),
                 text = state.alarmTime,
                 color = Color.White,
             )
 
-            DaysRepeat(state.alarmRepeat)
+            DaysRepeatPicker()
 
             Switch(
                 modifier = Modifier
@@ -117,34 +117,13 @@ fun AlarmItem(
                     uncheckedTrackColor = MaterialTheme.colorScheme.tertiary,
                     disabledUncheckedTrackColor = MaterialTheme.colorScheme.tertiary.copy(alpha = .3f),
                 ),
+                /* todo is enabled should be the whole element & the change should be
+                    only in the background color
+                    */
                 enabled = state.isEnabled
             )
         }
     }
-}
-
-@Composable
-fun ColumnScope.DaysRepeat(repeat: BooleanArray) {
-    val days = arrayOf('M', 'T', 'W', 'T', 'F', 'S', 'S')
-    val content = buildAnnotatedString {
-        repeat.forEachIndexed { index, isRepeated ->
-            val color = if (isRepeated) Calypso else Color.White
-
-            withStyle(
-                style = SpanStyle(
-                    color = color,
-                    fontSize = 15.sp
-                )
-            ) {
-                append(days[index] + " ")
-            }
-        }
-    }
-
-    Text(
-        modifier = Modifier.weight(1f),
-        text = content,
-    )
 }
 
 @Preview(showBackground = true)
