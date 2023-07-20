@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.component
+package com.muhammadali.alarmme.feature.main.ui.component.util
 
 import androidx.compose.ui.text.AnnotatedString
 
