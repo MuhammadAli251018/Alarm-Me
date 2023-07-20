@@ -33,7 +33,7 @@ fun DaysRepeatPicker(
     fontSize: TextUnit = 15.sp,
     spacesCount: Int = 5,
     repeat: Array<Boolean> = PreviewValue.repeat,
-    onDayClick: (Char) -> Unit = {},
+    onDayClick: (Int) -> Unit = {},
 ) {
     val days = arrayOf('M', 'T', 'W', 'T', 'F', 'S', 'S')
 
@@ -44,7 +44,7 @@ fun DaysRepeatPicker(
             Text(
                 modifier = modifier
                     .clickable {
-                        onDayClick(days[index])
+                        onDayClick(index)
                     },
                 text = days[index].toString(),
                 color = color,
