@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -31,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import com.muhammadali.alarmme.common.ui.component.DaysRepeatPicker
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
 
-//todo fix repeat & actions & make overload function with bundle
 private object PreviewValues{
     val title = "title"
     val time = buildAnnotatedString {
@@ -44,9 +44,9 @@ private object PreviewValues{
         }
     }
 
-    val repeat = arrayOf(false, true,  true,  true,  true,  true,  true).toBooleanArray()
+    val repeat = arrayOf(false, true,  true,  true,  true,  true,  true)
     val isScheduled = true
-    val isEnabled = true
+    val isEnabled = false
 
     val state = AlarmItemState(title, time, repeat, isScheduled, isEnabled)
     val action = AlarmItemAction({}, {})
@@ -54,10 +54,15 @@ private object PreviewValues{
 
 @Composable
 fun AlarmItem(
-    state: AlarmItemState = PreviewValues.state,
-    action: AlarmItemAction = PreviewValues.action
+    title: String,
+    time: AnnotatedString,
+    repeat: Array<Boolean>,
+    isScheduledInitValue: Boolean,
+    isEnabled: Boolean,
+    onItemClick: () -> Unit,
+    onSwitchClick: (Boolean) -> Unit
     ) {
-    var isScheduled by remember { mutableStateOf(state.isScheduled) }
+    var isScheduled by remember { mutableStateOf(isScheduledInitValue) }
 
     Card (
         modifier= Modifier
@@ -66,37 +71,42 @@ fun AlarmItem(
             .size(170.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondary
-        ),
-        ) {
+            containerColor =
+                if (isEnabled)
+                    MaterialTheme.colorScheme.secondary
+                else
+                    MaterialTheme.colorScheme.secondary.copy(alpha= .5f)
+
+        )
+    ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(15.dp)
-                .clickable{action.onItemClick()},
+                .clickable { onItemClick() },
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 modifier= Modifier
                     .align(Alignment.Start)
-                    .weight(.75f)
-                ,
-                text = state.alarmTitle,
+                    .weight(.75f),
+                text = title,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Start,
                 color = Color.White
             )
 
-
             Text(
                 modifier = Modifier.weight(1.25f),
-                text = state.alarmTime,
+                text = time,
                 color = Color.White,
             )
 
-            DaysRepeatPicker()
+            DaysRepeatPicker(
+                repeat= repeat
+            )
 
             Switch(
                 modifier = Modifier
@@ -105,7 +115,7 @@ fun AlarmItem(
                 checked = isScheduled,
                 onCheckedChange = {isEnabled ->
                     isScheduled = isEnabled
-                    action.onSwitchBtnClick(isEnabled)
+                    onSwitchClick(isEnabled)
                 },
                 colors= SwitchDefaults.colors(
                     checkedThumbColor = Color.White,
@@ -116,14 +126,26 @@ fun AlarmItem(
                     disabledCheckedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = .3f),
                     uncheckedTrackColor = MaterialTheme.colorScheme.tertiary,
                     disabledUncheckedTrackColor = MaterialTheme.colorScheme.tertiary.copy(alpha = .3f),
-                ),
-                /* todo is enabled should be the whole element & the change should be
-                    only in the background color
-                    */
-                enabled = state.isEnabled
+                )
             )
         }
     }
+}
+
+@Composable
+fun AlarmItem(
+    state: AlarmItemState = PreviewValues.state,
+    action: AlarmItemAction = PreviewValues.action
+) {
+    AlarmItem(
+        title = state.alarmTitle,
+        time = state.alarmTime,
+        repeat = state.alarmRepeat,
+        isScheduledInitValue = state.isScheduled,
+        isEnabled = state.isEnabled,
+        onItemClick = action.onItemClick,
+        onSwitchClick = action.onSwitchBtnClick
+    )
 }
 
 @Preview(showBackground = true)
