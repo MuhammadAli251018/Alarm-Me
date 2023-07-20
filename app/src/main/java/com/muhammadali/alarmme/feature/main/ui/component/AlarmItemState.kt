@@ -5,7 +5,7 @@ import androidx.compose.ui.text.AnnotatedString
 data class AlarmItemState(
     val alarmTitle: String,
     val alarmTime: AnnotatedString,
-    val alarmRepeat: BooleanArray,
+    val alarmRepeat: Array<Boolean>,
     val isScheduled: Boolean,
     val isEnabled: Boolean
 ) {
