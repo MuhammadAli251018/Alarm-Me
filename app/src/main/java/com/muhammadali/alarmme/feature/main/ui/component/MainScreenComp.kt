@@ -23,36 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.muhammadali.alarmme.common.ui.component.DaysRepeatPicker
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
-import com.muhammadali.alarmme.feature.main.ui.component.util.AlarmItemAction
-import com.muhammadali.alarmme.feature.main.ui.component.util.AlarmItemState
-
-private object PreviewValues{
-    val title = "title"
-    val time = buildAnnotatedString {
-        withStyle(style = SpanStyle(fontSize = 32.sp)) {
-            append("11:35 ")
-        }
-
-        withStyle(style = SpanStyle(fontSize = 16.sp)) {
-            append("AM")
-        }
-    }
-
-    val repeat = arrayOf(false, true,  true,  true,  true,  true,  true)
-    val isScheduled = true
-    val isEnabled = false
-
-    val state = AlarmItemState(title, time, repeat, isScheduled, isEnabled)
-    val action = AlarmItemAction({}, {})
-}
+import com.muhammadali.alarmme.feature.main.ui.screen.util.Time
+import com.muhammadali.alarmme.feature.main.ui.screen.util.toAnnotatedString
 
 @Composable
 fun AlarmItem(
@@ -134,29 +112,29 @@ fun AlarmItem(
     }
 }
 
-@Composable
-fun AlarmItem(
-    state: AlarmItemState = PreviewValues.state,
-    action: AlarmItemAction = PreviewValues.action
-) {
-    AlarmItem(
-        title = state.alarmTitle,
-        time = state.alarmTime,
-        repeat = state.alarmRepeat,
-        isScheduledInitValue = state.isScheduled,
-        isEnabled = state.isEnabled,
-        onItemClick = action.onItemClick,
-        onSwitchClick = action.onSwitchBtnClick
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
 fun AlarmItemPreview() {
-    AlarmMeTheme(
-        dynamicColor = false
 
-    ) {
-        AlarmItem()
+    val title = "title"
+    val time = Time(6, 30).toAnnotatedString(SpanStyle(fontSize = 32.sp),
+        SpanStyle(fontSize = 16.sp))
+
+    val repeat = arrayOf(false, true,  true,  true,  true,  true,  true)
+    val isScheduled = true
+    val isEnabled = false
+
+
+
+    AlarmMeTheme() {
+        AlarmItem(
+            title = title,
+            time = time,
+            repeat = repeat,
+            isScheduledInitValue = isScheduled,
+            isEnabled = isEnabled,
+            onItemClick = {},
+            onSwitchClick = {}
+        )
     }
 }
