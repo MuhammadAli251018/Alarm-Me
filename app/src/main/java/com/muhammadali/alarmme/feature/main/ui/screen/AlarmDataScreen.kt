@@ -91,6 +91,7 @@ fun AlarmDataScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        //todo fix the format so it becomes ringing after h hours m minutes
         Text(
             text = "ringing after: ${ringTime.toTextFormat()}",
             fontSize = 15.sp,
