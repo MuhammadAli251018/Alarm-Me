@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".AlarmMe"
@@ -12,12 +15,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AlarmMe"
-        tools:targetApi="31" >
+        tools:targetApi="31">
+        <activity
+            android:name=".feature.main.AlarmActivity"
+            android:exported="false"
+            android:label="@string/title_activity_alarm"
+            android:theme="@style/Theme.AlarmMe" />
+
+        <service android:name=".feature.main.domain.AlarmService" />
+
+        <receiver android:name=".feature.main.domain.AlarmReceiver" />
+
         <activity
             android:name=".feature.main.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AlarmMe" >
+            android:theme="@style/Theme.AlarmMe">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
