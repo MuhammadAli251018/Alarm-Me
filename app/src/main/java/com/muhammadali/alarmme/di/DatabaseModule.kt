@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.muhammadali.alarmme.feature.main.data.AlarmsDB
 import com.muhammadali.alarmme.feature.main.data.AlarmsDao
+import com.muhammadali.alarmme.feature.main.data.repo.AlarmsDbRepoImp
+import com.muhammadali.alarmme.feature.main.data.repo.AlarmsDbRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,4 +25,7 @@ object DatabaseModule {
 
     @Provides
     fun provideAlarmDao(alarmsDb: AlarmsDB): AlarmsDao = alarmsDb.alarmsDao()
+
+    @Provides
+    fun provideAlarmDbRepo(alarmsDao: AlarmsDao): AlarmsDbRepository = AlarmsDbRepoImp(alarmsDao)
 }
