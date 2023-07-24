@@ -5,16 +5,14 @@ import android.content.Context
 import com.muhammadali.alarmme.common.AlarmConstants
 
 interface AlarmScheduler {
-
-    companion object {
-        const val alarmIdKey = "alarmId"
-        const val alarmTitleKey = "alarmTitle"
-        const val alarmTimeKey = "alarmTime"
-        const val alarmSoundUriKey = "alarmSoundUri"
-        const val alarmVibrationKey = "alarmVibration"
-        const val alarmSnoozeKey = "alarmSnooze"
-    }
-
+companion object {
+    const val ALARM_TIME_KEY = "ALARM_TIME_KEY"
+    const val ALARM_TITLE_KEY = "ALARM_TITLE_KEY"
+    const val ALARM_DB_ID_KEY = "ALARM_DB_ID_KEY"
+    const val ALARM_SOUND_URI_KEY = "ALARM_SOUND_URI_KEY"
+    const val ALARM_VIBRATION_KEY = "ALARM_VIBRATION_KEY"
+    const val ALARM_SNOOZE_KEY = "ALARM_SNOOZE_KEY"
+}
     fun setAlarm(
         time: Long,
         context: Context,
