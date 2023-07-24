@@ -16,6 +16,9 @@ interface AlarmsDao {
     @Query("SELECT * FROM alarms WHERE scheduled = 1 ORDER BY `index` ASC")
     fun getScheduledAlarm(): Flow<List<Alarm>>
 
+    @Query("SELECT * FROM alarms WHERE id = :id")
+    fun getAlarmById(id: Int): Flow<Alarm>
+
     /**
      * elements must have the same id
      * */
