@@ -126,7 +126,7 @@ class AlarmService @Inject constructor(
         val alarmDBId = intent.extras?.getInt(AlarmScheduler.ALARM_DB_ID_KEY) ?: throw Exception()
 
         alarmScheduler.setAlarm(
-            time = time,
+            time = time /*todo add 5 min*/,
             this@AlarmService,
             AlarmReceiver::class.java,
             alarmDBId = alarmDBId,

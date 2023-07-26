@@ -83,7 +83,7 @@ fun AlarmDataScreen(
 
     val timePickerState = rememberUseCaseState(false)
     val datePickerState = rememberUseCaseState(false)
-    var isSnoozePVisible by remember { mutableStateOf(false) }
+    //var isSnoozePVisible by remember { mutableStateOf(false) }
     //var snoozeData by remember { mutableStateOf(getDateFormSnoozeMode(snoozeMode)) }
     var alarmTime by remember { mutableStateOf(alarmTimeInit) }
     var date by remember { mutableStateOf(dateInit) }
@@ -355,7 +355,7 @@ fun AlarmDataScreenPreview() {
     val alarmTitle = "Wake up"
     val ringtoneName = "bla"
     val vibrationMode = "vibration mode"
-    val snoozeState = SnoozeState.SnoozeOff
+    //val snoozeState = SnoozeState.SnoozeOff
 
 
     AlarmMeTheme {
