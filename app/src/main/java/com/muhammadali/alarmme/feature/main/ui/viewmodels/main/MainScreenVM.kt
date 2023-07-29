@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.viewmodels.main
+package com.muhammadali.alarmme.feature.main.ui.viewmodels.main
 
 import android.content.Context
 import androidx.compose.runtime.MutableState
