@@ -7,7 +7,6 @@ data class AlarmItemState(
     val alarmTime: AnnotatedString,
     val alarmRepeat: Array<Boolean>,
     val isScheduled: Boolean,
-    val isEnabled: Boolean
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
