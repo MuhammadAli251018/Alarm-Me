@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.muhammadali.alarmme.common.ui.component.DaysRepeatPicker
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
-import com.muhammadali.alarmme.feature.main.ui.screen.util.Time
-import com.muhammadali.alarmme.feature.main.ui.screen.util.toAnnotatedString
+import com.muhammadali.alarmme.feature.main.ui.util.toAnnotatedString
+import java.time.LocalTime
 
 @Composable
 fun AlarmItem(
@@ -117,7 +117,7 @@ fun AlarmItem(
 fun AlarmItemPreview() {
 
     val title = "title"
-    val time = Time(6, 30).toAnnotatedString(SpanStyle(fontSize = 32.sp),
+    val time = LocalTime.of(6, 30).toAnnotatedString(SpanStyle(fontSize = 32.sp),
         SpanStyle(fontSize = 16.sp))
 
     val repeat = arrayOf(false, true,  true,  true,  true,  true,  true)
