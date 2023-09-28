@@ -1,7 +1,6 @@
-package com.muhammadali.alarmme.feature.main.ui.screen
+package com.muhammadali.alarmme.feature.main.ui.screen.data
 
 import android.content.Context
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,113 +24,109 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.muhammadali.alarmme.R
 import com.muhammadali.alarmme.common.ui.component.DaysRepeatPicker
 import com.muhammadali.alarmme.common.ui.component.Picker
-import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.feature.main.ui.component.DatePicker
 import com.muhammadali.alarmme.feature.main.ui.component.TimePicker
+import com.muhammadali.alarmme.feature.main.ui.screen.navigation.MainActivityScreens
 import com.muhammadali.alarmme.feature.main.ui.util.DataScreenStartMode
 import com.muhammadali.alarmme.feature.main.ui.util.PickRingtoneContract
-import com.muhammadali.alarmme.feature.main.ui.util.toAnnotatedString
-import com.muhammadali.alarmme.feature.main.ui.util.toTextFormat
-import com.muhammadali.alarmme.feature.main.ui.viewmodels.main.AlarmDataScreenVM
+import com.muhammadali.alarmme.feature.main.ui.screen.data.viewmodel.AlarmDataScreenVM
+import com.muhammadali.alarmme.feature.main.ui.util.Ringtone
 import java.time.LocalDate
-import java.time.LocalTime
 
 
 @Composable
 fun AlarmDataScreen(
-    context: Context,
-    viewModel: AlarmDataScreenVM,
+    navController: NavHostController,
+    context: Context = LocalContext.current,
+    viewModel: AlarmDataScreenVM = hiltViewModel(),
     screenMode: DataScreenStartMode
 ) {
-    if (screenMode == DataScreenStartMode.CreateNewAlarmMode) {
-        //todo make the view model load data
-        val ringTime by remember {viewModel.ringingTime}
-        val alarmTitle by remember {viewModel.alarmTitle}
-        val ringtoneName by remember {viewModel.ringtoneName}
-        val vibrationMode by remember {viewModel.vibrationMode}
-
-        AlarmDataScreen(
-            context = context,
-            ringTime = ringTime,
-            alarmTimeInit = viewModel.alarmTime.value,
-            dateInit = viewModel.date.value,
-            repeatInitialValue = viewModel.repeatingPattern.value,
-            alarmTitle = alarmTitle,
-            ringtoneName = ringtoneName,
-            vibrationMode = vibrationMode,
-            snoozeModeInit = viewModel.snoozeMode.value,
-            onAlarmTimePick = viewModel::onAlarmTimePick,
-            onDatePickerPick = viewModel::onAlarmDatePick,
-            onSoundPickResult = viewModel::onSoundPickResult,
-            onVibrationPickerClick = viewModel::onVibrationPickerClick,
-            onSoundPickerClick = viewModel::onSoundPickerClick,
-            onSnoozePickerClick = viewModel::onSnoozePickerClick,
-            onSaveCancelClick = viewModel::onSaveBtnClick
-        )
+    if (screenMode != DataScreenStartMode.CreateNewAlarmMode) {
+        viewModel.loadAlarmById(screenMode.data)
     }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val datePickerState = rememberUseCaseState(false)
+    val timePickerState = rememberUseCaseState(false)
+    AlarmDataContent(
+        context = context,
+        navController = navController,
+        ringTime = uiState.ringingTime,
+        alarmTime = uiState.alarmTime,
+        date = uiState.date,
+        timePickerState = timePickerState,
+        datePickerState = datePickerState,
+        repeatDays = uiState.repeatPattern.toArray(),
+        alarmTextFieldLabelContent = uiState.alarmTextFieldLabelContent,
+        alarmTextFieldLabelColor = uiState.alarmTextFieldLabelColor,
+        alarmTitle = uiState.alarmTitle,
+        snoozeMode = uiState.snoozeMode,
+        ringtoneName = uiState.ringToneName,
+        vibrationMode = uiState.vibrationMode,
+        onAlarmTimePick = viewModel::onAlarmTimePick,
+        onDayRepeatPick = viewModel::onDayRepeatPicker,
+        onAlarmTitleChange = viewModel::onAlarmTitleChange,
+        onDatePickerPick = viewModel::onDatePickerPick,
+        onSoundPickerClick = viewModel::onSoundPickerClick,
+        onSoundPickResult = viewModel::onSoundPickerResult,
+        onVibrationPickerClick = viewModel::onVibrationPickerClick,
+        onSnoozePickerClick = viewModel::onSnoozePickerClick,
+        onSaveCancelClick = viewModel::onSaveCancelClick
+    )
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlarmDataScreen(
+fun AlarmDataContent(
     context: Context,
-    ringTime: LocalTime,
-    alarmTimeInit: LocalTime,
-    dateInit: LocalDate,
-    repeatInitialValue: Array<Boolean>,
+    navController: NavHostController,
+    ringTime: AnnotatedString,
+    alarmTime: AnnotatedString,
+    date: String,
+    timePickerState: UseCaseState,
+    datePickerState: UseCaseState,
+    repeatDays: Array<Boolean>,
+    alarmTextFieldLabelContent: String,
+    alarmTextFieldLabelColor: Color,
     alarmTitle: String,
+    snoozeMode: String,
     ringtoneName: String,
-    vibrationMode: Boolean,
-    snoozeModeInit: Boolean,
-    onAlarmTimePick: (LocalTime) -> Unit,
+    vibrationMode: String,
+    onAlarmTimePick: (Int, Int) -> Unit,
+    onDayRepeatPick: (Int) -> Unit,
+    onAlarmTitleChange: (String) -> Unit,
     onDatePickerPick: (LocalDate) -> Unit,
     onSoundPickerClick: () -> Unit,
-    onSoundPickResult: (Uri) -> Unit,
-    onVibrationPickerClick: (Boolean) -> Unit,
-    onSnoozePickerClick: (Boolean) -> Unit,
+    onSoundPickResult: (Ringtone?) -> Unit,
+    onVibrationPickerClick: () -> Unit,
+    onSnoozePickerClick: () -> Unit,
     onSaveCancelClick: (save: Boolean, Context) -> Unit
 ) {
-
-    val timePickerState = rememberUseCaseState(false)
-    val datePickerState = rememberUseCaseState(false)
-    //var isSnoozePVisible by remember { mutableStateOf(false) }
-    var snoozeData by remember { mutableStateOf(snoozeModeInit) }
-    var alarmTime by remember { mutableStateOf(alarmTimeInit) }
-    var date by remember { mutableStateOf(dateInit) }
-
     val launcher = rememberLauncherForActivityResult(
-        contract = PickRingtoneContract()) {
-        if (it != null)
-            onSoundPickResult(it)
-
-        //todo handle
-    }
+        contract = PickRingtoneContract(), onSoundPickResult)
 
     //dialogs
     TimePicker(
         state = timePickerState,
-        onPositiveClick = { hours, minutes ->
-            alarmTime = LocalTime.of(hours,minutes)
-            onAlarmTimePick(alarmTime)
-            timePickerState.hide()
-        },
+        onPositiveClick = onAlarmTimePick,
         onNegativeClick = {
             timePickerState.hide()
         }
@@ -139,11 +134,7 @@ fun AlarmDataScreen(
 
     DatePicker(
         state = datePickerState,
-        onSelectDate = {selectDate ->
-            date = selectDate
-            datePickerState.hide()
-            onDatePickerPick(selectDate)
-        },
+        onSelectDate = onDatePickerPick,
         onNegativeClick = {
             datePickerState.hide()
         }
@@ -159,8 +150,7 @@ fun AlarmDataScreen(
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "ringing after: ${ringTime.hour} hour and ${ringTime.minute} minute",
-            fontSize = 15.sp,
+            text = ringTime,
             color = Color.White
         )
 
@@ -177,11 +167,7 @@ fun AlarmDataScreen(
             Text(
                 modifier = Modifier
                     .padding(15.dp),
-                text = alarmTime.toAnnotatedString(
-                    timeStyle = SpanStyle(fontSize = 80.sp),
-                    periodStyle = SpanStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                ),
-                //fontSize = 60.sp,
+                text = alarmTime,
                 color = Color.White
             )
         }
@@ -197,7 +183,7 @@ fun AlarmDataScreen(
                 modifier = Modifier
                     .weight(1f)
                     .padding(20.dp),
-                text = date.toTextFormat(),
+                text = date,
                 fontSize = 20.sp,
                 color= Color.White
             )
@@ -220,55 +206,32 @@ fun AlarmDataScreen(
                 )
             }
         }
-        var repeat by remember { mutableStateOf(repeatInitialValue) }
 
         DaysRepeatPicker(
-            repeat = repeat,
+            repeat = repeatDays,
             fontSize = 30.sp,
             spacesCount = 20,
-            onDayClick = {index ->
-                val newRepeat = mutableListOf<Boolean>()
-                repeat.forEachIndexed { i: Int, value: Boolean ->
-                    newRepeat.add(if (i == index) !value else value)
-                }
-                repeat = newRepeat.toTypedArray()
-            }
+            onDayClick = onDayRepeatPick
         )
 
         Spacer(modifier = Modifier.height(15.dp))
-
-        var title by remember { mutableStateOf(alarmTitle) }
-        var label by remember { mutableStateOf("Alarm Title") }
-        var labelColor by remember { mutableStateOf(Color.White) }
-        val maxLength = 10
-
 
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp),
             label = {
-                    Text(text = label)
+                    Text(text = alarmTextFieldLabelContent)
             },
-            value = title,
+            value = alarmTitle,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.background,
                 unfocusedContainerColor = MaterialTheme.colorScheme.background,
                 disabledContainerColor = MaterialTheme.colorScheme.background,
-                focusedBorderColor = labelColor,
-                focusedLabelColor = labelColor,
+                focusedBorderColor = alarmTextFieldLabelColor,
+                focusedLabelColor = alarmTextFieldLabelColor,
             ),
-            onValueChange = { newValue ->
-                if (newValue.length <= maxLength) {
-                    title = newValue
-                    label = "Alarm Title"
-                    labelColor = Color.White
-                }
-                else {
-                    label = "Characters limit reached"
-                    labelColor = Color.Red
-                }
-            }
+            onValueChange = onAlarmTitleChange
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -290,23 +253,19 @@ fun AlarmDataScreen(
                 }
                 1 -> {
                     text = "Vibration"
-                    iconText = vibrationMode.toString()
-                    onClick = { onVibrationPickerClick(vibrationMode) }
+                    iconText = vibrationMode
+                    onClick = { onVibrationPickerClick() }
                 }
                 else -> {
                     text = "Snooze"
-                    iconText = if(snoozeData) "On" else "Off"
-                    onClick = {
-                        onSnoozePickerClick(snoozeData)
-                        snoozeData =! snoozeData
-                    }
+                    iconText = snoozeMode
+                    onClick = onSnoozePickerClick
                 }
             }
 
             Card(
                 modifier = Modifier
-                    .padding(20.dp)
-                    ,
+                    .padding(20.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {
 
@@ -345,6 +304,7 @@ fun AlarmDataScreen(
                             .padding(vertical = 20.dp)
                             .clickable {
                                 onSaveCancelClick(i == 0, context)
+                                navController.navigate(route = MainActivityScreens.MainScreen.rout)
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -393,4 +353,6 @@ fun AlarmDataScreenPreview() {
 
         )
     }*/
+
+    AlarmDataScreen(navController = rememberNavController(), screenMode = DataScreenStartMode.CreateNewAlarmMode)
 }

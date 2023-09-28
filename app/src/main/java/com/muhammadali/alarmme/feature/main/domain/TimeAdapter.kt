@@ -1,10 +1,18 @@
 package com.muhammadali.alarmme.feature.main.domain
 
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 
 interface TimeAdapter {
+
+    companion object {
+        fun getDateTimeFromEpochMilli(time: Long): LocalTime {
+            return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault()).toLocalTime()
+        }
+    }
 
     fun getTimeFormat(time: Long): LocalTime
 

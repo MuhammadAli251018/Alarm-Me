@@ -7,6 +7,8 @@ import com.muhammadali.alarmme.feature.main.domain.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.domain.AlarmSchedulerImp
 import com.muhammadali.alarmme.feature.main.domain.AlarmNotificationCreator
 import com.muhammadali.alarmme.feature.main.domain.AlarmNotificationCreatorImp
+import com.muhammadali.alarmme.feature.main.domain.TimeAdapter
+import com.muhammadali.alarmme.feature.main.domain.TimeAdapterImp
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,12 +32,18 @@ object DomainModule {
     }
 
     @Provides
-    fun providesAlarmScheduler(alarmManager: AlarmManager): AlarmScheduler {
-        return AlarmSchedulerImp(alarmManager)
+    fun providesAlarmScheduler(alarmManager: AlarmManager, timeAdapter: TimeAdapter): AlarmScheduler {
+        return AlarmSchedulerImp(
+            alarmManager = alarmManager,
+            timeAdapter = timeAdapter
+        )
     }
 
     @Provides
     fun providesNotificationCreator(notificationManager: NotificationManager): AlarmNotificationCreator {
         return AlarmNotificationCreatorImp(notificationManager)
     }
+
+    @Provides
+    fun providesTimeAdapter(): TimeAdapter = TimeAdapterImp()
 }
