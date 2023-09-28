@@ -27,7 +27,7 @@ class TimeAdapterImp :  TimeAdapter {
     }
 
     override fun getTimeInMillis(time: LocalDateTime): Long {
-        return time.toInstant(ZoneOffset.of(ZoneOffset.systemDefault().id)).toEpochMilli()
+        return time.atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli()
     }
 
     fun getCurrentTimeFormat() = getTimeFormat(System.currentTimeMillis())

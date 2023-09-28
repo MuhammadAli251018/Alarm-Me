@@ -9,7 +9,7 @@ import android.os.PowerManager
 import com.muhammadali.alarmme.common.AlarmConstants
 import com.muhammadali.alarmme.common.Notifications
 import com.muhammadali.alarmme.feature.main.data.Alarm
-import com.muhammadali.alarmme.feature.main.data.repo.AlarmsDbRepository
+import com.muhammadali.alarmme.feature.main.data.repo.DBRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class AlarmService @Inject constructor(
     private val alarmScheduler: AlarmScheduler,
     private val alarmNotificationCreator: AlarmNotificationCreator,
-    private val alarmsDbRepository: AlarmsDbRepository
+    private val dbRepository: DBRepository
         ) : Service() {
 
     //todo create exception for each case and handle them
@@ -104,12 +104,14 @@ class AlarmService @Inject constructor(
         scope.launch (Dispatchers.IO) {
             var alarm: Alarm
 
-            alarmsDbRepository.apply{
+            dbRepository.apply{
                 getAlarmById(id).collectLatest {
                     alarm = it
                     deleteAlarm(alarm)
                 }
             }
+
+            //todo schedule the next alarm
         }
     }
 

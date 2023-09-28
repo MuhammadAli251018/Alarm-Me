@@ -14,7 +14,13 @@ interface AlarmsDao {
 
     /** the elements are put in ASC order */
     @Query("SELECT * FROM alarms WHERE scheduled = 1 ORDER BY `index` ASC")
-    fun getScheduledAlarm(): Flow<List<Alarm>>
+    fun getScheduledAlarms(): Flow<List<Alarm>>
+
+    @Query("SELECT * FROM alarms ORDER BY  time DESC")
+    fun getAllAlarmsOrderedByTime(): Flow<List<Alarm>>
+
+    @Query("SELECT * FROM alarms WHERE `index` = 0 AND scheduled = 1")
+    fun getFirstAlarmToRing(): Flow<Alarm>
 
     @Query("SELECT * FROM alarms WHERE id = :id")
     fun getAlarmById(id: Int): Flow<Alarm>

@@ -2,38 +2,34 @@ package com.muhammadali.alarmme.feature.main.ui.screen.navigation
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.muhammadali.alarmme.feature.main.ui.screen.AlarmDataScreen
-import com.muhammadali.alarmme.feature.main.ui.screen.MainScreen
+import com.muhammadali.alarmme.feature.main.ui.screen.data.AlarmDataScreen
+import com.muhammadali.alarmme.feature.main.ui.screen.main.MainScreen
 import com.muhammadali.alarmme.feature.main.ui.util.DataScreenStartMode
-import com.muhammadali.alarmme.feature.main.ui.viewmodels.main.AlarmDataScreenVM
-import com.muhammadali.alarmme.feature.main.ui.viewmodels.main.MainScreenVM
+import com.muhammadali.alarmme.feature.main.ui.screen.data.viewmodel.AlarmDataScreenVM
+import com.muhammadali.alarmme.feature.main.ui.screen.main.viewmodel.MainScreenVM
 
 @Composable
-fun MainScreenNavHost(
+fun MainActivityNavHost(
     context: Context,
+    dataScreenVM: AlarmDataScreenVM,
     navController: NavHostController
 ) {
     NavHost(
         navController = navController,
         startDestination = MainActivityScreens
-            .MainScreen.rout) {
+            .MainScreen.rout
+    ) {
 
         composable(MainActivityScreens.MainScreen.rout) {
-            val viewModel = viewModel<MainScreenVM>()
+            //val viewModel = viewModel<MainScreenVM>()
 
             MainScreen(
-                alarms = viewModel.alarmsStateList.value,
-                onItemClick = viewModel::onItemClick,
-                onItemSwitchClick = {   index, scheduled ->
-                    viewModel.onItemSwitchBtnClick(index, scheduled, context)
-                },
-                onAddBtnClick = viewModel::onAddBtnClick
+                navController = navController
             )
         }
 
@@ -56,10 +52,11 @@ fun MainScreenNavHost(
                 else
                     DataScreenStartMode.UpdateAlarmMode(mode)
 
-            val viewModel = viewModel<AlarmDataScreenVM>()
+            //val viewModel = viewModel<AlarmDataScreenVM>()
             AlarmDataScreen(
+                navController = navController,
                 context = context,
-                viewModel = viewModel,
+                viewModel = dataScreenVM,
                 screenMode = launchMode
             )
         }

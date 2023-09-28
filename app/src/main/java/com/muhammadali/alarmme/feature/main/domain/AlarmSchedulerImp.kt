@@ -8,11 +8,34 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.muhammadali.alarmme.common.AlarmConstants
+import com.muhammadali.alarmme.feature.main.data.Alarm
+import com.muhammadali.alarmme.feature.main.ui.util.toAnnotatedString
+import java.time.Instant
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class AlarmSchedulerImp @Inject constructor(
-    private val alarmManager: AlarmManager
+    private val alarmManager: AlarmManager,
+    private val timeAdapter: TimeAdapter
 ) : AlarmScheduler {
+    override val scheduler = ScheduleAlarm { alarm: Alarm, context: Context ->
+        val receiver = AlarmReceiver::class.java
+        val time = timeAdapter.getTimeFormat(alarm.time)
+        val textTime = time.toAnnotatedString().text
+        val snooze = alarm.snooze.toBooleanStrict()
+
+        setAlarm(
+            time = alarm.time,
+            context = context,
+            receiver = receiver,
+            alarmDBId = alarm.id,
+            alarmTitle = alarm.title,
+            alarmSoundUri = alarm.ringtoneRef,
+            alarmTime = textTime,
+            alarmSnooze = snooze,
+            alarmVibration = alarm.vibration
+        )
+    }
     override fun setAlarm(
         time: Long,
         context: Context,

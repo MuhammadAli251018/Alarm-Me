@@ -3,6 +3,7 @@ package com.muhammadali.alarmme.feature.main.domain
 import android.content.BroadcastReceiver
 import android.content.Context
 import com.muhammadali.alarmme.common.AlarmConstants
+import com.muhammadali.alarmme.feature.main.data.Alarm
 
 interface AlarmScheduler {
 companion object {
@@ -13,6 +14,7 @@ companion object {
     const val ALARM_VIBRATION_KEY = "ALARM_VIBRATION_KEY"
     const val ALARM_SNOOZE_KEY = "ALARM_SNOOZE_KEY"
 }
+    val scheduler: ScheduleAlarm
     fun setAlarm(
         time: Long,
         context: Context,

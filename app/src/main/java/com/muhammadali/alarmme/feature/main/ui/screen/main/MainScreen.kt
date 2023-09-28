@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.screen
+package com.muhammadali.alarmme.feature.main.ui.screen.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -19,30 +19,49 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentCompositionLocalContext
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.muhammadali.alarmme.R
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.feature.main.ui.component.AlarmItem
 import com.muhammadali.alarmme.feature.main.ui.component.util.AlarmItemState
-import com.muhammadali.alarmme.feature.main.ui.util.toAnnotatedString
-import java.time.LocalTime
-
-/*
-* Main Screen structure
-* 1- text have value -> "Alarms"
-* 2- vertical grid of the alarms info
-* 3- button to add new alarm
-* */
+import com.muhammadali.alarmme.feature.main.ui.screen.main.viewmodel.MainScreenVM
+import com.muhammadali.alarmme.feature.main.ui.screen.navigation.MainActivityScreens
 
 @Composable
 fun MainScreen(
+    viewModel: MainScreenVM = hiltViewModel(),
+    navController: NavHostController
+    ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    MainScreenContent(
+        navController = navController,
+        alarms = uiState.alarms,
+        onItemClick = viewModel::onAlarmItemClick,
+        onItemSwitchClick = {   index, scheduled ->
+            viewModel.onSwitchBtnAlarmItemClick(index, scheduled, context)
+        },
+        onAddBtnClick = viewModel::onAddBtnClick
+    )
+}
+
+@Composable
+fun MainScreenContent(
+    navController: NavHostController,
     alarms: List<AlarmItemState>,
     onItemClick: (index: Int) -> Unit,
     onItemSwitchClick: (index: Int, isScheduled: Boolean) -> Unit,
@@ -54,6 +73,7 @@ fun MainScreen(
     ){
         Column(
             modifier = Modifier
+                .padding(horizontal = 10.dp)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -73,7 +93,7 @@ fun MainScreen(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2)
             ) {
-                itemsIndexed(items= alarms) {index,itemState ->
+                items(items= alarms) {itemState ->
 
                     AlarmItem(
                         title = itemState.alarmTitle,
@@ -81,8 +101,12 @@ fun MainScreen(
                         repeat = itemState.alarmRepeat,
                         isScheduledInitValue = itemState.isScheduled,
                         isEnabled = itemState.isScheduled,
-                        onItemClick = { onItemClick(index) },
-                        onSwitchClick = {onItemSwitchClick(index, it)}
+                        onItemClick = {
+                            onItemClick(itemState.alarmDBId)
+                            navController.navigate(route = MainActivityScreens.AlarmDataScreen.rout
+                                    + "/${itemState.alarmDBId}")
+                        },
+                        onSwitchClick = {onItemSwitchClick(itemState.alarmDBId, it)}
                     )
                 }
             }
@@ -93,7 +117,11 @@ fun MainScreen(
                 .padding(bottom = 50.dp)
                 .size(70.dp)
                 .align(Alignment.BottomCenter),
-            onClick = onAddBtnClick
+            onClick = {
+                onAddBtnClick()
+                navController.navigate(route = MainActivityScreens.AlarmDataScreen.rout
+                        + "/${-1}")
+            }
         ) {
 
             Card (
@@ -124,18 +152,9 @@ fun MainScreen(
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-
-    val title = "title"
-    val time = LocalTime.of(6, 30)
-        .toAnnotatedString(SpanStyle(fontSize = 32.sp), SpanStyle(fontSize = 16.sp))
-    val repeat = arrayOf(false, true,  true,  false,  false,  true,  true)
-    val isScheduled = true
-    val state = AlarmItemState(title, time, repeat, isScheduled)
-    val alarms = listOf(state, state, state, state)
-
     AlarmMeTheme(
         dynamicColor = false
     ) {
-        MainScreen(alarms = alarms, onItemClick = {}, onItemSwitchClick = {_,_ ->}) {}
+        MainScreen(navController = rememberNavController())
     }
 }
