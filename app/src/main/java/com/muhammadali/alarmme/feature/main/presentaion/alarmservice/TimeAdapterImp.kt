@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.domain
+package com.muhammadali.alarmme.feature.main.presentaion.alarmservice
 
 import java.time.Instant
 import java.time.LocalDate
@@ -8,7 +8,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Calendar
 
-class TimeAdapterImp :  TimeAdapter {
+class TimeAdapterImp : TimeAdapter {
 
 
     override fun getTimeFormat(time: Long): LocalTime {

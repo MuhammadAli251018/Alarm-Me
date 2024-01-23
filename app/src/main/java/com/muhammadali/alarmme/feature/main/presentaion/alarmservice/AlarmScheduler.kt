@@ -1,9 +1,10 @@
-package com.muhammadali.alarmme.feature.main.domain
+package com.muhammadali.alarmme.feature.main.presentaion.alarmservice
 
+import android.app.AlarmManager
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.ALARM_SERVICE
 import com.muhammadali.alarmme.common.AlarmConstants
-import com.muhammadali.alarmme.feature.main.data.Alarm
 
 interface AlarmScheduler {
 companion object {
@@ -33,5 +34,12 @@ companion object {
         context: Context,
         receiver: Class<out BroadcastReceiver>,
         alarmId: Int = AlarmConstants.ALARM_PENDING_INTENT_ID
+    )
+}
+
+fun Context.getAlarmScheduler(): AlarmScheduler {
+    return AlarmSchedulerImp(
+        getSystemService(ALARM_SERVICE) as AlarmManager,
+        TimeAdapterImp()
     )
 }

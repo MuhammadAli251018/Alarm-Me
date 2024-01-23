@@ -19,7 +19,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,28 +36,29 @@ import com.muhammadali.alarmme.R
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.feature.main.ui.component.AlarmItem
 import com.muhammadali.alarmme.feature.main.ui.component.util.AlarmItemState
-import com.muhammadali.alarmme.feature.main.ui.screen.main.viewmodel.MainScreenVM
+import com.muhammadali.alarmme.feature.main.ui.screen.main.viewmodel.MainScreenPresenter
 import com.muhammadali.alarmme.feature.main.ui.screen.navigation.MainActivityScreens
 
 @Composable
 fun MainScreen(
-    viewModel: MainScreenVM = hiltViewModel(),
+    presenter: MainScreenPresenter = hiltViewModel(),
     navController: NavHostController
     ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val alarms by presenter.alarms.collectAsStateWithLifecycle(emptyList())
     val context = LocalContext.current
 
     MainScreenContent(
         navController = navController,
-        alarms = uiState.alarms,
-        onItemClick = viewModel::onAlarmItemClick,
+        alarms = alarms,
+        onItemClick = presenter::onAlarmItemClick,
         onItemSwitchClick = {   index, scheduled ->
-            viewModel.onSwitchBtnAlarmItemClick(index, scheduled, context)
+            presenter.onSwitchBtnAlarmItemClick(index, scheduled, context)
         },
-        onAddBtnClick = viewModel::onAddBtnClick
+        onAddBtnClick = presenter::onAddBtnClick
     )
 }
 
+// TODO MAKE IT STATELESS
 @Composable
 fun MainScreenContent(
     navController: NavHostController,
@@ -90,26 +90,38 @@ fun MainScreenContent(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2)
-            ) {
-                items(items= alarms) {itemState ->
+            if (alarms.isNotEmpty()){
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2)
+                ) {
+                    items(items = alarms) { itemState ->
 
-                    AlarmItem(
-                        title = itemState.alarmTitle,
-                        time = itemState.alarmTime,
-                        repeat = itemState.alarmRepeat,
-                        isScheduledInitValue = itemState.isScheduled,
-                        isEnabled = itemState.isScheduled,
-                        onItemClick = {
-                            onItemClick(itemState.alarmDBId)
-                            navController.navigate(route = MainActivityScreens.AlarmDataScreen.rout
-                                    + "/${itemState.alarmDBId}")
-                        },
-                        onSwitchClick = {onItemSwitchClick(itemState.alarmDBId, it)}
-                    )
+                        AlarmItem(
+                            title = itemState.alarmTitle,
+                            time = itemState.alarmTime,
+                            repeat = itemState.alarmRepeat,
+                            isScheduledInitValue = itemState.isScheduled,
+                            isEnabled = itemState.isScheduled,
+                            onItemClick = {
+                                onItemClick(itemState.alarmDBId)
+                                navController.navigate(
+                                    route = MainActivityScreens.AlarmDataScreen.rout
+                                            + "/${itemState.alarmDBId}"
+                                )
+                            },
+                            onSwitchClick = { onItemSwitchClick(itemState.alarmDBId, it) }
+                        )
+                    }
                 }
             }
+            else
+                Box(modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                ) {
+                    Text(text = "No Alarms, you can create new alarms")
+                }
         }
 
         IconButton(

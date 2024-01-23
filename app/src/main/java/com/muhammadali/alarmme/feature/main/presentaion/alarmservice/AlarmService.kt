@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.domain
+package com.muhammadali.alarmme.feature.main.presentaion.alarmservice
 
 import android.app.Service
 import android.content.Context
@@ -8,7 +8,7 @@ import android.os.IBinder
 import android.os.PowerManager
 import com.muhammadali.alarmme.common.AlarmConstants
 import com.muhammadali.alarmme.common.Notifications
-import com.muhammadali.alarmme.feature.main.data.Alarm
+import com.muhammadali.alarmme.feature.main.data.AlarmEntity
 import com.muhammadali.alarmme.feature.main.data.repo.DBRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -102,12 +102,12 @@ class AlarmService @Inject constructor(
         val scope = CoroutineScope(Dispatchers.IO)
 
         scope.launch (Dispatchers.IO) {
-            var alarm: Alarm
+            var alarmEntity: AlarmEntity
 
             dbRepository.apply{
                 getAlarmById(id).collectLatest {
-                    alarm = it
-                    deleteAlarm(alarm)
+                    alarmEntity = it
+                    deleteAlarm(alarmEntity)
                 }
             }
 

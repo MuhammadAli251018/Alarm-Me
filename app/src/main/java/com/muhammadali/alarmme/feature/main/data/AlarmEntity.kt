@@ -2,7 +2,6 @@ package com.muhammadali.alarmme.feature.main.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.muhammadali.alarmme.feature.main.ui.screen.data.viewmodel.DataUIState
 
 @Entity(tableName = "alarms")
 data class Alarm(
@@ -16,6 +15,4 @@ data class Alarm(
     val index: Int,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0
-) {
-
-}
+)
