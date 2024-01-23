@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.domain
+package com.muhammadali.alarmme.feature.main.presentaion.alarmservice
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -8,32 +8,30 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.muhammadali.alarmme.common.AlarmConstants
-import com.muhammadali.alarmme.feature.main.data.Alarm
-import com.muhammadali.alarmme.feature.main.ui.util.toAnnotatedString
-import java.time.Instant
-import java.time.LocalDateTime
+import com.muhammadali.alarmme.feature.main.data.AlarmEntity
+import com.muhammadali.alarmme.feature.main.presentaion.util.toAnnotatedString
 import javax.inject.Inject
 
 class AlarmSchedulerImp @Inject constructor(
     private val alarmManager: AlarmManager,
     private val timeAdapter: TimeAdapter
 ) : AlarmScheduler {
-    override val scheduler = ScheduleAlarm { alarm: Alarm, context: Context ->
+    override val scheduler = ScheduleAlarm { alarmEntity: AlarmEntity, context: Context ->
         val receiver = AlarmReceiver::class.java
-        val time = timeAdapter.getTimeFormat(alarm.time)
+        val time = timeAdapter.getTimeFormat(alarmEntity.time)
         val textTime = time.toAnnotatedString().text
-        val snooze = alarm.snooze.toBooleanStrict()
+        val snooze = alarmEntity.snooze.toBooleanStrict()
 
         setAlarm(
-            time = alarm.time,
+            time = alarmEntity.time,
             context = context,
             receiver = receiver,
-            alarmDBId = alarm.id,
-            alarmTitle = alarm.title,
-            alarmSoundUri = alarm.ringtoneRef,
+            alarmDBId = alarmEntity.id,
+            alarmTitle = alarmEntity.title,
+            alarmSoundUri = alarmEntity.ringtoneRef,
             alarmTime = textTime,
             alarmSnooze = snooze,
-            alarmVibration = alarm.vibration
+            alarmVibration = alarmEntity.vibration
         )
     }
     override fun setAlarm(
