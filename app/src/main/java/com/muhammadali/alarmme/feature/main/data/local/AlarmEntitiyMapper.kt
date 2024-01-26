@@ -24,6 +24,40 @@ fun AlarmEntity.toAlarm(): Alarm {
     )
 }
 
+fun Alarm.toAlarmEntity(): AlarmEntity {
+    return AlarmEntity(
+        time = this.time,
+        title = this.title,
+        scheduled = this.enabled,
+        snooze = this.preferences.snooze.id,
+        vibration = this.preferences.vibration,
+        ringtoneRef = this.preferences.ringtoneRef,
+        repeat = encodeRepeatToString(this.preferences.repeat)
+    )
+}
+
+private fun encodeRepeatToString(repeat: AlarmPreferences.RepeatPattern): String {
+    var encodedRepeat = ""
+    if (repeat is AlarmPreferences.RepeatPattern.Weekly) {
+        encodedRepeat += "weekly,"
+
+        for (i in 0 .. 6) {
+           if ((repeat as AlarmPreferences.RepeatPattern.Weekly).activeDays.contains(getFromIndex(i)))
+               encodedRepeat += "0"
+            else
+                encodedRepeat += "1"
+        }
+    }
+    else {
+        encodedRepeat += "days,"
+        (repeat as AlarmPreferences.RepeatPattern.CertainDays).days.forEach {
+            encodedRepeat += it.toString()
+        }
+    }
+
+    return encodedRepeat
+}
+
 fun convertToRepeat(repeat: String): AlarmPreferences.RepeatPattern {
     val pattern = repeat.split(Pattern.compile(","))
 

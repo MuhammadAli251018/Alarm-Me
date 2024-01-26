@@ -1,7 +1,7 @@
 package com.muhammadali.alarmme.feature.main.data.repo
 
-import com.muhammadali.alarmme.feature.main.data.Alarm
-import com.muhammadali.alarmme.feature.main.data.AlarmsDao
+import com.muhammadali.alarmme.feature.main.data.local.AlarmEntity
+import com.muhammadali.alarmme.feature.main.data.local.AlarmsDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,22 +13,22 @@ class DBRepoImp @Inject constructor(
     override val alarmsDao: AlarmsDao
 ) : DBRepository {
 
-    override suspend fun insertOrUpdateAlarm(alarm: Alarm) {
-        alarmsDao.insertOrUpdateAlarm(alarm)
+    override suspend fun insertOrUpdateAlarm(alarmEntity: AlarmEntity) {
+        alarmsDao.insertOrUpdateAlarm(alarmEntity)
         arrangeDB()
     }
 
-    override suspend fun deleteAlarm(alarm: Alarm) {
-        alarmsDao.deleteAlarm(alarm)
+    override suspend fun deleteAlarm(alarmEntity: AlarmEntity) {
+        alarmsDao.deleteAlarm(alarmEntity)
         arrangeDB()
     }
 
-    private fun getAlarmsToUpdate(alarms: List<Alarm>): List<Alarm> {
-        val sortedAlarms = alarms.sortedBy {
+    private fun getAlarmsToUpdate(alarmEntities: List<AlarmEntity>): List<AlarmEntity> {
+        val sortedAlarms = alarmEntities.sortedBy {
             it.time
         }
 
-        val alarmsToUpdate = mutableListOf<Alarm>()
+        val alarmsToUpdate = mutableListOf<AlarmEntity>()
 
         for (index in 0 .. sortedAlarms.lastIndex) {
             if (index != sortedAlarms[index].index) {
@@ -58,14 +58,14 @@ class DBRepoImp @Inject constructor(
         }
     }
 
-    override fun getAllAlarms(): Flow<List<Alarm>> = alarmsDao.getAllAlarms()
+    override fun getAllAlarms(): Flow<List<AlarmEntity>> = alarmsDao.getAllAlarms()
 
-    override fun getScheduledAlarm(): Flow<List<Alarm>> = alarmsDao.getScheduledAlarms()
+    override fun getScheduledAlarm(): Flow<List<AlarmEntity>> = alarmsDao.getScheduledAlarms()
 
-    override fun getAllAlarmsOrderedByTime(): Flow<List<Alarm>> = alarmsDao.getAllAlarmsOrderedByTime()
+    override fun getAllAlarmsOrderedByTime(): Flow<List<AlarmEntity>> = alarmsDao.getAllAlarmsOrderedByTime()
 
-    override fun getFirstAlarmToRing(): Flow<Alarm> = alarmsDao.getFirstAlarmToRing()
+    override fun getFirstAlarmToRing(): Flow<AlarmEntity> = alarmsDao.getFirstAlarmToRing()
 
-    override fun getAlarmById(id: Int): Flow<Alarm> = alarmsDao.getAlarmById(id)
+    override fun getAlarmById(id: Int): Flow<AlarmEntity> = alarmsDao.getAlarmById(id)
 
 }
