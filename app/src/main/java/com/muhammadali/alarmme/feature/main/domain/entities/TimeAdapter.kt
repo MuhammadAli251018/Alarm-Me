@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.presentaion.alarmservice
+package com.muhammadali.alarmme.feature.main.domain.entities
 
 import java.time.Instant
 import java.time.LocalDate

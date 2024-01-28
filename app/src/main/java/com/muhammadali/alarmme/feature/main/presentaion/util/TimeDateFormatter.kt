@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.util
+package com.muhammadali.alarmme.feature.main.presentaion.util
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle

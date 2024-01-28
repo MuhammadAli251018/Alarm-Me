@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
+import android.widget.Toast
 import com.muhammadali.alarmme.common.AlarmConstants
+import kotlin.time.Duration.Companion.minutes
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -14,12 +16,19 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val wakeLock: PowerManager.WakeLock =
             (context.getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, AlarmConstants.WAKE_LOCK_TAG)
+                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, AlarmNotificatorImp.WAKE_LOCK_TAG)
             }
 
-        //wake lock ensures that the service starts even when the screen in off
-        wakeLock.acquire(2*60*1000L)
+        Toast.makeText(context, "Bla Bla", Toast.LENGTH_LONG).show()
 
-        context.startService(intent)
+
+        //wake lock ensures that the service starts even when the screen in off
+        wakeLock.acquire(2.minutes.inWholeMilliseconds)
+
+        val i = Intent(context, AlarmService::class.java)
+        i.action = AlarmNotificatorImp.RECEIVE_ALARM_ACTION
+        i.putExtra("alarmId", intent.getIntExtra("alarmId", -1))
+
+        context.startService(i)
     }
 }

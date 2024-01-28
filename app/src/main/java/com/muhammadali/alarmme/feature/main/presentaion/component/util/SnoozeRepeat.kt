@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.component.util
+package com.muhammadali.alarmme.feature.main.presentaion.component.util
 
 enum class SnoozeRepeat (val content: String) {
     ThreeTimes("3 times"),

@@ -41,7 +41,7 @@ sealed class Result<T> {
     fun getOrThrow() =
         if (status == Status.Success)
             (this as Success).data
-        else throw Throwable() //   todo but the exception
+        else throw (this as Failure).exception //   todo but the exception
 
 }
 

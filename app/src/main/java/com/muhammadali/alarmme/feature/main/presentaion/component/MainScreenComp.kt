@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.component
+package com.muhammadali.alarmme.feature.main.presentaion.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.muhammadali.alarmme.common.ui.component.DaysRepeatPicker
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
-import com.muhammadali.alarmme.feature.main.ui.util.toAnnotatedString
+import com.muhammadali.alarmme.feature.main.presentaion.util.toAnnotatedString
 import java.time.LocalTime
 
 @Composable

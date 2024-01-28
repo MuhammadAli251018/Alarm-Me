@@ -1,33 +1,31 @@
-package com.muhammadali.alarmme.feature.main.ui.screen.main.viewmodel
+package com.muhammadali.alarmme.feature.main.presentaion.screen.main.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.muhammadali.alarmme.feature.main.data.repo.DBRepository
-import com.muhammadali.alarmme.feature.main.domain.AlarmScheduler
-import com.muhammadali.alarmme.feature.main.ui.component.util.AlarmItemState
+import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
+import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
+import com.muhammadali.alarmme.feature.main.presentaion.component.util.AlarmItemState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class MainScreenVM @Inject constructor(
-    private val alarmsDbRepository: DBRepository,
-    private val alarmScheduler: AlarmScheduler,
+class MainScreenVM constructor(
+    //private val alarmsDbRepository: AlarmsDBRepo,
+    //private val alarmScheduler: AlarmScheduler,
     ) : ViewModel(), MainScreenPresenter
 {
 
 
     init {
         viewModelScope.launch {
-            alarmsDbRepository.getAllAlarms().collectLatest { alarms ->
+           /* alarmsDbRepository.getAllAlarms().collectLatest { alarms ->
                 //updateUIState(MainUIState(alarms.toListOfAlarmItems()))
-            }
+            }*/
         }
     }
 
@@ -47,16 +45,16 @@ class MainScreenVM @Inject constructor(
     }
 
     private fun updateAlarm(id: Int, scheduled: Boolean, context: Context) {
-        viewModelScope.launch (Dispatchers.IO) {
+        /*viewModelScope.launch (Dispatchers.IO) {
             alarmsDbRepository.getAlarmById(id).collectLatest { alarm ->
                 alarmsDbRepository.insertOrUpdateAlarm(alarm.copy(
                     scheduled = scheduled
                 ))
 
                 alarmsDbRepository.getFirstAlarmToRing().collectLatest {
-                    alarmScheduler.scheduler.schedule(alarm = alarm, context = context)
+                    alarmScheduler.scheduler.schedule(alarmEntity = alarm, context = context)
                 }
             }
-        }
+        }*/
     }
 }

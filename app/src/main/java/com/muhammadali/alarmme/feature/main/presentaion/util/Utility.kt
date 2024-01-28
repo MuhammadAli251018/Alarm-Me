@@ -1,14 +1,11 @@
-package com.muhammadali.alarmme.feature.main.ui.util
+package com.muhammadali.alarmme.feature.main.presentaion.util
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalTime
-import java.util.Date
-import java.util.logging.SimpleFormatter
 
 
 enum class TimeState(){

@@ -1,6 +1,8 @@
 package com.muhammadali.alarmme.feature.main
 
+import android.media.RingtoneManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -12,29 +14,78 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
-import com.muhammadali.alarmme.feature.main.ui.screen.navigation.MainActivityNavHost
-import com.muhammadali.alarmme.feature.main.ui.screen.data.viewmodel.AlarmDataScreenVM
-import com.muhammadali.alarmme.feature.main.ui.screen.main.viewmodel.MainScreenVM
+import com.muhammadali.alarmme.common.util.TimeAdapterImp
+import com.muhammadali.alarmme.feature.main.data.local.AlarmsDB
+import com.muhammadali.alarmme.feature.main.data.repo.AlarmsDbRepoImp
+import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
+import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
+import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmReceiver
+import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmSchedulerImp
+import com.muhammadali.alarmme.feature.main.presentaion.screen.navigation.MainActivityNavHost
+import com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel.AlarmDataScreenVM
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.runBlocking
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private fun getContext() = this
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val dataScreenVM by viewModels<AlarmDataScreenVM>()
+        //val dataScreenVM by viewModels<AlarmDataScreenVM>()
+        val scheduler = AlarmSchedulerImp(
+            AlarmReceiver::class.java
+        ){
+            getContext()
+        }
 
+        runBlocking {
+            val alarm = Alarm(
+                alarmId = 1,
+                title = "test",
+                time = System.currentTimeMillis() + (5.seconds.inWholeMilliseconds),
+                preferences = AlarmPreferences(
+                    AlarmPreferences.Snooze.NoSnooze,
+                    vibration = true,
+                    ringtoneRef = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                        .toString(),
+                    repeat = AlarmPreferences.RepeatPattern.Weekly(listOf(AlarmPreferences.RepeatPattern.Weekly.DaysOfWeeks.Monday))
+                ),
+                enabled = true
+            )
 
+            val dao =  Room.databaseBuilder(
+                this@MainActivity,
+                AlarmsDB::class.java,
+                name = "alarms_db"
+            ).build().alarmsDao()
+
+            val dbRepo = AlarmsDbRepoImp(dao)
+            dbRepo.addOrUpdateAlarm(alarm)
+            scheduler.scheduleOrUpdate(
+                alarm = alarm
+            )
+
+            Toast.makeText(this@MainActivity, "scheduled", Toast.LENGTH_LONG).show()
+        }
         setContent {
             AlarmMeTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     val navController = rememberNavController()
-                    MainActivityNavHost(
+                    /*MainActivityNavHost(
                         context = this,
                         dataScreenVM = dataScreenVM,
                         navController = navController)
+                }*/
                 }
             }
         }
@@ -55,4 +106,5 @@ fun GreetingPreview() {
     AlarmMeTheme {
         Greeting("Android")
     }
+
 }
