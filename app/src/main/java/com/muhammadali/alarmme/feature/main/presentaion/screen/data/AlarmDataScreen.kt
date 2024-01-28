@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.screen.data
+package com.muhammadali.alarmme.feature.main.presentaion.screen.data
 
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -42,13 +42,13 @@ import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.muhammadali.alarmme.R
 import com.muhammadali.alarmme.common.ui.component.DaysRepeatPicker
 import com.muhammadali.alarmme.common.ui.component.Picker
-import com.muhammadali.alarmme.feature.main.ui.component.DatePicker
-import com.muhammadali.alarmme.feature.main.ui.component.TimePicker
-import com.muhammadali.alarmme.feature.main.ui.screen.navigation.MainActivityScreens
-import com.muhammadali.alarmme.feature.main.ui.util.DataScreenStartMode
-import com.muhammadali.alarmme.feature.main.ui.util.PickRingtoneContract
-import com.muhammadali.alarmme.feature.main.ui.screen.data.viewmodel.AlarmDataScreenVM
-import com.muhammadali.alarmme.feature.main.ui.util.Ringtone
+import com.muhammadali.alarmme.feature.main.presentaion.component.DatePicker
+import com.muhammadali.alarmme.feature.main.presentaion.component.TimePicker
+import com.muhammadali.alarmme.feature.main.presentaion.screen.navigation.MainActivityScreens
+import com.muhammadali.alarmme.feature.main.presentaion.util.DataScreenStartMode
+import com.muhammadali.alarmme.feature.main.presentaion.util.PickRingtoneContract
+import com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel.AlarmDataScreenVM
+import com.muhammadali.alarmme.feature.main.presentaion.util.Ringtone
 import java.time.LocalDate
 
 
@@ -60,12 +60,12 @@ fun AlarmDataScreen(
     screenMode: DataScreenStartMode
 ) {
     if (screenMode != DataScreenStartMode.CreateNewAlarmMode) {
-        viewModel.loadAlarmById(screenMode.data)
+        //viewModel.loadAlarmById(screenMode.data)
     }
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    //val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val datePickerState = rememberUseCaseState(false)
     val timePickerState = rememberUseCaseState(false)
-    AlarmDataContent(
+    /*AlarmDataContent(
         context = context,
         navController = navController,
         ringTime = uiState.ringingTime,
@@ -89,7 +89,7 @@ fun AlarmDataScreen(
         onVibrationPickerClick = viewModel::onVibrationPickerClick,
         onSnoozePickerClick = viewModel::onSnoozePickerClick,
         onSaveCancelClick = viewModel::onSaveCancelClick
-    )
+    )*/
 }
 
 

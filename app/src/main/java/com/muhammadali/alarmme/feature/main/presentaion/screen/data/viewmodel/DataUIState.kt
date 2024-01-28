@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.screen.data.viewmodel
+package com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString

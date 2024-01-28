@@ -53,4 +53,18 @@ class AlarmsDbRepoImp(
             }
         }
     }
+
+    override fun getAlarmWithId(id: Int): Flow<Result<Alarm>> {
+        return flow {
+            try {
+                val result= dbDao.getAlarmById(id)
+
+                result.collect { collectedAlarm ->
+                    this.emit(Result.success(collectedAlarm.toAlarm()))
+                }
+            } catch (e: IOException) {
+                emit(Result.failure(Exception(""/*Todo: Handle*/)))
+            }
+        }
+    }
 }

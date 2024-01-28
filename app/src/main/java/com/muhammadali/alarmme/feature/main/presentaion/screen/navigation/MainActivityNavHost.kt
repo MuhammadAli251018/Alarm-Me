@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.screen.navigation
+package com.muhammadali.alarmme.feature.main.presentaion.screen.navigation
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -7,16 +7,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.muhammadali.alarmme.feature.main.ui.screen.data.AlarmDataScreen
-import com.muhammadali.alarmme.feature.main.ui.screen.main.MainScreen
-import com.muhammadali.alarmme.feature.main.ui.util.DataScreenStartMode
-import com.muhammadali.alarmme.feature.main.ui.screen.data.viewmodel.AlarmDataScreenVM
-import com.muhammadali.alarmme.feature.main.ui.screen.main.viewmodel.MainScreenVM
+import com.muhammadali.alarmme.feature.main.presentaion.screen.data.AlarmDataScreen
+import com.muhammadali.alarmme.feature.main.presentaion.screen.main.MainScreen
+import com.muhammadali.alarmme.feature.main.presentaion.util.DataScreenStartMode
+import com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel.AlarmDataScreenVM
 
 @Composable
 fun MainActivityNavHost(
     context: Context,
-    dataScreenVM: AlarmDataScreenVM,
+    //dataScreenVM: AlarmDataScreenVM,
     navController: NavHostController
 ) {
     NavHost(
@@ -53,12 +52,12 @@ fun MainActivityNavHost(
                     DataScreenStartMode.UpdateAlarmMode(mode)
 
             //val viewModel = viewModel<AlarmDataScreenVM>()
-            AlarmDataScreen(
+            /*AlarmDataScreen(
                 navController = navController,
                 context = context,
                 viewModel = dataScreenVM,
                 screenMode = launchMode
-            )
+            )*/
         }
     }
 }

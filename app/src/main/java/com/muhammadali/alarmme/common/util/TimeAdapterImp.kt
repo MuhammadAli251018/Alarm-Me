@@ -1,12 +1,12 @@
-package com.muhammadali.alarmme.feature.main.presentaion.alarmservice
+package com.muhammadali.alarmme.common.util
 
+import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
-import java.util.Calendar
 
 class TimeAdapterImp : TimeAdapter {
 

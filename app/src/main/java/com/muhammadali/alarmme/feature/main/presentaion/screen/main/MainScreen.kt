@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.screen.main
+package com.muhammadali.alarmme.feature.main.presentaion.screen.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -34,10 +34,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.muhammadali.alarmme.R
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
-import com.muhammadali.alarmme.feature.main.ui.component.AlarmItem
-import com.muhammadali.alarmme.feature.main.ui.component.util.AlarmItemState
-import com.muhammadali.alarmme.feature.main.ui.screen.main.viewmodel.MainScreenPresenter
-import com.muhammadali.alarmme.feature.main.ui.screen.navigation.MainActivityScreens
+import com.muhammadali.alarmme.feature.main.presentaion.component.AlarmItem
+import com.muhammadali.alarmme.feature.main.presentaion.component.util.AlarmItemState
+import com.muhammadali.alarmme.feature.main.presentaion.screen.main.viewmodel.MainScreenPresenter
+import com.muhammadali.alarmme.feature.main.presentaion.screen.navigation.MainActivityScreens
 
 @Composable
 fun MainScreen(

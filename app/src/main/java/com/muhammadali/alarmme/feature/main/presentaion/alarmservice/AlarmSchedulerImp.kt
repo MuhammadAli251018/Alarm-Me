@@ -6,89 +6,65 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
-import com.muhammadali.alarmme.common.AlarmConstants
-import com.muhammadali.alarmme.feature.main.data.AlarmEntity
-import com.muhammadali.alarmme.feature.main.presentaion.util.toAnnotatedString
-import javax.inject.Inject
+import com.muhammadali.alarmme.common.util.Result
+import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
+import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
+import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmNotificatorImp.Companion.RECEIVE_ALARM_ACTION
 
-class AlarmSchedulerImp @Inject constructor(
-    private val alarmManager: AlarmManager,
-    private val timeAdapter: TimeAdapter
+class AlarmSchedulerImp(
+    private val receiver: Class< out BroadcastReceiver>,
+    private val contextProvider: ContextProvider
 ) : AlarmScheduler {
-    override val scheduler = ScheduleAlarm { alarmEntity: AlarmEntity, context: Context ->
-        val receiver = AlarmReceiver::class.java
-        val time = timeAdapter.getTimeFormat(alarmEntity.time)
-        val textTime = time.toAnnotatedString().text
-        val snooze = alarmEntity.snooze.toBooleanStrict()
-
-        setAlarm(
-            time = alarmEntity.time,
-            context = context,
-            receiver = receiver,
-            alarmDBId = alarmEntity.id,
-            alarmTitle = alarmEntity.title,
-            alarmSoundUri = alarmEntity.ringtoneRef,
-            alarmTime = textTime,
-            alarmSnooze = snooze,
-            alarmVibration = alarmEntity.vibration
-        )
+    companion object {
+        const val ALARM_TIME_KEY = "ALARM_TIME_KEY"
+        const val ALARM_TITLE_KEY = "ALARM_TITLE_KEY"
+        const val ALARM_DB_ID_KEY = "ALARM_DB_ID_KEY"
+        const val ALARM_SOUND_URI_KEY = "ALARM_SOUND_URI_KEY"
+        const val ALARM_VIBRATION_KEY = "ALARM_VIBRATION_KEY"
+        const val ALARM_SNOOZE_KEY = "ALARM_SNOOZE_KEY"
     }
-    override fun setAlarm(
-        time: Long,
-        context: Context,
-        receiver: Class<out BroadcastReceiver>,
-        alarmDBId: Int,
-        alarmTitle: String,
-        alarmTime: String,
-        alarmSoundUri: String,
-        alarmVibration: Boolean,
-        alarmSnooze: Boolean,
-        alarmId: Int
-    ) {
+
+    private fun <T> executeWithContext(operation: (context: Context) -> T): T = operation(contextProvider.getContext())
+
+
+    override fun scheduleOrUpdate(alarm: Alarm): Result<Unit> = executeWithContext {context ->
         val intent = Intent(context, receiver).apply {
-            action = AlarmConstants.RECEIVE_ALARM_ACTION
-            putExtra("alarmId", alarmDBId)
-            putExtra("alarmTitle", alarmTitle)
-            putExtra("alarmTime", alarmTime)
-            putExtra("alarmSoundUri", alarmSoundUri)
-            putExtra("alarmVibration", alarmVibration)
-            putExtra("alarmSnooze", alarmSnooze)
+            action = RECEIVE_ALARM_ACTION
+            putExtra("alarmId", alarm.alarmId)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(context,
-            alarmId,
+            alarm.alarmId,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
-        //todo log for testing
+        val alarmManager =context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val is31OrAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-        Log.d("AlarmScheduler", "is31OrAbove: $is31OrAbove")
-
         if (is31OrAbove) {
-            //todo log for testing
             val canSchedule = alarmManager.canScheduleExactAlarms()
-            Log.d("AlarmScheduler", "canSchedule: $canSchedule")
 
             if (canSchedule)
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarm.time, pendingIntent)
             else {
+                return@executeWithContext Result.failure(Exception("Need Exact alarm permission"))
             }
-        }    // handle
-        else {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pendingIntent)
         }
-            //handle
+        else {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarm.time, pendingIntent)
+        }
+
+        Result.success(Unit)
     }
 
-    override fun cancelAlarm( context: Context, receiver: Class<out BroadcastReceiver>, alarmId: Int) {
-        val intent = Intent(context, receiver)
-        val pendingIntent = PendingIntent.getBroadcast(context,
+    override fun cancelAlarm(alarmId: Int): Result<Unit> = executeWithContext {context ->
+        val alarmingIntent = Intent(context, receiver)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
             alarmId,
-            intent,
+            alarmingIntent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        alarmManager.cancel(pendingIntent)
+        Result.success(alarmManager.cancel(pendingIntent))
     }
-
 }

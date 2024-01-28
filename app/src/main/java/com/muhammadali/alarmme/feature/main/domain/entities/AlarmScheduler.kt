@@ -1,7 +1,9 @@
 package com.muhammadali.alarmme.feature.main.domain.entities
 
-interface AlarmScheduler {
-    fun scheduleOrUpdate(alarm: Alarm)
+import com.muhammadali.alarmme.common.util.Result
 
-    fun cancelAlarm(alarmId: String)
+interface AlarmScheduler {
+    fun scheduleOrUpdate(alarm: Alarm): Result<Unit>
+
+    fun cancelAlarm(alarmId: Int): Result<Unit>
 }

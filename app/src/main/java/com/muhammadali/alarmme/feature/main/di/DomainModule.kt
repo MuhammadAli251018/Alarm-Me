@@ -1,27 +1,15 @@
 package com.muhammadali.alarmme.feature.main.di
 
-import android.app.AlarmManager
-import android.app.NotificationManager
-import android.content.Context
-import com.muhammadali.alarmme.feature.main.domain.AlarmScheduler
-import com.muhammadali.alarmme.feature.main.domain.AlarmSchedulerImp
-import com.muhammadali.alarmme.feature.main.domain.AlarmNotificationCreator
-import com.muhammadali.alarmme.feature.main.domain.AlarmNotificationCreatorImp
-import com.muhammadali.alarmme.feature.main.domain.TimeAdapter
-import com.muhammadali.alarmme.feature.main.domain.TimeAdapterImp
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
 @InstallIn(ViewModelComponent::class, ServiceComponent::class)
 object DomainModule {
 
-    @Provides
+    /*@Provides
     fun providesAlarmManager(@ApplicationContext context: Context): AlarmManager {
         return context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
@@ -33,17 +21,17 @@ object DomainModule {
 
     @Provides
     fun providesAlarmScheduler(alarmManager: AlarmManager, timeAdapter: TimeAdapter): AlarmScheduler {
-        return AlarmSchedulerImp(
-            alarmManager = alarmManager,
+        return AlarmSchedulerIMP(
+            receiver = BroadcastReceiver::class.java,
             timeAdapter = timeAdapter
         )
     }
 
     @Provides
-    fun providesNotificationCreator(notificationManager: NotificationManager): AlarmNotificationCreator {
+    fun providesNotificationCreator(notificationManager: NotificationManager): AlarmNotificator {
         return AlarmNotificationCreatorImp(notificationManager)
     }
 
     @Provides
-    fun providesTimeAdapter(): TimeAdapter = TimeAdapterImp()
+    fun providesTimeAdapter(): TimeAdapter = TimeAdapterImp()*/
 }

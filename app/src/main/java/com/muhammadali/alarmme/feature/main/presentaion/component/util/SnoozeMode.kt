@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.component.util
+package com.muhammadali.alarmme.feature.main.presentaion.component.util
 
 
 sealed class SnoozeState() {

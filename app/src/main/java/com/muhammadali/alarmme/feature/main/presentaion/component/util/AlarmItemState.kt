@@ -1,9 +1,9 @@
-package com.muhammadali.alarmme.feature.main.ui.component.util
+package com.muhammadali.alarmme.feature.main.presentaion.component.util
 
 import androidx.compose.ui.text.AnnotatedString
-import com.muhammadali.alarmme.feature.main.data.Alarm
-import com.muhammadali.alarmme.feature.main.domain.TimeAdapter
-import com.muhammadali.alarmme.feature.main.ui.util.toAnnotatedString
+import com.muhammadali.alarmme.feature.main.data.local.AlarmEntity
+import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
+import com.muhammadali.alarmme.feature.main.presentaion.util.toAnnotatedString
 
 data class AlarmItemState(
     val alarmDBId: Int,
@@ -46,7 +46,7 @@ fun String.getRepeatFromStringFormat(): Array<Boolean> {
     }.toTypedArray()
 }
 
-fun Alarm.toAlarmItemState(): AlarmItemState {
+fun AlarmEntity.toAlarmItemState(): AlarmItemState {
     return AlarmItemState(
         alarmTitle = title,
         alarmDBId = id,
@@ -56,7 +56,7 @@ fun Alarm.toAlarmItemState(): AlarmItemState {
     )
 }
 
-fun List<Alarm>.toListOfAlarmItems(): List<AlarmItemState> {
+fun List<AlarmEntity>.toListOfAlarmItems(): List<AlarmItemState> {
     return mutableListOf<AlarmItemState>().apply {
         this@toListOfAlarmItems.forEach {
             this.add(it.toAlarmItemState())

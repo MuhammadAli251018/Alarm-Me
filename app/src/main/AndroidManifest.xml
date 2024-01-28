@@ -22,11 +22,13 @@
             android:name=".feature.main.AlarmActivity"
             android:exported="false"
             android:label="@string/title_activity_alarm"
-            android:theme="@style/Theme.AlarmMe" />
+            android:theme="@style/Theme.AlarmMe"
+            android:showOnLockScreen="true"
+            />
 
-        <service android:name=".feature.main.domain.AlarmService" />
+        <service android:name=".feature.main.presentaion.alarmservice.AlarmService" />
 
-        <receiver android:name=".feature.main.domain.AlarmReceiver" />
+        <receiver android:name=".feature.main.presentaion.alarmservice.AlarmReceiver" />
 
         <activity
             android:name=".feature.main.MainActivity"

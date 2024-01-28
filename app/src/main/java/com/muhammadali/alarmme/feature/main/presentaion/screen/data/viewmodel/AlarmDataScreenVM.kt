@@ -1,14 +1,14 @@
-package com.muhammadali.alarmme.feature.main.ui.screen.data.viewmodel
+package com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel
 
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.muhammadali.alarmme.feature.main.data.Alarm
-import com.muhammadali.alarmme.feature.main.data.repo.DBRepository
-import com.muhammadali.alarmme.feature.main.domain.AlarmScheduler
-import com.muhammadali.alarmme.feature.main.domain.TimeAdapter
-import com.muhammadali.alarmme.feature.main.ui.util.TimeDateFormatter
+import com.muhammadali.alarmme.feature.main.data.local.AlarmEntity
+import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
+import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
+import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
+import com.muhammadali.alarmme.feature.main.presentaion.util.TimeDateFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,22 +27,22 @@ import javax.inject.Inject
 
 private const val TAG = "alarm_data_view_model"
 
-@HiltViewModel
+//@HiltViewModel
 class AlarmDataScreenVM @Inject constructor(
-    private val dbRepository: DBRepository,
+    private val dbRepository: AlarmsDBRepo,
     private val alarmScheduler: AlarmScheduler,
-    override val timeAdapter: TimeAdapter,
-    override val timeDateFormatter: TimeDateFormatter
-) : ViewModel(), DataUIManager {
+    //override val timeAdapter: TimeAdapter,
+    //override val timeDateFormatter: TimeDateFormatter
+) : ViewModel() /*, DataUIManager*/ {
 
-    private var alarm: Alarm = getDefaultAlarm()
-    private val _uiState by lazy {  MutableStateFlow(alarmToDataUIState(alarm)) }
+    /*private var alarmEntity: AlarmEntity = getDefaultAlarm()
+    private val _uiState by lazy {  MutableStateFlow(alarmToDataUIState(alarmEntity)) }
     override val uiState: StateFlow<DataUIState> by lazy { _uiState.asStateFlow() }
-    private var alarmLocalTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(alarm.time), ZoneId.systemDefault())
-
-
-    private fun getDefaultAlarm(): Alarm {
-        return Alarm(
+    private var alarmLocalTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(alarmEntity.time), ZoneId.systemDefault())
+*/
+    /*
+    private fun getDefaultAlarm(): AlarmEntity {
+        return AlarmEntity(
             time = System.currentTimeMillis(),
             title = "Alarm",
             true,
@@ -57,7 +57,7 @@ class AlarmDataScreenVM @Inject constructor(
     fun loadAlarmById(id: Int) {
         viewModelScope.launch (Dispatchers.IO) {
             dbRepository.getAlarmById(id).collectLatest {
-                alarm = it
+                alarmEntity = it
             }
         }
     }
@@ -68,10 +68,10 @@ class AlarmDataScreenVM @Inject constructor(
 
     override fun saveAlarmData(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
-            dbRepository.insertOrUpdateAlarm(alarm)
+            dbRepository.insertOrUpdateAlarm(alarmEntity)
         }
 
-        alarmScheduler.scheduler.schedule(alarm, context)
+        alarmScheduler.scheduler.schedule(alarmEntity, context)
     }
 
     override fun getRingingTime(alarmTime: LocalTime): LocalTime {
@@ -94,7 +94,7 @@ class AlarmDataScreenVM @Inject constructor(
             minutes
         )
 
-        alarm = alarm.copy(time = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+        alarmEntity = alarmEntity.copy(time = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
         alarmLocalTime = time
 
         return time.toLocalTime()
@@ -109,23 +109,23 @@ class AlarmDataScreenVM @Inject constructor(
             alarmLocalTime.minute
         )
 
-        alarm = alarm.copy(time = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+        alarmEntity = alarmEntity.copy(time = time.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
         alarmLocalTime = time
 
         return time.toLocalTime()
     }
 
     override fun saveNewRingtoneUri(uri: Uri) {
-        alarm = alarm.copy(ringtoneRef = uri.toString())
+        alarmEntity = alarmEntity.copy(ringtoneRef = uri.toString())
     }
 
     override fun changeVibrationMode() {
-        alarm = alarm.copy(vibration = !alarm.vibration)
+        alarmEntity = alarmEntity.copy(vibration = !alarmEntity.vibration)
     }
 
     override fun changeSnoozeMode() {
-        val snoozeMode = alarm.snooze.toBooleanStrict()
-        alarm = alarm.copy(snooze = (!snoozeMode).toString())
+        val snoozeMode = alarmEntity.snooze.toBooleanStrict()
+        alarmEntity = alarmEntity.copy(snooze = (!snoozeMode).toString())
     }
-
+*/
 }

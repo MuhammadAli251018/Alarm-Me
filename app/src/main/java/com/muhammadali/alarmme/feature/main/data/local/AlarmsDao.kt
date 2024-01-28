@@ -22,8 +22,8 @@ interface AlarmsDao {
     @Query("SELECT * FROM alarms WHERE `index` = 0 AND scheduled = 1")
     fun getFirstAlarmToRing(): Flow<AlarmEntity>*/
 
-    /*@Query("SELECT * FROM alarms WHERE id = :id")
-    fun getAlarmById(id: Int): Flow<AlarmEntity>*/
+    @Query("SELECT * FROM alarms WHERE id = :id")
+    fun getAlarmById(id: Int): Flow<AlarmEntity>
 
     @Upsert
     suspend fun insertOrUpdateAlarm(alarmEntity: AlarmEntity)

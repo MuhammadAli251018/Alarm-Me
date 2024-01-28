@@ -1,37 +1,37 @@
-package com.muhammadali.alarmme.feature.main.ui.screen.data.viewmodel
+package com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel
 
 import android.content.Context
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
-import com.muhammadali.alarmme.feature.main.data.Alarm
-import com.muhammadali.alarmme.feature.main.domain.TimeAdapter
-import com.muhammadali.alarmme.feature.main.ui.screen.UIStateManager
-import com.muhammadali.alarmme.feature.main.ui.util.Ringtone
-import com.muhammadali.alarmme.feature.main.ui.util.TimeDateFormatter
+import com.muhammadali.alarmme.feature.main.data.local.AlarmEntity
+import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
+import com.muhammadali.alarmme.feature.main.presentaion.screen.UIStateManager
+import com.muhammadali.alarmme.feature.main.presentaion.util.Ringtone
+import com.muhammadali.alarmme.feature.main.presentaion.util.TimeDateFormatter
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.Month
 
 const val ALARM_MAX_TITLE_LENGTH = 15
 interface DataUIManager: UIStateManager<DataUIState> {
-    fun alarmToDataUIState(alarm: Alarm): DataUIState {
-        val localTime = timeAdapter.getTimeFormat(alarm.time)
-        val localDate = timeAdapter.getDateFormat(alarm.time)
+    /*fun alarmToDataUIState(alarmEntity: AlarmEntity): DataUIState {
+        val localTime = timeAdapter.getTimeFormat(alarmEntity.time)
+        val localDate = timeAdapter.getDateFormat(alarmEntity.time)
 
         return DataUIState(
-            alarmTitle = alarm.title,
+            alarmTitle = alarmEntity.title,
             alarmTime = timeDateFormatter
                 .formatAlarmTimeToAnnotatedString(localTime),
             ringingTime = timeDateFormatter.formatRingingTimeToAnnotatedString(getRingingTime(localTime)),
             date = timeDateFormatter.getAlarmDateAsString(localDate),
-            repeatPattern = AlarmRepeatingPattern.ofString(alarm.repeat),
-            vibrationMode = if (alarm.vibration) "ON" else "OFF",
-            snoozeMode = if (alarm.snooze.toBooleanStrict()) "ON" else "OFF",
+            repeatPattern = AlarmRepeatingPattern.ofString(alarmEntity.repeat),
+            vibrationMode = if (alarmEntity.vibration) "ON" else "OFF",
+            snoozeMode = if (alarmEntity.snooze.toBooleanStrict()) "ON" else "OFF",
             ringToneName = "Default",
-            alarmTextFieldLabelContent = getAlarmLabelContent(alarm.title),
-            alarmTextFieldLabelColor = getAlarmLabelColor(alarm.title)
+            alarmTextFieldLabelContent = getAlarmLabelContent(alarmEntity.title),
+            alarmTextFieldLabelColor = getAlarmLabelColor(alarmEntity.title)
         )
-    }
+    }*/
 
 
     val timeDateFormatter: TimeDateFormatter

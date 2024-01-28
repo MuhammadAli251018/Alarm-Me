@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.util
+package com.muhammadali.alarmme.feature.main.presentaion.util
 
 import android.app.Activity
 import android.content.Context

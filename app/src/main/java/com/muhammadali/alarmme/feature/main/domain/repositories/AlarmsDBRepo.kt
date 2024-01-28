@@ -2,12 +2,15 @@ package com.muhammadali.alarmme.feature.main.domain.repositories
 
 import com.muhammadali.alarmme.common.util.Result
 import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
+import kotlinx.coroutines.flow.Flow
 
 interface AlarmsDBRepo {
 
-    fun addOrUpdateAlarm(alarm: Alarm): Result<Unit>
+    suspend fun addOrUpdateAlarm(alarm: Alarm): Result<Unit>
 
-    fun deleteAlarm(alarmId: String): Result<Unit>
+    suspend fun deleteAlarm(alarmId: Int): Result<Unit>
 
-    fun getAllAlarms(): Result<List<Alarm>>
+   fun getAllAlarms(): Flow<Result<List<Alarm>>>
+
+   fun getAlarmWithId(id: Int): Flow<Result<Alarm>>
 }
