@@ -6,31 +6,37 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import com.muhammadali.alarmme.common.util.Result
 import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmNotificatorImp.Companion.RECEIVE_ALARM_ACTION
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
 
 class AlarmSchedulerImp(
     private val receiver: Class< out BroadcastReceiver>,
-    private val contextProvider: ContextProvider
+    private val context: Context
 ) : AlarmScheduler {
     companion object {
-        const val ALARM_TIME_KEY = "ALARM_TIME_KEY"
+        const val AlARM_ID_KEY = "alarm_Id"
+        /*const val ALARM_TIME_KEY = "ALARM_TIME_KEY"
         const val ALARM_TITLE_KEY = "ALARM_TITLE_KEY"
         const val ALARM_DB_ID_KEY = "ALARM_DB_ID_KEY"
         const val ALARM_SOUND_URI_KEY = "ALARM_SOUND_URI_KEY"
         const val ALARM_VIBRATION_KEY = "ALARM_VIBRATION_KEY"
-        const val ALARM_SNOOZE_KEY = "ALARM_SNOOZE_KEY"
+        const val ALARM_SNOOZE_KEY = "ALARM_SNOOZE_KEY"*/
     }
 
-    private fun <T> executeWithContext(operation: (context: Context) -> T): T = operation(contextProvider.getContext())
+    private fun <T> executeWithContext(operation: (context: Context) -> T): T = operation(context)
 
 
     override fun scheduleOrUpdate(alarm: Alarm): Result<Unit> = executeWithContext {context ->
         val intent = Intent(context, receiver).apply {
             action = RECEIVE_ALARM_ACTION
-            putExtra("alarmId", alarm.alarmId)
+            val encodedAlarm = Json.encodeToString(alarm)
+            Log.d("LogAlarm", encodedAlarm)
+            putExtra(AlARM_ID_KEY, encodedAlarm)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(context,

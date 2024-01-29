@@ -13,48 +13,42 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.muhammadali.alarmme.R
-import com.muhammadali.alarmme.common.AlarmConstants
-import com.muhammadali.alarmme.common.Notifications
 import com.muhammadali.alarmme.feature.main.AlarmActivity
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotification
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotificator
 
-class AlarmNotificatorImp (private val contextProvider: ContextProvider) : AlarmNotificator {
+//  todo manage the Context to avoid memory leaks
+class AlarmNotificatorImp ( private val context: Context) : AlarmNotificator {
 
     companion object {
-        const val ALARMS_CHANNEL_ID = "alarms_channel_id"
-        const val ALARMS_CHANNEL_NAME = "Alarms"
+
+        // Actions
         const val END_ALARM_ACTION = "end_alarm_action"
         const val SNOOZE_ALARM_ACTION = "snooze_alarm_action"
         const val RECEIVE_ALARM_ACTION = "receive_alarm_action"
+
+        const val ALARMS_CHANNEL_ID = "alarms_channel_id"
+        const val ALARMS_CHANNEL_NAME = "Alarms"
+
         const val WAKE_LOCK_TAG = "Alarm-Me::MyWakelockTag"
         const val alarmIdKey = "alarmId"
-        const val alarmTitleKey = "alarmTitle"
-        const val alarmTimeKey = "alarmTime"
-        const val alarmSoundUriKey = "alarmSoundUri"
-        const val alarmVibrationKey = "alarmVibration"
-        const val alarmSnoozeKey = "alarmSnooze"
-        const val alarmNotificationId = "alarm_notification_id"
-
-        const val ALARM_PENDING_INTENT_ID = 0
         const val END_ALARM_REQUEST_CODE = 3
         const val SNOOZE_ALARM_REQUEST_CODE = 4
-        const val START_ALARM_ACTIVITY_REQUEST_CODE = 5
-        const val ALARM_NOTIFICATION_ID = 6
+        const val START_ALARM_REQUEST_CODE = 5
     }
 
-    private fun <T> executeWithContext(operation: (context: Context) -> T): T = operation(contextProvider.getContext())
+    //private fun <T> executeWithContext(operation: (context: Context) -> T): T = operation(context)
 
-    private fun <T> executeWithNotificationManager(operation: (NotificationManager, Context) -> T): T = executeWithContext {context ->
+    private fun <T> executeWithNotificationManager(operation: (NotificationManager) -> T): T {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        operation(notificationManager, context)
+        return operation(notificationManager)
     }
 
-    private fun isNotificationEnabled() : Boolean = executeWithNotificationManager { notificationManager, context ->
+    private fun isNotificationEnabled() : Boolean = executeWithNotificationManager { notificationManager ->
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
             val channel =
-                notificationManager.getNotificationChannel(Notifications.ALARMS_CHANNEL_ID)
+                notificationManager.getNotificationChannel(ALARMS_CHANNEL_ID)
             channel?.importance != NotificationManager.IMPORTANCE_NONE
         }
         else {
@@ -62,7 +56,7 @@ class AlarmNotificatorImp (private val contextProvider: ContextProvider) : Alarm
             result == PackageManager.PERMISSION_GRANTED
         }
     }
-    override fun fireAlarm(alarmNotification: AlarmNotification) = executeWithNotificationManager { notificationManager, context ->
+    override fun fireAlarm(alarmNotification: AlarmNotification) = executeWithNotificationManager { notificationManager ->
         // check if notification allowed
         if (!isNotificationEnabled()) {
             Toast.makeText(context, "Notification not enabled", Toast.LENGTH_LONG).show()
@@ -81,7 +75,7 @@ class AlarmNotificatorImp (private val contextProvider: ContextProvider) : Alarm
 
         val alarmPendingIntent = PendingIntent.getActivities(
             context,
-            START_ALARM_ACTIVITY_REQUEST_CODE,
+            START_ALARM_REQUEST_CODE,
             arrayOf(alarmActivityIntent),
             PendingIntent.FLAG_IMMUTABLE
         )
@@ -97,8 +91,6 @@ class AlarmNotificatorImp (private val contextProvider: ContextProvider) : Alarm
             snoozeIntent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-
-        //val vibration
 
         val notification = NotificationCompat.Builder(context, ALARMS_CHANNEL_ID)
             .setContentTitle(alarmNotification.title)
@@ -122,7 +114,7 @@ class AlarmNotificatorImp (private val contextProvider: ContextProvider) : Alarm
         )
     }
 
-    override fun cancelAlarm(alarmId: Int) = executeWithNotificationManager { notificationManager, context ->
+    override fun cancelAlarm(alarmId: Int) = executeWithNotificationManager { notificationManager ->
         notificationManager.cancel(alarmId)
     }
 }

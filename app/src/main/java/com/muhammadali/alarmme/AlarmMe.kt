@@ -1,12 +1,9 @@
 package com.muhammadali.alarmme
 
 import android.app.Application
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import com.muhammadali.alarmme.common.Notifications
-import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotificator
 import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmNotificatorImp
 import dagger.hilt.android.HiltAndroidApp
 

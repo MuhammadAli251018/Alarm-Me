@@ -1,22 +1,28 @@
 package com.muhammadali.alarmme.feature.main.domain.entities
 
+import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.ZERO
 import kotlin.time.Duration.Companion.minutes
 
+@Serializable
 data class AlarmPreferences (
     val snooze: Snooze,
     val vibration: Boolean,
     val ringtoneRef: String,
     val repeat:RepeatPattern
 ) {
+
+    @Serializable
     sealed class RepeatPattern {
 
-         class Weekly(activeDays: List<DaysOfWeeks>)
+        @Serializable
+         class Weekly(val activeDays: Set<DaysOfWeeks>)
           : RepeatPattern() {
 
-             val activeDays: List<DaysOfWeeks> = activeDays.toSet().toList()
+             //val activeDays: List<DaysOfWeeks> = activeDays.toSet().toList()
 
+             @Serializable
             enum class DaysOfWeeks(val index: Int){
                 Saturday(0),
                 Sunday(1),
@@ -28,20 +34,25 @@ data class AlarmPreferences (
             }
          }
 
+        @Serializable
         data class CertainDays(val days: List<Long>) : RepeatPattern()
     }
 
+    @Serializable
     sealed class Snooze (
         val repeat: Int,
         val duration: Duration,
         val id: Int
     ) {
 
+        @Serializable
         object NoSnooze : Snooze(0, ZERO, 0)
 
+        @Serializable
         /** Repeat for three times with 5 minutes duration*/
         object ThreeR5M : Snooze(3, 5.minutes, 1)
 
+        @Serializable
         /** Repeat for 5 times with 5 minutes duration*/
         object FiveR5M : Snooze(5, 5.minutes, 2)
     }
@@ -62,6 +73,7 @@ fun getFromIndex(index: Int): AlarmPreferences.RepeatPattern.Weekly.DaysOfWeeks 
     }
 }
 
+@Serializable
 data class Alarm(
     val alarmId: Int,
     val title: String,

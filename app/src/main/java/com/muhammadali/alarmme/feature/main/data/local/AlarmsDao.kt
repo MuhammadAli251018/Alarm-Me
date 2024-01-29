@@ -26,8 +26,8 @@ interface AlarmsDao {
     fun getAlarmById(id: Int): Flow<AlarmEntity>
 
     @Upsert
-    suspend fun insertOrUpdateAlarm(alarmEntity: AlarmEntity)
+    fun insertOrUpdateAlarm(alarmEntity: AlarmEntity)
 
     @Query("DELETE FROM alarms WHERE id = :id")
-    suspend fun deleteAlarm(id: Int)
+    fun deleteAlarm(id: Int)
 }
