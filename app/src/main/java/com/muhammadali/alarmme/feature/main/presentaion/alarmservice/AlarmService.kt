@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.os.PowerManager
+import android.util.Log
 import android.widget.Toast
 import androidx.room.Room
 import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
@@ -12,31 +13,21 @@ import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotification
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 import com.muhammadali.alarmme.common.util.Result
 import com.muhammadali.alarmme.common.util.TimeAdapterImp
 import com.muhammadali.alarmme.feature.main.data.local.AlarmsDB
 import com.muhammadali.alarmme.feature.main.data.repo.AlarmsDbRepoImp
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.json.Json
 
 @AndroidEntryPoint
-class AlarmService /*@Inject constructor(
-    private val dbRepository: AlarmsDBRepo
-)*/ : Service() {
+class AlarmService : Service() {
 
-    private lateinit var dbRepository: AlarmsDBRepo
 
-    private val alarmScheduler: AlarmScheduler = AlarmSchedulerImp(AlarmReceiver::class.java) {
-        getContext()
-    }
+    private lateinit var alarmScheduler: AlarmScheduler
     private val timeAdapter: TimeAdapter = TimeAdapterImp()
-    private val alarmNotificator = AlarmNotificatorImp {
-        getContext()
-    }
+    private lateinit var alarmNotificator: AlarmNotificatorImp
 
     //todo create exception for each case and handle them
 
@@ -51,42 +42,40 @@ class AlarmService /*@Inject constructor(
         2- to snooze alarm
         3- to cancel the alarm
     */
-    private suspend fun CoroutineScope.getAlarm(intent: Intent): Result<Alarm> {
-        return async {
-            val alarmId = intent.getIntExtra(AlarmNotificatorImp.alarmIdKey, -1)
-            if (alarmId == -1)
-            // todo handle
-                throw Exception("couldn't find alarmId ")
 
-            dbRepository.getAlarmWithId(alarmId).first()
-        }.await()
+    private fun getAlarm(intent: Intent): Result<Alarm> {
+        val alarmEncoded = intent.extras?.getString(AlarmSchedulerImp.AlARM_ID_KEY) ?: return Result.failure(Exception("couldn't find alarm in received intent"))
+        return try {
+            val alarm = Json.decodeFromString<Alarm>(alarmEncoded)
+            Result.success(alarm)
+        } catch (e: IllegalArgumentException) {
+            Result.failure(Exception("couldn't decode received alarm"))
+        }
     }
     override fun onStartCommand(
         intent: Intent?,
         flags: Int,
         startId: Int
     ): Int {
-
         // release the wake lock to ensure the starting of the service
-        val wakeLock: PowerManager.WakeLock =
-            (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, AlarmNotificatorImp.WAKE_LOCK_TAG)
-            }
         //wake lock ensures that the service starts even when the screen in off
         //ensure that the acquired wake lock is released
-        if (wakeLock.isHeld)
-            wakeLock.release()
 
-        dbRepository = AlarmsDbRepoImp(Room.databaseBuilder(
-            applicationContext,
-            AlarmsDB::class.java,
-            name = "alarms_db"
-        ).build().alarmsDao())
+            (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, AlarmNotificatorImp.WAKE_LOCK_TAG).apply {
+                    Toast.makeText(this@AlarmService, "is held: ${isHeld}", Toast.LENGTH_LONG).show()
+                    if (isHeld)
+                        release()
+                }
+            }
+
+
+        alarmNotificator = AlarmNotificatorImp(this)
+        alarmScheduler = AlarmSchedulerImp(AlarmReceiver::class.java, this)
 
         if (intent != null) {
-            val id = intent.getIntExtra("alarmId", -1)
-            Toast.makeText(this, "Bla from service id is: ${id}", Toast.LENGTH_LONG).show()
 
+            Log.d("LogAlarm", intent.getStringExtra(AlarmSchedulerImp.AlARM_ID_KEY).toString())
             when (intent.action) {
                 AlarmNotificatorImp.RECEIVE_ALARM_ACTION -> {
                     runBlocking {
@@ -121,14 +110,12 @@ class AlarmService /*@Inject constructor(
     }
 
     private fun endAlarm(intent: Intent) {
-        val id = intent.extras?.getInt(AlarmNotificatorImp.alarmIdKey) ?: throw Exception()
+        val id = intent.extras?.getInt(AlarmNotificatorImp.alarmIdKey) ?: throw Exception("couldn't find alarm id")
 
         alarmNotificator.cancelAlarm(id)
     }
 
     private fun snoozeAlarm(intent: Intent) {
-
-        // should reschedule alarms
 
         // todo check to see if a snoozed alarm reached his limit
         runBlocking {

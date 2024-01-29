@@ -70,7 +70,7 @@ fun convertToRepeat(repeat: String): AlarmPreferences.RepeatPattern {
                    weeklyPattern.add(getFromIndex(index))
             }
 
-            AlarmPreferences.RepeatPattern.Weekly(weeklyPattern)
+            AlarmPreferences.RepeatPattern.Weekly(weeklyPattern.toSet())
         }
         else -> {
             val days = mutableListOf<Long>()

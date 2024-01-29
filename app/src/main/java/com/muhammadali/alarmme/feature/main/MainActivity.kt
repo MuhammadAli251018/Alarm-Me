@@ -26,6 +26,10 @@ import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmSchedu
 import com.muhammadali.alarmme.feature.main.presentaion.screen.navigation.MainActivityNavHost
 import com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel.AlarmDataScreenVM
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -39,12 +43,9 @@ class MainActivity : ComponentActivity() {
 
         //val dataScreenVM by viewModels<AlarmDataScreenVM>()
         val scheduler = AlarmSchedulerImp(
-            AlarmReceiver::class.java
-        ){
-            getContext()
-        }
+            AlarmReceiver::class.java, this)
 
-        runBlocking {
+        CoroutineScope(Dispatchers.Default).launch {
             val alarm = Alarm(
                 alarmId = 1,
                 title = "test",
@@ -54,24 +55,16 @@ class MainActivity : ComponentActivity() {
                     vibration = true,
                     ringtoneRef = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
                         .toString(),
-                    repeat = AlarmPreferences.RepeatPattern.Weekly(listOf(AlarmPreferences.RepeatPattern.Weekly.DaysOfWeeks.Monday))
+                    repeat = AlarmPreferences.RepeatPattern.Weekly(listOf(AlarmPreferences.RepeatPattern.Weekly.DaysOfWeeks.Monday).toSet())
                 ),
                 enabled = true
             )
 
-            val dao =  Room.databaseBuilder(
-                this@MainActivity,
-                AlarmsDB::class.java,
-                name = "alarms_db"
-            ).build().alarmsDao()
-
-            val dbRepo = AlarmsDbRepoImp(dao)
-            dbRepo.addOrUpdateAlarm(alarm)
             scheduler.scheduleOrUpdate(
                 alarm = alarm
             )
 
-            Toast.makeText(this@MainActivity, "scheduled", Toast.LENGTH_LONG).show()
+            //Toast.makeText(this@MainActivity, "scheduled", Toast.LENGTH_LONG).show()
         }
         setContent {
             AlarmMeTheme {

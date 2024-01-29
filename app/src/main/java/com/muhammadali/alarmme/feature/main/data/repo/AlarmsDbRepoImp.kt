@@ -16,8 +16,7 @@ class AlarmsDbRepoImp(
 
     override suspend fun addOrUpdateAlarm(alarm: Alarm): Result<Unit> {
         return try {
-            dbDao.insertOrUpdateAlarm(alarm.toAlarmEntity())
-            Result.success(Unit)
+            Result.success(dbDao.insertOrUpdateAlarm(alarm.toAlarmEntity()))
         }
         catch (e: IOException) {
             Result.failure(Exception(""/*Todo: Handle*/))
@@ -26,8 +25,7 @@ class AlarmsDbRepoImp(
 
     override suspend fun deleteAlarm(alarmId: Int): Result<Unit> {
         return try {
-            dbDao.deleteAlarm(alarmId)
-            Result.success(Unit)
+            Result.success(dbDao.deleteAlarm(alarmId))
         }
         catch (e: IOException) {
             Result.failure(Exception(""/*Todo: Handle*/))
