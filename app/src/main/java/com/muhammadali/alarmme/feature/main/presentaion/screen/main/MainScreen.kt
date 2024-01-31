@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.muhammadali.alarmme.R
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.feature.main.presentaion.component.AlarmItem
@@ -47,8 +46,13 @@ fun MainScreen(
     val alarms by presenter.alarms.collectAsStateWithLifecycle(emptyList())
     val context = LocalContext.current
 
-    MainScreenContent(
-        navController = navController,
+    MainScreen(
+        navigate = {alarmId ->
+            navController.navigate(
+                route = MainActivityScreens.AlarmDataScreen.rout
+                        + "/$alarmId"
+            )
+        },
         alarms = alarms,
         onItemClick = presenter::onAlarmItemClick,
         onItemSwitchClick = {   index, scheduled ->
@@ -58,24 +62,24 @@ fun MainScreen(
     )
 }
 
-// TODO MAKE IT STATELESS
 @Composable
-fun MainScreenContent(
-    navController: NavHostController,
+fun MainScreen(
+    navigate: (String) -> Unit,
     alarms: List<AlarmItemState>,
     onItemClick: (index: Int) -> Unit,
     onItemSwitchClick: (index: Int, isScheduled: Boolean) -> Unit,
     onAddBtnClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ){
         Column(
             modifier = Modifier
                 .padding(horizontal = 10.dp)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -104,10 +108,7 @@ fun MainScreenContent(
                             isEnabled = itemState.isScheduled,
                             onItemClick = {
                                 onItemClick(itemState.alarmDBId)
-                                navController.navigate(
-                                    route = MainActivityScreens.AlarmDataScreen.rout
-                                            + "/${itemState.alarmDBId}"
-                                )
+                                navigate(itemState.alarmDBId.toString())
                             },
                             onSwitchClick = { onItemSwitchClick(itemState.alarmDBId, it) }
                         )
@@ -118,9 +119,13 @@ fun MainScreenContent(
                 Box(modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "No Alarms, you can create new alarms")
+                    Text(
+                        text = "No Alarms",
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
         }
 
@@ -131,8 +136,7 @@ fun MainScreenContent(
                 .align(Alignment.BottomCenter),
             onClick = {
                 onAddBtnClick()
-                navController.navigate(route = MainActivityScreens.AlarmDataScreen.rout
-                        + "/${-1}")
+                navigate(MainActivityScreens.AlarmDataScreen.rout + "/${-1}")
             }
         ) {
 
@@ -167,6 +171,12 @@ fun MainScreenPreview() {
     AlarmMeTheme(
         dynamicColor = false
     ) {
-        MainScreen(navController = rememberNavController())
+        MainScreen(
+            navigate = {},
+            alarms = emptyList(),
+            onItemClick = {},
+            onItemSwitchClick = {_,_ -> },
+            onAddBtnClick = {}
+        )
     }
 }
