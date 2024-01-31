@@ -12,20 +12,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class MainScreenVM constructor(
-    //private val alarmsDbRepository: AlarmsDBRepo,
-    //private val alarmScheduler: AlarmScheduler,
+@HiltViewModel
+class MainScreenVM @Inject constructor(
+    private val alarmsDbRepository: AlarmsDBRepo,
+    private val alarmScheduler: AlarmScheduler,
     ) : ViewModel(), MainScreenPresenter
 {
 
 
     init {
-        viewModelScope.launch {
-           /* alarmsDbRepository.getAllAlarms().collectLatest { alarms ->
+        viewModelScope.launch(Dispatchers.IO) {
+           alarmsDbRepository.getAllAlarms().collectLatest { alarms ->
                 //updateUIState(MainUIState(alarms.toListOfAlarmItems()))
-            }*/
+            }
         }
     }
 
@@ -33,7 +35,9 @@ class MainScreenVM constructor(
     override val alarms = _alarms.asStateFlow()
 
     override fun onAlarmItemClick(id: Int) {
-        TODO("Not yet implemented")
+        /*viewModelScope.launch(Dispatchers.IO){
+
+        }*/
     }
 
     override fun onSwitchBtnAlarmItemClick(id: Int, scheduled: Boolean, context: Context) {
@@ -41,20 +45,29 @@ class MainScreenVM constructor(
     }
 
     override fun onAddBtnClick() {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     private fun updateAlarm(id: Int, scheduled: Boolean, context: Context) {
-        /*viewModelScope.launch (Dispatchers.IO) {
-            alarmsDbRepository.getAlarmById(id).collectLatest { alarm ->
-                alarmsDbRepository.insertOrUpdateAlarm(alarm.copy(
-                    scheduled = scheduled
-                ))
+        viewModelScope.launch (Dispatchers.IO) {
+            alarmsDbRepository.getAlarmWithId(id).collectLatest { alarm ->
+                alarm.handleData(
+                    onSuccess = {
+                        //  Todo handle errors
 
-                alarmsDbRepository.getFirstAlarmToRing().collectLatest {
-                    alarmScheduler.scheduler.schedule(alarmEntity = alarm, context = context)
-                }
+                        val updatedAlarm = it.copy(enabled = scheduled)
+                        this.launch {
+                            alarmsDbRepository.addOrUpdateAlarm(updatedAlarm)
+                        }
+
+                        if (scheduled)
+                            alarmScheduler.scheduleOrUpdate(updatedAlarm).handleData({}, {})
+                    },
+                    onFailure = {
+
+                    }
+                )
             }
-        }*/
+        }
     }
 }
