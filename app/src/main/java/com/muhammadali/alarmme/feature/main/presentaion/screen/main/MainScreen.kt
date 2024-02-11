@@ -40,7 +40,7 @@ import com.muhammadali.alarmme.feature.main.presentaion.screen.navigation.MainAc
 
 @Composable
 fun MainScreen(
-    presenter: MainScreenPresenter = hiltViewModel(),
+    presenter: MainScreenPresenter,
     navController: NavHostController
     ) {
     val alarms by presenter.alarms.collectAsStateWithLifecycle(emptyList())
@@ -49,8 +49,7 @@ fun MainScreen(
     MainScreen(
         navigate = {alarmId ->
             navController.navigate(
-                route = MainActivityScreens.AlarmDataScreen.rout
-                        + "/$alarmId"
+                route = MainActivityScreens.AlarmDataScreen.rout + "/$alarmId"
             )
         },
         alarms = alarms,
@@ -64,7 +63,7 @@ fun MainScreen(
 
 @Composable
 fun MainScreen(
-    navigate: (String) -> Unit,
+    navigate: (Int) -> Unit,
     alarms: List<AlarmItemState>,
     onItemClick: (index: Int) -> Unit,
     onItemSwitchClick: (index: Int, isScheduled: Boolean) -> Unit,
@@ -108,7 +107,7 @@ fun MainScreen(
                             isEnabled = itemState.isScheduled,
                             onItemClick = {
                                 onItemClick(itemState.alarmDBId)
-                                navigate(itemState.alarmDBId.toString())
+                                navigate(itemState.alarmDBId)
                             },
                             onSwitchClick = { onItemSwitchClick(itemState.alarmDBId, it) }
                         )
@@ -136,7 +135,7 @@ fun MainScreen(
                 .align(Alignment.BottomCenter),
             onClick = {
                 onAddBtnClick()
-                navigate(MainActivityScreens.AlarmDataScreen.rout + "/${-1}")
+                navigate(-1)
             }
         ) {
 

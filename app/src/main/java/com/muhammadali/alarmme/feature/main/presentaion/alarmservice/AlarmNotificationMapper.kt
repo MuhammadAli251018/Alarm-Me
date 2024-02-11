@@ -9,6 +9,7 @@ import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 fun Alarm.toAlarmNotification(timeAdapter: TimeAdapter): AlarmNotification {
     val localTime = timeAdapter.getTimeFormat(time)
     val stringTime = "${localTime.hour} : ${localTime.minute}"
+
     return AlarmNotification(
         id = alarmId,
         title = title,

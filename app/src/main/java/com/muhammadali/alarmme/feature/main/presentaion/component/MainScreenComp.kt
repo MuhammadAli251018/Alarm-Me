@@ -85,7 +85,7 @@ fun AlarmItem(
             )
 
             DaysRepeatPicker(
-                repeat= repeat
+                repeat= repeat.toList()
             )
 
             Switch(
