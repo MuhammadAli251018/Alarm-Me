@@ -24,7 +24,7 @@ import com.muhammadali.alarmme.common.ui.theme.Calypso
 
 
 private object PreviewValue {
-    val repeat = arrayOf(false, true,  true,  true,  true,  true,  true)
+    val repeat = listOf(false, true,  true,  true,  true,  true,  true)
 }
 
 @Composable
@@ -32,7 +32,7 @@ fun DaysRepeatPicker(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = 15.sp,
     spacesCount: Int = 5,
-    repeat: Array<Boolean> = PreviewValue.repeat,
+    repeat: List<Boolean> = PreviewValue.repeat,
     onDayClick: (Int) -> Unit = {},
 ) {
     val days = arrayOf('M', 'T', 'W', 'T', 'F', 'S', 'S')

@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         //val dataScreenVM by viewModels<AlarmDataScreenVM>()
-        val scheduler = AlarmSchedulerImp(
+        /*val scheduler = AlarmSchedulerImp(
             AlarmReceiver::class.java, this)
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
             )
 
             //Toast.makeText(this@MainActivity, "scheduled", Toast.LENGTH_LONG).show()
-        }
+        }*/
         setContent {
             AlarmMeTheme {
                 // A surface container using the 'background' color from the theme
@@ -74,16 +74,15 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    /*MainActivityNavHost(
-                        context = this,
-                        dataScreenVM = dataScreenVM,
-                        navController = navController)
-                }*/
+                    MainActivityNavHost(
+                        navController = navController
+                    )
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

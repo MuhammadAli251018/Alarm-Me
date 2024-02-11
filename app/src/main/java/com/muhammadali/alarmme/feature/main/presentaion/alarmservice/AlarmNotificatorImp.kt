@@ -18,7 +18,8 @@ import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotification
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotificator
 
 //  todo manage the Context to avoid memory leaks
-class AlarmNotificatorImp ( private val context: Context) : AlarmNotificator {
+
+class AlarmNotificatorImp (private val context: Context) : AlarmNotificator {
 
     companion object {
 
@@ -98,11 +99,15 @@ class AlarmNotificatorImp ( private val context: Context) : AlarmNotificator {
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .addAction(R.drawable.ic_launcher_foreground, "End", endPendingIntent)
+            .addAction(R.drawable.ic_launcher_foreground, "End Alarm", endPendingIntent)
             .setSound(ringtone, AudioManager.STREAM_ALARM)
             .setVibrate(alarmNotification.vibrate)
             .setContentIntent(alarmPendingIntent)
             .setFullScreenIntent(alarmPendingIntent, true)
+            .setAutoCancel(true)
+            .setOngoing(true)
+            .setLocalOnly(true)
+
 
 
         if (alarmNotification.allowSnooze)

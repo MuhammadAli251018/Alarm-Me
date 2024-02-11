@@ -9,10 +9,12 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.components.ServiceComponent
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
-@InstallIn(ActivityComponent::class)
+@InstallIn(ActivityComponent::class, ViewModelComponent::class, ServiceComponent::class)
 object UIModule {
 
     /*@Provides
@@ -21,13 +23,5 @@ object UIModule {
     @Provides
     fun providesTimeFormatter(): TimeDateFormatter {
         return TimeDateFormatter()
-    }
-
-    @Provides
-    fun providesAlarmScheduler(@ApplicationContext context: Context): AlarmScheduler {
-        return AlarmSchedulerImp(
-            receiver = AlarmReceiver::class.java,
-            context
-        )
     }
 }
