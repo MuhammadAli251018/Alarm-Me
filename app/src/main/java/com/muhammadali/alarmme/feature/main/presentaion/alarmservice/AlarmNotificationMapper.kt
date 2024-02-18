@@ -14,7 +14,7 @@ fun Alarm.toAlarmNotification(timeAdapter: TimeAdapter): AlarmNotification {
         id = alarmId,
         title = title,
         time = stringTime,
-        allowSnooze = preferences.snooze !is AlarmPreferences.Snooze.NoSnooze,
+        allowSnooze = preferences.snooze,
         ringtoneRef = preferences.ringtoneRef
     )
 }

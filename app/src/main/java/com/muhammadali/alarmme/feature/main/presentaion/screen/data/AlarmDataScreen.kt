@@ -75,7 +75,7 @@ object AlarmDataScreenPreview {
     }
     val alarmTime = LocalTime.now().toAnnotatedString()
     val date = LocalDate.now().toTextFormat()
-    val repeat = arrayOf(true, true, false, true, true, false, false)
+    val repeat = listOf(true, true, false, true, true, false, false)
     val alarmTitle = "Wake up"
     val ringtoneName = "bla"
     val vibrationMode = "Off"

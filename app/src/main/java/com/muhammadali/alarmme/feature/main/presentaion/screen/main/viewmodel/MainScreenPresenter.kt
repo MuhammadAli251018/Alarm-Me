@@ -11,7 +11,7 @@ interface MainScreenPresenter {
 
     fun onAlarmItemClick(id: Int)
 
-    fun onSwitchBtnAlarmItemClick(id: Int, scheduled: Boolean, context: Context)
+    fun onSwitchBtnAlarmItemClick(id: Int, scheduled: Boolean)
 
     fun onAddBtnClick()
 }

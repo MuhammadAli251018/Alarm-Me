@@ -7,6 +7,7 @@ import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
+import com.muhammadali.alarmme.feature.main.domain.entities.DaysOfWeeks
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import kotlin.time.Duration.Companion.seconds
@@ -36,10 +37,10 @@ class AlarmSchedulerImpTest {
             time = System.currentTimeMillis() + 2.seconds.inWholeMilliseconds,
             alarmId = 0,
             preferences = AlarmPreferences(
-                AlarmPreferences.Snooze.NoSnooze,
+                false,
                 vibration = false,
                 ringtoneRef = "Bla",
-                repeat = AlarmPreferences.RepeatPattern.Weekly(setOf(AlarmPreferences.RepeatPattern.Weekly.DaysOfWeeks.Monday))
+                repeat = AlarmPreferences.RepeatPattern.Weekly(setOf(DaysOfWeeks.Monday))
             ),
             enabled = true
         )
