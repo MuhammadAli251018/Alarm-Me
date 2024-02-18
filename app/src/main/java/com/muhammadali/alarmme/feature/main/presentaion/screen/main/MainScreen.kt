@@ -55,7 +55,7 @@ fun MainScreen(
         alarms = alarms,
         onItemClick = presenter::onAlarmItemClick,
         onItemSwitchClick = {   index, scheduled ->
-            presenter.onSwitchBtnAlarmItemClick(index, scheduled, context)
+            presenter.onSwitchBtnAlarmItemClick(index, scheduled)
         },
         onAddBtnClick = presenter::onAddBtnClick
     )

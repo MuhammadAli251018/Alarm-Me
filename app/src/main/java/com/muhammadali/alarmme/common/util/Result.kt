@@ -26,6 +26,15 @@ sealed class Result<T> {
         Status.Failure -> onFailure((this as Failure).exception)
     }
 
+    suspend fun handleDataAsync(
+        onSuccess: suspend (data: T) -> Unit,
+        onFailure: suspend (Throwable) -> Unit
+    ) = when (status) {
+        Status.Success -> onSuccess((this as Success).data)
+
+        Status.Failure -> onFailure((this as Failure).exception)
+    }
+
     fun getOrElse(
         onElse: (e: Throwable) -> T
     ) = when (val exception = getOrNull()) {

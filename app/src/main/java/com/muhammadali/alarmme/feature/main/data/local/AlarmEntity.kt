@@ -13,5 +13,5 @@ data class AlarmEntity(
     val repeat: String,
     val vibration: Boolean,
     val ringtoneRef: String,
-    val snooze: Int
+    val snooze: Boolean
 )

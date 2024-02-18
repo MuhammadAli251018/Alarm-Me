@@ -99,12 +99,13 @@ class AlarmService @Inject constructor(
 
         // todo check to see if a snoozed alarm reached his limit
         runBlocking {
-            val alarm = getAlarm(intent).getOrThrow()
+           /* Todo
+           val alarm = getAlarm(intent).getOrThrow()
             alarmScheduler.scheduleOrUpdate(
                 alarm.copy(
                     time = alarm.time + (alarm.preferences.snooze.duration.inWholeMilliseconds)
                 )
-            )
+            )*/
         }
     }
 }
