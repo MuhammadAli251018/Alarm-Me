@@ -17,40 +17,29 @@ enum class DaysOfWeeks(val index: Int){
 data class AlarmPreferences (
     val snooze: Boolean,
     val vibration: Boolean,
-    val ringtoneRef: String,
+    val ringtone: AlarmRingtone,
     val repeat:RepeatPattern
 ) {
 
     @Serializable
     sealed class RepeatPattern {
 
+        abstract val activeDays: Set<DaysOfWeeks>
         @Serializable
-         class Weekly(val activeDays: Set<DaysOfWeeks>)
-          : RepeatPattern()
-
-        /*@Serializable
-        data class CertainDays(val days: List<Long>) : RepeatPattern()*/
+         open class Weekly(override val activeDays: Set<DaysOfWeeks>)
+          : RepeatPattern() {
+              object RepeatOff : Weekly(setOf())
+          }
     }
 
-    /*@Serializable
-    sealed class Snooze (
-        val repeat: Int,
-        val duration: Duration,
-        val id: Int
-    ) {
-
-        @Serializable
-        object NoSnooze : Snooze(0, ZERO, 0)
-
-        @Serializable
-        *//** Repeat for three times with 5 minutes duration*//*
-        object ThreeR5M : Snooze(3, 5.minutes, 1)
-
-        @Serializable
-        *//** Repeat for 5 times with 5 minutes duration*//*
-        object FiveR5M : Snooze(5, 5.minutes, 2)
-    }*/
+    @Serializable
+    data class AlarmRingtone(
+        val name: String,
+        val reference: String
+    )
 }
+
+
 
 fun getFromIndex(index: Int): DaysOfWeeks {
     return when(index) {

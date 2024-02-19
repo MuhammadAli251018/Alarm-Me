@@ -12,7 +12,7 @@ fun AlarmEntity.toAlarm(): Alarm {
     val preferences = AlarmPreferences(
         snooze = this.snooze,
         vibration = this.vibration,
-        ringtoneRef = this.ringtoneRef,
+        ringtone = this.ringtoneRef,
         repeat = convertToRepeat(this.repeat)
 
     )
@@ -32,7 +32,7 @@ fun Alarm.toAlarmEntity(): AlarmEntity {
         scheduled = this.enabled,
         snooze = this.preferences.snooze,
         vibration = this.preferences.vibration,
-        ringtoneRef = this.preferences.ringtoneRef,
+        ringtoneRef = this.preferences.ringtone,
         repeat = encodeRepeatToString(this.preferences.repeat)
     )
 }

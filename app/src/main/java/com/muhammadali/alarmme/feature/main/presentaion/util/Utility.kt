@@ -4,6 +4,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
+import com.muhammadali.alarmme.feature.main.domain.entities.getFromIndex
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -68,4 +70,13 @@ infix fun LocalTime.minus(otherTime: LocalTime): LocalTime {
         minutes *= -1
 
     return LocalTime.of(hours, minutes)
+}
+
+fun AlarmPreferences.RepeatPattern.toBooleanList(): List<Boolean> {
+    val days = mutableListOf<Boolean>()
+
+    for ( i in 0 until 7)
+        days.add(activeDays.contains(getFromIndex(i)))
+
+    return days
 }

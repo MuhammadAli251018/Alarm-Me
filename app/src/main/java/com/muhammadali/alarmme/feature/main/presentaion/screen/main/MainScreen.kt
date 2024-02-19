@@ -44,7 +44,6 @@ fun MainScreen(
     navController: NavHostController
     ) {
     val alarms by presenter.alarms.collectAsStateWithLifecycle(emptyList())
-    val context = LocalContext.current
 
     MainScreen(
         navigate = {alarmId ->
