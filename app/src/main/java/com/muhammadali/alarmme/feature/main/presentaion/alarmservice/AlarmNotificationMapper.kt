@@ -2,7 +2,6 @@ package com.muhammadali.alarmme.feature.main.presentaion.alarmservice
 
 import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotification
-import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 
 
@@ -15,6 +14,6 @@ fun Alarm.toAlarmNotification(timeAdapter: TimeAdapter): AlarmNotification {
         title = title,
         time = stringTime,
         allowSnooze = preferences.snooze,
-        ringtoneRef = preferences.ringtoneRef
+        ringtoneRef = preferences.ringtone.reference
     )
 }

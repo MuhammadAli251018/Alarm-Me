@@ -39,11 +39,12 @@ class AlarmSchedulerImpTest {
             preferences = AlarmPreferences(
                 false,
                 vibration = false,
-                ringtoneRef = "Bla",
+                ringtone = AlarmPreferences.AlarmRingtone("Bla", "bla"),
                 repeat = AlarmPreferences.RepeatPattern.Weekly(setOf(DaysOfWeeks.Monday))
             ),
             enabled = true
         )
+
         schedulerImp.scheduleOrUpdate(alarm).handleData({
             val nextAlarm = alarmManager.nextAlarmClock
 

@@ -13,6 +13,7 @@ import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
 import com.muhammadali.alarmme.feature.main.presentaion.screen.data.AlarmDataScreenPreview
 import com.muhammadali.alarmme.feature.main.presentaion.util.Ringtone
 import com.muhammadali.alarmme.feature.main.presentaion.util.TimeDateFormatter
+import com.muhammadali.alarmme.feature.main.presentaion.util.toBooleanList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -85,12 +86,12 @@ class AlarmDataScreenVM @Inject constructor(
             _date
                 .emitChangesOnly(timeDateFormatter
                     .getAlarmDateAsString(timeAdapter.getDateFormat(alarm.time)))
-            //_repeatDays.emitChangesOnly(alarm.preferences.repeat.) Todo
+            _repeatDays.emitChangesOnly(alarm.preferences.repeat.toBooleanList())
 
             _alarmTitle.emitChangesOnly(alarm.title)
             _snoozeMod.emitChangesOnly(alarm.preferences.snooze.toString())
             _vibrationMode.emitChangesOnly(alarm.preferences.vibration.toString())
-            //_ringtoneName.emitChanges Todo
+            _ringtoneName.emitChangesOnly(alarm.preferences.ringtone.name)
         }
     }
 
@@ -103,7 +104,9 @@ class AlarmDataScreenVM @Inject constructor(
             preferences = AlarmPreferences(
                 snooze = false,
                 repeat = AlarmPreferences.RepeatPattern.Weekly(setOf(DaysOfWeeks.Friday)),
-                ringtoneRef = "",
+                ringtone = AlarmPreferences.AlarmRingtone(
+                    "", "" // todo
+                ),
                 vibration = true
             )
         )
@@ -128,8 +131,6 @@ class AlarmDataScreenVM @Inject constructor(
             minutes
         )
     }
-
-
 
     override val onAlarmTimePick: (hour: Int, minute: Int) -> Unit = {hour, minute ->
         viewModelScope.launch(Dispatchers.Default) {
@@ -170,7 +171,12 @@ class AlarmDataScreenVM @Inject constructor(
 
     override val onSoundPickResult: (Ringtone?) -> Unit = {ringTone ->
         if (ringTone != null)
-            alarm = alarm.copy(preferences = alarm.preferences.copy(ringtoneRef = ringTone.uri.toString()))
+            alarm = alarm.copy(preferences = alarm.preferences.copy(
+                ringtone = AlarmPreferences.AlarmRingtone(
+                    name = ringTone.title,
+                    reference = ringTone.uri.toString()
+                )
+            ))
     }
 
     override val onVibrationPickerClick: () -> Unit = {
