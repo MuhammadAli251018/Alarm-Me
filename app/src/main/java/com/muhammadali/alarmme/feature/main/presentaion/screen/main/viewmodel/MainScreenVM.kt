@@ -1,6 +1,7 @@
 package com.muhammadali.alarmme.feature.main.presentaion.screen.main.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
@@ -9,14 +10,18 @@ import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
 import com.muhammadali.alarmme.feature.main.presentaion.component.util.AlarmItemState
 import com.muhammadali.alarmme.feature.main.presentaion.util.TimeDateFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+private const val TAG = "MainScreenVMTag"
 @HiltViewModel
 class MainScreenVM @Inject constructor(
     private val alarmsDbRepository: AlarmsDBRepo,
@@ -57,6 +62,8 @@ class MainScreenVM @Inject constructor(
 
     override fun onSwitchBtnAlarmItemClick(id: Int, scheduled: Boolean) {
         updateAlarm(id, scheduled)
+        Log.d(TAG, "switch button click called")
+
     }
 
     override fun onAddBtnClick() {
@@ -64,11 +71,14 @@ class MainScreenVM @Inject constructor(
     }
 
     private fun updateAlarm(id: Int, scheduled: Boolean) {
-        viewModelScope.launch (Dispatchers.IO) {
-            alarmsDbRepository.getAlarmWithId(id).collectLatest { alarm ->
-                alarm.handleData(
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = async { alarmsDbRepository.getAlarmWithId(id).first() }.await()
+
+            result.handleData(
                     onSuccess = {
                         //  Todo handle errors
+
+                        Log.d(TAG, "given id UI with id: ${id}, read id: ${it.alarmId}")
 
                         val updatedAlarm = it.copy(enabled = scheduled)
 
@@ -83,7 +93,7 @@ class MainScreenVM @Inject constructor(
 
                     }
                 )
-            }
+
         }
     }
 }

@@ -4,15 +4,18 @@ import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
 import com.muhammadali.alarmme.feature.main.domain.entities.DaysOfWeeks
 import com.muhammadali.alarmme.feature.main.domain.entities.getFromIndex
+import com.muhammadali.alarmme.feature.main.presentaion.util.Ringtone
 import java.util.regex.Pattern
 
 // Todo edit to handle errors
 
 fun AlarmEntity.toAlarm(): Alarm {
+    val ringtone = ringtoneRef.split(",")
+
     val preferences = AlarmPreferences(
         snooze = this.snooze,
         vibration = this.vibration,
-        ringtone = this.ringtoneRef,
+        ringtone = AlarmPreferences.AlarmRingtone(ringtone[0], ringtone[1]),
         repeat = convertToRepeat(this.repeat)
 
     )
@@ -27,12 +30,13 @@ fun AlarmEntity.toAlarm(): Alarm {
 
 fun Alarm.toAlarmEntity(): AlarmEntity {
     return AlarmEntity(
+        id = alarmId,
         time = this.time,
         title = this.title,
         scheduled = this.enabled,
         snooze = this.preferences.snooze,
         vibration = this.preferences.vibration,
-        ringtoneRef = this.preferences.ringtone,
+        ringtoneRef = "${this.preferences.ringtone.name},${preferences.ringtone.reference}",
         repeat = encodeRepeatToString(this.preferences.repeat)
     )
 }
@@ -61,6 +65,5 @@ fun convertToRepeat(repeat: String): AlarmPreferences.RepeatPattern {
     }
 
     return AlarmPreferences.RepeatPattern.Weekly(weeklyPattern.toSet())
-
 
 }

@@ -1,5 +1,6 @@
 package com.muhammadali.alarmme.feature.main.presentaion.component
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -96,6 +97,7 @@ fun AlarmItem(
                 onCheckedChange = {isEnabled ->
                     isScheduled = isEnabled
                     onSwitchClick(isEnabled)
+                    Log.d("MainScreenCompTag", "switch clicked")
                 },
                 colors= SwitchDefaults.colors(
                     checkedThumbColor = Color.White,

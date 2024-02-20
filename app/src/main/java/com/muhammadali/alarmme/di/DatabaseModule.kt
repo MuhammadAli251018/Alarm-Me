@@ -22,7 +22,9 @@ object DatabaseModule {
             context,
             AlarmsDB::class.java,
             name = "alarms_db"
-        ).build()
+        )
+        .fallbackToDestructiveMigration()
+        .build()
     }
 
     @Provides
