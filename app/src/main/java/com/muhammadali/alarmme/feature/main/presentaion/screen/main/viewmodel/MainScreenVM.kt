@@ -30,8 +30,6 @@ class MainScreenVM @Inject constructor(
     private val timeDateFormatter: TimeDateFormatter
     ) : ViewModel(), MainScreenPresenter
 {
-
-
     init {
         viewModelScope.launch(Dispatchers.IO) {
            alarmsDbRepository.getAllAlarms().collectLatest { result ->
@@ -87,7 +85,9 @@ class MainScreenVM @Inject constructor(
                         }
 
                         if (scheduled)
-                            alarmScheduler.scheduleOrUpdate(updatedAlarm).handleData({}, {})
+                            alarmScheduler.scheduleOrUpdate(updatedAlarm).getOrElse { Log.d(TAG, "alarm scheduled successfully") }
+                        else
+                            alarmScheduler.cancelAlarm(updatedAlarm.alarmId).getOrElse {  Log.d(TAG, "alarm canceled successfully")}
                     },
                     onFailure = {
 
