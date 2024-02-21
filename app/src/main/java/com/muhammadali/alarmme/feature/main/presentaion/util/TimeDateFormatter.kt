@@ -34,7 +34,7 @@ class TimeDateFormatter @Inject constructor() {
         val hoursIdentifier = if (hours > 1) "hours" else "hour"
         val minutesIdentifier = if (minutes > 1) "minute" else "minutes"
 
-        val ringingPhrase = "Ringing after"
+        val ringingPhrase = "Ringing after "
         val hourPhrase = if (hours > 0) "$hours $hoursIdentifier and" else ""
         val minutePhrases = "$minutes $minutesIdentifier"
 
@@ -76,10 +76,10 @@ class TimeDateFormatter @Inject constructor() {
         }
     }
 
-    fun formatRingingTimeToAnnotatedString(time: LocalTime): AnnotatedString {
+    fun formatRingingTimeToAnnotatedString(hours: Int, minutes: Int): AnnotatedString {
         return getRingingFormat(
-            time.hour,
-            time.minute,
+            hours,
+            minutes,
             wordsStyle = SpanStyle(fontSize = 10.sp),
             timeNumbersStyle = SpanStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
         )

@@ -1,6 +1,7 @@
 package com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.domain.entities.DaysOfWeeks
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
+import com.muhammadali.alarmme.feature.main.domain.entities.getFromIndex
 import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
 import com.muhammadali.alarmme.feature.main.presentaion.screen.data.AlarmDataScreenPreview
 import com.muhammadali.alarmme.feature.main.presentaion.util.Ringtone
@@ -74,10 +76,13 @@ class AlarmDataScreenVM @Inject constructor(
 
     private fun updateUI() {
         viewModelScope.launch {
-            //val ringingTime = alarm.time - System.currentTimeMillis()
+            val ringingTime = (alarm.time - System.currentTimeMillis())
+            val hours = ringingTime / (60 * 60 * 1000)
+            val minutes = (ringingTime - (hours * 60 * 60 * 1000)).toDouble() / (1000 * 60)
+
+            Log.d(TAG, "hours: ${ringingTime / (1000 * 60 * 60)}")
             _ringingTime
-                .emitChangesOnly(timeDateFormatter.formatRingingTimeToAnnotatedString(
-                    timeAdapter.getTimeFormat(alarm.time - System.currentTimeMillis())))
+                .emitChangesOnly(timeDateFormatter.formatRingingTimeToAnnotatedString(hours.toInt(), minutes.toInt()))
 
             _alarmTime
                 .emitChangesOnly(timeDateFormatter.formatAlarmTimeToAnnotatedString(
@@ -99,7 +104,7 @@ class AlarmDataScreenVM @Inject constructor(
         return Alarm(
             alarmId = 0,
             title = "",
-            time = 0L,
+            time = System.currentTimeMillis(),
             enabled = true,
             preferences = AlarmPreferences(
                 snooze = false,
@@ -133,20 +138,38 @@ class AlarmDataScreenVM @Inject constructor(
     }
 
     override val onAlarmTimePick: (hour: Int, minute: Int) -> Unit = {hour, minute ->
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.Main) {
             //alarmScheduleTime.emit(LocalDateTime.of(localDate.value, LocalTime.of(hour, minute)))
+            val dateTime = LocalDateTime.of(timeAdapter.getDateFormat(alarm.time),
+                getLocalTime(hour, minute))
+
             alarm = alarm.copy(
                 time = timeAdapter
                     .getTimeInMillis(
-                        LocalDateTime.of(timeAdapter.getDateFormat(alarm.time),
-                            getLocalTime(hour, minute))
+                        dateTime
                     )
             )
+
+            Log.d(TAG, "passed hour: ${hour}, minute: ${minute}|| dateTime: date ${dateTime.dayOfMonth}/${dateTime.monthValue}/${dateTime.year}")
         }
     }
 
     override val onDayRepeatPick: (Int) -> Unit = { index ->
-
+        viewModelScope.launch(Dispatchers.Main) {
+            val isScheduled = alarm.preferences.repeat.activeDays.contains(getFromIndex(index))
+            alarm = if (isScheduled)
+                alarm.copy(
+                    preferences = alarm.preferences.copy(
+                        repeat = AlarmPreferences.RepeatPattern.Weekly(alarm.preferences.repeat.activeDays.minus(getFromIndex(index)))
+                    )
+                )
+            else
+                alarm.copy(
+                    preferences = alarm.preferences.copy(
+                        repeat = AlarmPreferences.RepeatPattern.Weekly(alarm.preferences.repeat.activeDays.plus(getFromIndex(index)))
+                    )
+                )
+        }
     }
 
     override val onAlarmTitleChange: (String) -> Unit = { newTitle ->
@@ -155,13 +178,18 @@ class AlarmDataScreenVM @Inject constructor(
 
     override val onDatePickerPick: (LocalDate) -> Unit = {newDate ->
         viewModelScope.launch(Dispatchers.Default) {
+            val dateTime = LocalDateTime.of(newDate,
+                timeAdapter.getTimeFormat(alarm.time))
+
             alarm = alarm.copy(
                 time = timeAdapter
                     .getTimeInMillis(
-                        LocalDateTime.of(newDate,
-                            timeAdapter.getTimeFormat(alarm.time))
+                        dateTime
                     )
             )
+
+            Log.d(TAG, "passed hour: ${dateTime.hour}, minute: ${dateTime.minute}|| dateTime: date ${dateTime.dayOfMonth}/${dateTime.monthValue}/${dateTime.year}")
+
         }
     }
 
@@ -195,7 +223,7 @@ class AlarmDataScreenVM @Inject constructor(
                 alarm
             )
 
-            alarmScheduler.scheduleOrUpdate(alarm)
+            alarmScheduler.scheduleOrUpdate(alarm).getOrElse { Log.d(TAG, "failed to schedule alarm") }
         }
 
     }
