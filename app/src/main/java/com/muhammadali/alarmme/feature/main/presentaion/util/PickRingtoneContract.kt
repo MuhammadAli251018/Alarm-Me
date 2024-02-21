@@ -6,6 +6,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContract
 
 class PickRingtoneContract : ActivityResultContract<String, Ringtone?>() {
@@ -25,6 +26,8 @@ class PickRingtoneContract : ActivityResultContract<String, Ringtone?>() {
             else {
                 intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) ?: return null
             }
+            Log.d("PickRingtoneContractTag", "uri: $uri")
+
             val ringtoneTitle = RingtoneManager.getRingtone(context, uri).getTitle(context) ?: return null
 
             Ringtone(uri, ringtoneTitle)

@@ -61,13 +61,13 @@ object AlarmDataScreenPreview {
     val ringTime = buildAnnotatedString {
         val time = LocalTime.now()
 
-        append("ringing after ")
+        append("Ringing after ")
 
         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
             append(time.hour.toString())
         }
 
-        append("and ")
+        append(" and ")
 
         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
             append(time.minute.toString())
@@ -297,7 +297,7 @@ fun AlarmDataContent(
                     iconText = ringtoneName
                     onClick =  {
                         onSoundPickerClick()
-                        launcher.launch(null)
+                        launcher.launch("null")
                     }
                 }
                 1 -> {
