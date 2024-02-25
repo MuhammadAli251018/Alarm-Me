@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -223,7 +224,11 @@ class AlarmDataScreenVM @Inject constructor(
                 alarm
             )
 
-            alarmScheduler.scheduleOrUpdate(alarm).getOrElse { Log.d(TAG, "failed to schedule alarm") }
+            withContext(Dispatchers.Default){
+                alarmScheduler.scheduleOrUpdate(alarm).handleData({
+                    Log.d(TAG, "successfully scheduled alarm")
+                }) { Log.d(TAG, "failed to schedule alarm") }
+            }
         }
 
     }
