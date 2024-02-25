@@ -7,6 +7,7 @@ import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotificator
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmNotificatorImp
+import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmReceiver
 import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmSchedulerImp
 import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmService
 import dagger.Module
@@ -24,7 +25,7 @@ object CommonModule {
     @Provides
     fun providesAlarmScheduler(@ApplicationContext context: Context): AlarmScheduler {
         return AlarmSchedulerImp(
-            receiver = BroadcastReceiver::class.java,
+            receiver = AlarmReceiver::class.java,
             context = context
         )
     }

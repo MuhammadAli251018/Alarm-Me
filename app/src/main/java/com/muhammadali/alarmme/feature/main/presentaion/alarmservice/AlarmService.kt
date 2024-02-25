@@ -12,6 +12,7 @@ import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 import kotlinx.coroutines.runBlocking
 import com.muhammadali.alarmme.common.util.Result
+import com.muhammadali.alarmme.common.util.TimeAdapterImp
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotificator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.json.Json
@@ -23,14 +24,10 @@ import javax.inject.Inject
  * To snooze alarm,
  * Or to cancel the alarm
     */
-@AndroidEntryPoint
-class AlarmService @Inject constructor(
-    private var alarmScheduler: AlarmScheduler,
-    private val timeAdapter: TimeAdapter,
-    private val alarmNotificator: AlarmNotificator
 
-) : Service() {
-
+class AlarmService : Service() {
+    private val timeAdapter: TimeAdapter = TimeAdapterImp()
+    private lateinit var alarmNotificator: AlarmNotificator
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -62,6 +59,9 @@ class AlarmService @Inject constructor(
             }
 
         if (intent != null) {
+
+            alarmNotificator = AlarmNotificatorImp(this)
+
 
             Log.d("LogAlarm", intent.getStringExtra(AlarmSchedulerImp.AlARM_ID_KEY).toString())
             when (intent.action) {

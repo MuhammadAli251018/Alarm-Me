@@ -24,13 +24,21 @@ data class AlarmPreferences (
     @Serializable
     sealed class RepeatPattern {
 
+        companion object {
+            fun repeatOff() = AlarmPreferences.RepeatPattern.Weekly(setOf())
+        }
+
         abstract val activeDays: Set<DaysOfWeeks>
         @Serializable
          open class Weekly(override val activeDays: Set<DaysOfWeeks>)
           : RepeatPattern() {
-              object RepeatOff : Weekly(setOf())
+
+              @Serializable
+              data class WeeklyPattern(val daysOfWeeks: Set<DaysOfWeeks>) : Weekly(daysOfWeeks)
+
           }
     }
+
 
     @Serializable
     data class AlarmRingtone(
@@ -38,7 +46,6 @@ data class AlarmPreferences (
         val reference: String
     )
 }
-
 
 
 fun getFromIndex(index: Int): DaysOfWeeks {
