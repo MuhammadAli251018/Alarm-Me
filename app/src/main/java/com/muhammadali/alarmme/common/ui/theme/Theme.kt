@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.theme
+package com.muhammadali.alarmme.common.ui.theme
 
 import android.app.Activity
 import android.os.Build
