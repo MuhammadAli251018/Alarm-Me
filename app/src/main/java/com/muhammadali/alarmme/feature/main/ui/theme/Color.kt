@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.ui.theme
+package com.muhammadali.alarmme.feature.main.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -15,3 +15,4 @@ val Pink40 = Color(0xFF7D5260)
 val Calypso = Color(0xFF296B80)
 val Tuna = Color(0xFF34344A)
 val Shark = Color(0xFF1D1D23)
+val Comet = Color(0xFF535377)
