@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.screen
+package com.muhammadali.alarmme.feature.main.ui.screen.util
 
 import com.muhammadali.alarmme.feature.main.ui.component.AlarmItemState
 
