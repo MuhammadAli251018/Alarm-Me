@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.ui.component
+package com.muhammadali.alarmme.feature.main.ui.component.util
 
 data class AlarmItemAction(
     val onItemClick: () -> Unit,
