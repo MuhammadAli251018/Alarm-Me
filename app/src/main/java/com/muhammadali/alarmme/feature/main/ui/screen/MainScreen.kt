@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
@@ -23,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +35,8 @@ import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.feature.main.ui.component.AlarmItem
 import com.muhammadali.alarmme.feature.main.ui.component.AlarmItemAction
 import com.muhammadali.alarmme.feature.main.ui.component.AlarmItemState
+import com.muhammadali.alarmme.feature.main.ui.screen.util.MainScreenAction
+import com.muhammadali.alarmme.feature.main.ui.screen.util.MainScreenState
 
 /*
 * Main Screen structure
@@ -54,7 +56,7 @@ private object PreviewValues {
             append("AM")
         }
     }
-    val repeat = arrayOf(false, true,  true,  false,  false,  true,  true).toBooleanArray()
+    val repeat = arrayOf(false, true,  true,  false,  false,  true,  true)
     val isScheduled = true
     val isEnabled = true
     val state = AlarmItemState(title, time, repeat, isScheduled, isEnabled)
@@ -63,7 +65,7 @@ private object PreviewValues {
     val state3 = AlarmItemState(title, time, repeat, isScheduled, isEnabled)
     val mainScreenState = MainScreenState(listOf(state, state1, state2, state3))
     val mainScreenAction = MainScreenAction(
-        {}, {_ -> }, {_ -> }
+        {}, {_ -> }, {_ , _-> }
     )
 }
 
@@ -71,6 +73,22 @@ private object PreviewValues {
 fun MainScreen(
     state: MainScreenState = PreviewValues.mainScreenState,
     action: MainScreenAction = PreviewValues.mainScreenAction
+) {
+    MainScreen(
+        alarms = state.alarms,
+        onItemClick = action.onItemClick,
+        onItemSwitchClick = action.onItemSwitchBtnClick,
+        onAddBtnClick = action.onAddBtnClick
+
+    )
+}
+
+@Composable
+fun MainScreen(
+    alarms: List<AlarmItemState>,
+    onItemClick: (index: Int) -> Unit,
+    onItemSwitchClick: (index: Int, isScheduled: Boolean) -> Unit,
+    onAddBtnClick: () -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -97,15 +115,15 @@ fun MainScreen(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2)
             ) {
-                itemsIndexed(items= state.alarms) {index,itemState ->
+                itemsIndexed(items= alarms) {index,itemState ->
                     AlarmItem(
                         state=itemState,
                         action= AlarmItemAction(
                             onItemClick = {
-                                          action.onItemClick(index)
+                                onItemClick(index)
                             },
                             onSwitchBtnClick = {isScheduled ->
-                                action.onItemSwitchBtnClick(isScheduled)
+                                onItemSwitchClick(index, isScheduled)
                             }
                         )
                     )
@@ -118,8 +136,8 @@ fun MainScreen(
                 .padding(bottom = 50.dp)
                 .size(70.dp)
                 .align(Alignment.BottomCenter),
-            onClick = action.onAddBtnClick
-            ) {
+            onClick = onAddBtnClick
+        ) {
 
             Card (
                 modifier= Modifier
@@ -131,7 +149,7 @@ fun MainScreen(
                     .fillMaxSize()
                     .padding(20.dp),
                     contentAlignment = Alignment.Center
-                    ) {
+                ) {
 
                     Icon(
                         modifier= Modifier.fillMaxSize(),
@@ -144,6 +162,7 @@ fun MainScreen(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
