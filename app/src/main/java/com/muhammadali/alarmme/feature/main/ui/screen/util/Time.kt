@@ -32,7 +32,7 @@ fun Time.toTextFormat(twentyForeFormat: Boolean = false, getOnlyTime: Boolean = 
 
         val hours = if(this.period == Period.PM) this.hours + 12 else this.hours
 
-        "${if (hours >= 10) hours else "0$hours"} : ${
+        "${if (hours >= 10) hours else "0$hours"}:${
             when {
                 minutes == 0 -> "00"
                 minutes < 10 -> "0$minutes"
@@ -42,7 +42,7 @@ fun Time.toTextFormat(twentyForeFormat: Boolean = false, getOnlyTime: Boolean = 
         }"
     }
     else {
-        "${if (hours >= 10) hours else "0$hours"} : ${
+        "${if (hours >= 10) hours else "0$hours"}:${
             when {
                 minutes == 0 -> "00"
                 minutes < 10 -> "0$minutes"

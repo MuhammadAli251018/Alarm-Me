@@ -23,19 +23,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.muhammadali.alarmme.R
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.feature.main.ui.component.AlarmItem
-import com.muhammadali.alarmme.feature.main.ui.component.util.AlarmItemAction
 import com.muhammadali.alarmme.feature.main.ui.component.util.AlarmItemState
-import com.muhammadali.alarmme.feature.main.ui.screen.util.MainScreenAction
-import com.muhammadali.alarmme.feature.main.ui.screen.util.MainScreenState
+import com.muhammadali.alarmme.feature.main.ui.screen.util.Time
+import com.muhammadali.alarmme.feature.main.ui.screen.util.toAnnotatedString
 
 /*
 * Main Screen structure
@@ -43,44 +40,6 @@ import com.muhammadali.alarmme.feature.main.ui.screen.util.MainScreenState
 * 2- vertical grid of the alarms info
 * 3- button to add new alarm
 * */
-
-private object PreviewValues {
-    val title = "title"
-    val time = buildAnnotatedString {
-        withStyle(style = SpanStyle(fontSize = 32.sp)) {
-            append("6:35 ")
-        }
-
-        withStyle(style = SpanStyle(fontSize = 16.sp)) {
-            append("AM")
-        }
-    }
-    val repeat = arrayOf(false, true,  true,  false,  false,  true,  true)
-    val isScheduled = true
-    val isEnabled = true
-    val state = AlarmItemState(title, time, repeat, isScheduled, isEnabled)
-    val state1 = AlarmItemState(title, time, repeat, isScheduled, isEnabled)
-    val state2 = AlarmItemState(title, time, repeat, isScheduled, isEnabled)
-    val state3 = AlarmItemState(title, time, repeat, isScheduled, isEnabled)
-    val mainScreenState = MainScreenState(listOf(state, state1, state2, state3))
-    val mainScreenAction = MainScreenAction(
-        {}, {_ -> }, {_ , _-> }
-    )
-}
-
-@Composable
-fun MainScreen(
-    state: MainScreenState = PreviewValues.mainScreenState,
-    action: MainScreenAction = PreviewValues.mainScreenAction
-) {
-    MainScreen(
-        alarms = state.alarms,
-        onItemClick = action.onItemClick,
-        onItemSwitchClick = action.onItemSwitchBtnClick,
-        onAddBtnClick = action.onAddBtnClick
-
-    )
-}
 
 @Composable
 fun MainScreen(
@@ -115,16 +74,15 @@ fun MainScreen(
                 columns = GridCells.Fixed(2)
             ) {
                 itemsIndexed(items= alarms) {index,itemState ->
+
                     AlarmItem(
-                        state=itemState,
-                        action= AlarmItemAction(
-                            onItemClick = {
-                                onItemClick(index)
-                            },
-                            onSwitchBtnClick = {isScheduled ->
-                                onItemSwitchClick(index, isScheduled)
-                            }
-                        )
+                        title = itemState.alarmTitle,
+                        time = itemState.alarmTime,
+                        repeat = itemState.alarmRepeat,
+                        isScheduledInitValue = itemState.isScheduled,
+                        isEnabled = itemState.isEnabled,
+                        onItemClick = { onItemClick(index) },
+                        onSwitchClick = {onItemSwitchClick(index, it)}
                     )
                 }
             }
@@ -166,9 +124,18 @@ fun MainScreen(
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
+
+    val title = "title"
+    val time = Time(6, 30).toAnnotatedString(SpanStyle(fontSize = 32.sp), SpanStyle(fontSize = 16.sp))
+    val repeat = arrayOf(false, true,  true,  false,  false,  true,  true)
+    val isScheduled = true
+    val isEnabled = true
+    val state = AlarmItemState(title, time, repeat, isScheduled, isEnabled)
+    val alarms = listOf(state, state, state, state)
+
     AlarmMeTheme(
         dynamicColor = false
     ) {
-        MainScreen()
+        MainScreen(alarms = alarms, onItemClick = {}, onItemSwitchClick = {_,_ ->}) {}
     }
 }
