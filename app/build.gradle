@@ -76,7 +76,7 @@ dependencies {
     def nav_version = "2.6.0"
     implementation "androidx.navigation:navigation-compose:$nav_version"
 
-    //viewmodel
+    //view model
     def lifecycle_version = "2.6.1"
 
     // ViewModel
@@ -84,4 +84,8 @@ dependencies {
     // ViewModel utilities for Compose
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
 
+    //room
+    def room_version = "2.5.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 }
