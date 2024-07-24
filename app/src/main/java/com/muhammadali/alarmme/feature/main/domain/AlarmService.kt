@@ -8,7 +8,12 @@ import android.os.IBinder
 import android.os.PowerManager
 import com.muhammadali.alarmme.common.AlarmConstants
 import com.muhammadali.alarmme.common.Notifications
+import com.muhammadali.alarmme.feature.main.data.Alarm
 import com.muhammadali.alarmme.feature.main.data.repo.AlarmsDbRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AlarmService @Inject constructor(
@@ -43,9 +48,11 @@ class AlarmService @Inject constructor(
                     fireAlarm(intent)
                 }
                 AlarmConstants.END_ALARM_ACTION -> {
-
+                    endAlarm(intent)
                 }
-                AlarmConstants.SNOOZE_ALARM_ACTION -> {}
+                AlarmConstants.SNOOZE_ALARM_ACTION -> {
+                    snoozeAlarm(intent)
+                }
             }
         }
 
@@ -91,10 +98,19 @@ class AlarmService @Inject constructor(
         val id = intent.extras?.getInt(AlarmNotificationCreator.alarmIdKey) ?: throw Exception()
 
         alarmNotificationCreator.cancelAlarm()
-        //todo provide a way to get single alarm form db
-        //alarmsDbRepository.deleteAlarm()
 
+        val scope = CoroutineScope(Dispatchers.IO)
 
+        scope.launch (Dispatchers.IO) {
+            var alarm: Alarm
+
+            alarmsDbRepository.apply{
+                getAlarmById(id).collectLatest {
+                    alarm = it
+                    deleteAlarm(alarm)
+                }
+            }
+        }
     }
 
 
