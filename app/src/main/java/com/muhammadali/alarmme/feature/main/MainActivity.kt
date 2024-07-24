@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
+import com.muhammadali.alarmme.feature.main.domain.AlarmScheduler
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
