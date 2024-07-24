@@ -17,9 +17,9 @@ import com.muhammadali.alarmme.common.Notifications
 import com.muhammadali.alarmme.feature.main.AlarmActivity
 import javax.inject.Inject
 
-class AlarmCreatorImp @Inject constructor(
+class AlarmNotificationCreatorImp @Inject constructor(
     private val notificationManager: NotificationManager
-) : AlarmCreator {
+) : AlarmNotificationCreator {
 
     private fun areNotificationEnabled(context: Context) : Boolean {
 

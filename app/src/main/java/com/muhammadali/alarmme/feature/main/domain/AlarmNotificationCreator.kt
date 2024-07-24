@@ -5,7 +5,18 @@ import android.net.Uri
 import com.muhammadali.alarmme.common.AlarmConstants
 import com.muhammadali.alarmme.common.Notifications
 
-interface AlarmCreator {
+interface AlarmNotificationCreator {
+
+    companion object {
+        const val alarmIdKey = "alarmId"
+        const val alarmTitleKey = "alarmTitle"
+        const val alarmTimeKey = "alarmTime"
+        const val alarmSoundUriKey = "alarmSoundUri"
+        const val alarmVibrationKey = "alarmVibration"
+        const val alarmSnoozeKey = "alarmSnooze"
+
+        const val alarmNotificationId = "alarm_notification_id"
+    }
 
     fun fireAlarm(
         context: Context,
