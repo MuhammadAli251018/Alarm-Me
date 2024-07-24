@@ -5,8 +5,8 @@ import android.app.NotificationManager
 import android.content.Context
 import com.muhammadali.alarmme.feature.main.domain.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.domain.AlarmSchedulerImp
-import com.muhammadali.alarmme.feature.main.domain.AlarmCreator
-import com.muhammadali.alarmme.feature.main.domain.AlarmCreatorImp
+import com.muhammadali.alarmme.feature.main.domain.AlarmNotificationCreator
+import com.muhammadali.alarmme.feature.main.domain.AlarmNotificationCreatorImp
 import dagger.Module
 import dagger.Provides
 //import dagger.hilt.InstallIn
@@ -32,7 +32,7 @@ object AlarmModule {
     }
 
     @Provides
-    fun providesNotificationCreator(notificationManager: NotificationManager): AlarmCreator {
-        return AlarmCreatorImp(notificationManager)
+    fun providesNotificationCreator(notificationManager: NotificationManager): AlarmNotificationCreator {
+        return AlarmNotificationCreatorImp(notificationManager)
     }
 }
