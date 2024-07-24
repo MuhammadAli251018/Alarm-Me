@@ -13,6 +13,8 @@ class AlarmsDbRepoImp @Inject constructor(
 
     override fun getScheduledAlarm(): Flow<List<Alarm>> = alarmsDao.getScheduledAlarm()
 
+    override fun getAlarmById(id: Int): Flow<Alarm> = alarmsDao.getAlarmById(id)
+
     override suspend fun insertOrUpdateAlarm(alarm: Alarm) = alarmsDao.insertOrUpdateAlarm(alarm)
 
     override suspend fun deleteAlarm(alarm: Alarm) = alarmsDao.deleteAlarm(alarm)
