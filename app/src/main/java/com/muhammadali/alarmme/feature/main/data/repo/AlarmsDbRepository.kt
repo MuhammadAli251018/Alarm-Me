@@ -11,6 +11,9 @@ interface AlarmsDbRepository {
     /** the elements are put in ASC order */
     fun getScheduledAlarm(): Flow<List<Alarm>>
 
+    fun getAlarmById(id: Int): Flow<Alarm>
+
+
     /**
      * elements must have the same id
      * */
