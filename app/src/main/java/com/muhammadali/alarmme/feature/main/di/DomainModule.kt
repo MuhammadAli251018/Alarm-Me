@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.di
+package com.muhammadali.alarmme.feature.main.di
 
 import android.app.AlarmManager
 import android.app.NotificationManager
@@ -7,16 +7,17 @@ import com.muhammadali.alarmme.feature.main.domain.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.domain.AlarmSchedulerImp
 import com.muhammadali.alarmme.feature.main.domain.AlarmNotificationCreator
 import com.muhammadali.alarmme.feature.main.domain.AlarmNotificationCreatorImp
+import com.muhammadali.alarmme.feature.main.domain.TimeAdapter
+import com.muhammadali.alarmme.feature.main.domain.TimeAdapterImp
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(ActivityComponent::class, ServiceComponent::class)
-object AlarmModule {
+@InstallIn(SingletonComponent::class)
+object DomainModule {
 
     @Provides
     fun providesAlarmManager(@ApplicationContext context: Context): AlarmManager {
