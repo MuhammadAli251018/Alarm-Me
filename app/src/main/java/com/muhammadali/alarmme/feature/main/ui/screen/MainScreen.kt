@@ -31,8 +31,8 @@ import com.muhammadali.alarmme.R
 import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.feature.main.ui.component.AlarmItem
 import com.muhammadali.alarmme.feature.main.ui.component.util.AlarmItemState
-import com.muhammadali.alarmme.feature.main.ui.screen.util.Time
-import com.muhammadali.alarmme.feature.main.ui.screen.util.toAnnotatedString
+import com.muhammadali.alarmme.feature.main.ui.util.toAnnotatedString
+import java.time.LocalTime
 
 /*
 * Main Screen structure
@@ -80,7 +80,7 @@ fun MainScreen(
                         time = itemState.alarmTime,
                         repeat = itemState.alarmRepeat,
                         isScheduledInitValue = itemState.isScheduled,
-                        isEnabled = itemState.isEnabled,
+                        isEnabled = itemState.isScheduled,
                         onItemClick = { onItemClick(index) },
                         onSwitchClick = {onItemSwitchClick(index, it)}
                     )
@@ -126,11 +126,11 @@ fun MainScreen(
 fun MainScreenPreview() {
 
     val title = "title"
-    val time = Time(6, 30).toAnnotatedString(SpanStyle(fontSize = 32.sp), SpanStyle(fontSize = 16.sp))
+    val time = LocalTime.of(6, 30)
+        .toAnnotatedString(SpanStyle(fontSize = 32.sp), SpanStyle(fontSize = 16.sp))
     val repeat = arrayOf(false, true,  true,  false,  false,  true,  true)
     val isScheduled = true
-    val isEnabled = true
-    val state = AlarmItemState(title, time, repeat, isScheduled, isEnabled)
+    val state = AlarmItemState(title, time, repeat, isScheduled)
     val alarms = listOf(state, state, state, state)
 
     AlarmMeTheme(
