@@ -58,7 +58,7 @@ class MainScreenVM @Inject constructor(
     private val alarmTime = getCurrentLocalTime()
     private val alarmDate = getCurrentDate()
     private val alarmRepeat = arrayOf(true, true, true, true, true, true, true)
-    private val alarmVibrationMode =
+//    private val alarmVibrationMode =
 
     init {
         viewModelScope.launch {
