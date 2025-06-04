@@ -78,7 +78,7 @@ class AlarmNotificatorImp (private val context: Context) : AlarmNotificator {
             context,
             START_ALARM_REQUEST_CODE,
             arrayOf(alarmActivityIntent),
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val endPendingIntent = PendingIntent.getBroadcast(context,

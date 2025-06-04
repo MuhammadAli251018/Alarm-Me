@@ -1,35 +1,31 @@
 package com.muhammadali.alarmme.di
 
-import android.content.Context
 import androidx.room.Room
 import com.muhammadali.alarmme.feature.main.data.local.AlarmsDB
 import com.muhammadali.alarmme.feature.main.data.local.AlarmsDao
 import com.muhammadali.alarmme.feature.main.data.repo.AlarmsDbRepoImp
 import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object DatabaseModule {
-
-    @Provides
-    fun provideAlarmsDB(@ApplicationContext context: Context): AlarmsDB {
-        return Room.databaseBuilder(
-            context,
+val dbModule = module {
+    single<AlarmsDB> {
+        Room.databaseBuilder(
+            androidContext(),
             AlarmsDB::class.java,
             name = "alarms_db"
         )
-        .fallbackToDestructiveMigration()
-        .build()
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
-    @Provides
-    fun provideAlarmDao(alarmsDb: AlarmsDB): AlarmsDao = alarmsDb.alarmsDao()
+    single<AlarmsDao> {
+        get<AlarmsDB>().alarmsDao()
+    }
 
-    @Provides
-    fun provideAlarmDbRepo(alarmsDao: AlarmsDao): AlarmsDBRepo = AlarmsDbRepoImp(alarmsDao)
+    factory<AlarmsDBRepo> {
+        AlarmsDbRepoImp(
+            dbDao = get<AlarmsDao>()
+        )
+    }
 }

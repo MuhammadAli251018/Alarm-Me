@@ -1,9 +1,6 @@
 package com.muhammadali.alarmme.feature.main.presentaion.screen.navigation
 
-import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,6 +11,7 @@ import com.muhammadali.alarmme.feature.main.presentaion.screen.main.MainScreen
 import com.muhammadali.alarmme.feature.main.presentaion.util.DataScreenStartMode
 import com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel.AlarmDataScreenVM
 import com.muhammadali.alarmme.feature.main.presentaion.screen.main.viewmodel.MainScreenVM
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MainActivityNavHost(
@@ -26,7 +24,7 @@ fun MainActivityNavHost(
     ) {
 
         composable(MainActivityScreens.MainScreen.rout) {
-            val viewModel = hiltViewModel<MainScreenVM>()
+            val viewModel = koinViewModel<MainScreenVM>()
 
             MainScreen(
                 navController = navController,
@@ -53,7 +51,7 @@ fun MainActivityNavHost(
                 else
                     DataScreenStartMode.UpdateAlarmMode(mode)
 
-            val viewModel = hiltViewModel<AlarmDataScreenVM>()
+            val viewModel = koinViewModel<AlarmDataScreenVM>()
             AlarmDataScreen(
                 navController = navController,
                 presenter = viewModel,

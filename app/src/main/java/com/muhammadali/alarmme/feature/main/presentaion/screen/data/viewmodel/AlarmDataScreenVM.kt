@@ -16,7 +16,6 @@ import com.muhammadali.alarmme.feature.main.presentaion.screen.data.AlarmDataScr
 import com.muhammadali.alarmme.feature.main.presentaion.util.Ringtone
 import com.muhammadali.alarmme.feature.main.presentaion.util.TimeDateFormatter
 import com.muhammadali.alarmme.feature.main.presentaion.util.toBooleanList
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,12 +27,10 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import javax.inject.Inject
 
 private const val TAG = "alarm_data_view_model"
 
-@HiltViewModel
-class AlarmDataScreenVM @Inject constructor(
+class AlarmDataScreenVM (
     private val dbRepository: AlarmsDBRepo,
     private val alarmScheduler: AlarmScheduler,
     private val timeDateFormatter: TimeDateFormatter,

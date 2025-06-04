@@ -1,6 +1,5 @@
 package com.muhammadali.alarmme.feature.main.presentaion.screen.main.viewmodel
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +8,6 @@ import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
 import com.muhammadali.alarmme.feature.main.presentaion.component.util.AlarmItemState
 import com.muhammadali.alarmme.feature.main.presentaion.util.TimeDateFormatter
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -18,12 +16,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 private const val TAG = "MainScreenVMTag"
-@HiltViewModel
-class MainScreenVM @Inject constructor(
+class MainScreenVM (
     private val alarmsDbRepository: AlarmsDBRepo,
     private val alarmScheduler: AlarmScheduler,
     private val timeAdapter: TimeAdapter,

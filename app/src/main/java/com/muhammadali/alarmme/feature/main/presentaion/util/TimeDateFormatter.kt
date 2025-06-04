@@ -8,9 +8,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import java.time.LocalDate
 import java.time.LocalTime
-import javax.inject.Inject
 
-class TimeDateFormatter @Inject constructor() {
+class TimeDateFormatter {
 
     enum class Period(val strValur: String) {
         PM("PM"),

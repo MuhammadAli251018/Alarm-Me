@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlinx.serialization)
     id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
 //    id("com.google.devtools.ksp")
 }
 
@@ -92,10 +91,8 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
 
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.56.2")
-    kapt("com.google.dagger:hilt-compiler:2.56.2")
-
     // Truth
     testImplementation("com.google.truth:truth:1.4.2")
+
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 }
