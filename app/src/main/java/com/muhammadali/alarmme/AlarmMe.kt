@@ -4,7 +4,8 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import com.muhammadali.alarmme.di.dbModule
+import com.muhammadali.alarmme.common.di.dbModule
+import com.muhammadali.alarmme.feature.allAlarms.di.allAlarmsModule
 import com.muhammadali.alarmme.feature.main.di.commonModule
 import com.muhammadali.alarmme.feature.main.di.uiModule
 import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmNotificatorImp
@@ -23,7 +24,8 @@ class AlarmMe : Application() {
             modules(
                 dbModule,
                 commonModule,
-                uiModule
+                uiModule,
+                allAlarmsModule
             )
         }
 

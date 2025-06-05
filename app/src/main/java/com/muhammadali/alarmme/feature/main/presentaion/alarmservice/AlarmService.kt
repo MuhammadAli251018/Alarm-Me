@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
-import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
+import com.muhammadali.alarmme.common.domain.Alarm
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotification
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 import kotlinx.coroutines.runBlocking

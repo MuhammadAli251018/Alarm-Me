@@ -8,11 +8,10 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.muhammadali.alarmme.common.util.Result
-import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
+import com.muhammadali.alarmme.common.domain.Alarm
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmNotificatorImp.Companion.RECEIVE_ALARM_ACTION
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.encodeToString
 
 class AlarmSchedulerImp(
     private val receiver: Class< out BroadcastReceiver>,
@@ -31,7 +30,7 @@ class AlarmSchedulerImp(
     private fun <T> executeWithContext(operation: (context: Context) -> T): T = operation(context)
 
 
-    override fun scheduleOrUpdate(alarm: Alarm): Result<Unit> = executeWithContext {context ->
+    override fun scheduleOrUpdate(alarm: Alarm): Result<Unit> = executeWithContext { context ->
         val intent = Intent(context, receiver).apply {
             action = RECEIVE_ALARM_ACTION
             val encodedAlarm = Json.encodeToString(alarm)

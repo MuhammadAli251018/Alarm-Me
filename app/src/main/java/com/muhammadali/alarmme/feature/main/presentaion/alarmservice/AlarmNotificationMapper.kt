@@ -1,6 +1,6 @@
 package com.muhammadali.alarmme.feature.main.presentaion.alarmservice
 
-import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
+import com.muhammadali.alarmme.common.domain.Alarm
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotification
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 

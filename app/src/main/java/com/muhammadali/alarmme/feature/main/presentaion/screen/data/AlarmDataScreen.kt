@@ -42,8 +42,8 @@ import androidx.navigation.NavHostController
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.muhammadali.alarmme.R
-import com.muhammadali.alarmme.common.ui.component.DaysRepeatPicker
-import com.muhammadali.alarmme.common.ui.component.Picker
+import com.muhammadali.alarmme.common.presentation.component.DaysRepeatPicker
+import com.muhammadali.alarmme.common.presentation.component.Picker
 import com.muhammadali.alarmme.feature.main.presentaion.component.DatePicker
 import com.muhammadali.alarmme.feature.main.presentaion.component.TimePicker
 import com.muhammadali.alarmme.feature.main.presentaion.screen.navigation.MainActivityScreens

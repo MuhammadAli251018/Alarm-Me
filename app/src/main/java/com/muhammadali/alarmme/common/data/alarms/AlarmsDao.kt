@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.data.local
+package com.muhammadali.alarmme.common.data.alarms
 
 import androidx.room.Dao
 import androidx.room.Query

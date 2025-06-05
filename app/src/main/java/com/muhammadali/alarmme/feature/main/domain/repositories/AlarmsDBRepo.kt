@@ -1,7 +1,7 @@
 package com.muhammadali.alarmme.feature.main.domain.repositories
 
 import com.muhammadali.alarmme.common.util.Result
-import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
+import com.muhammadali.alarmme.common.domain.Alarm
 import kotlinx.coroutines.flow.Flow
 
 interface AlarmsDBRepo {

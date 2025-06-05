@@ -1,10 +1,10 @@
-package com.muhammadali.alarmme.feature.main.data.local
+package com.muhammadali.alarmme.common.data.alarms.mapper
 
-import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
-import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
-import com.muhammadali.alarmme.feature.main.domain.entities.DaysOfWeeks
-import com.muhammadali.alarmme.feature.main.domain.entities.getFromIndex
-import com.muhammadali.alarmme.feature.main.presentaion.util.Ringtone
+import com.muhammadali.alarmme.common.data.alarms.AlarmEntity
+import com.muhammadali.alarmme.common.domain.Alarm
+import com.muhammadali.alarmme.common.domain.AlarmPreferences
+import com.muhammadali.alarmme.common.domain.DaysOfWeeks
+import com.muhammadali.alarmme.common.domain.getFromIndex
 import java.util.regex.Pattern
 
 // Todo edit to handle errors

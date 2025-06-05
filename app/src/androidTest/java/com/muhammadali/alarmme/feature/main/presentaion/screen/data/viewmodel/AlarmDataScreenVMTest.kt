@@ -1,33 +1,24 @@
 package com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel
 
-import android.app.AlarmManager
-import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.IBinder
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import com.muhammadali.alarmme.common.util.Failure
 import com.muhammadali.alarmme.common.util.Result
 import com.muhammadali.alarmme.common.util.Success
 import com.muhammadali.alarmme.common.util.TimeAdapterImp
-import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
-import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
+import com.muhammadali.alarmme.common.domain.Alarm
+import com.muhammadali.alarmme.common.domain.AlarmPreferences
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
-import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
 import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmSchedulerImp
-import com.muhammadali.alarmme.feature.main.presentaion.util.TimeDateFormatter
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
 import org.junit.Test
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 private const val TAG = "AlarmDataScreenVMTestTAG"
 

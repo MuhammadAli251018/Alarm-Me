@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.domain.entities
+package com.muhammadali.alarmme.common.domain
 
 import kotlinx.serialization.Serializable
 
@@ -18,14 +18,14 @@ data class AlarmPreferences (
     val snooze: Boolean,
     val vibration: Boolean,
     val ringtone: AlarmRingtone,
-    val repeat:RepeatPattern
+    val repeat: RepeatPattern
 ) {
 
     @Serializable
     sealed class RepeatPattern {
 
         companion object {
-            fun repeatOff() = AlarmPreferences.RepeatPattern.Weekly(setOf())
+            fun repeatOff() = Weekly(setOf())
         }
 
         abstract val activeDays: Set<DaysOfWeeks>

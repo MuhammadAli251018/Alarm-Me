@@ -5,9 +5,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
-import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
-import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
-import com.muhammadali.alarmme.feature.main.domain.entities.DaysOfWeeks
+import com.muhammadali.alarmme.common.domain.Alarm
+import com.muhammadali.alarmme.common.domain.AlarmPreferences
+import com.muhammadali.alarmme.common.domain.DaysOfWeeks
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import kotlin.time.Duration.Companion.seconds

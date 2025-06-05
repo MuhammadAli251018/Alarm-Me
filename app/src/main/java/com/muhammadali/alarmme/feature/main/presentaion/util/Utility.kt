@@ -4,8 +4,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
-import com.muhammadali.alarmme.feature.main.domain.entities.getFromIndex
+import com.muhammadali.alarmme.common.domain.AlarmPreferences
+import com.muhammadali.alarmme.common.domain.getFromIndex
 import java.time.LocalDate
 import java.time.LocalTime
 

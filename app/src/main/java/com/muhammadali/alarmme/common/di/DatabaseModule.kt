@@ -1,8 +1,8 @@
-package com.muhammadali.alarmme.di
+package com.muhammadali.alarmme.common.di
 
 import androidx.room.Room
-import com.muhammadali.alarmme.feature.main.data.local.AlarmsDB
-import com.muhammadali.alarmme.feature.main.data.local.AlarmsDao
+import com.muhammadali.alarmme.common.data.alarms.AlarmsDB
+import com.muhammadali.alarmme.common.data.alarms.AlarmsDao
 import com.muhammadali.alarmme.feature.main.data.repo.AlarmsDbRepoImp
 import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
 import org.koin.android.ext.koin.androidContext

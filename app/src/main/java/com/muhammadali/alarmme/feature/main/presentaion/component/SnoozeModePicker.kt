@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
+import com.muhammadali.alarmme.common.presentation.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.feature.main.presentaion.component.util.SnoozeRepeat
 import com.muhammadali.alarmme.feature.main.presentaion.component.util.SnoozeState
 import com.muhammadali.alarmme.feature.main.presentaion.component.util.getAllSnoozeRepeat

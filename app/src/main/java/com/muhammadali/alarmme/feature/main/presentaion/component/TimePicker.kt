@@ -8,7 +8,7 @@ import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockSelection
-import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
+import com.muhammadali.alarmme.common.presentation.ui.theme.AlarmMeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

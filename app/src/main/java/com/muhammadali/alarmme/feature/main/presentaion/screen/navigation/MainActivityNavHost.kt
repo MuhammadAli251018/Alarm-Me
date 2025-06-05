@@ -6,8 +6,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.muhammadali.alarmme.feature.allAlarms.presentation.AllAlarmsScreen
 import com.muhammadali.alarmme.feature.main.presentaion.screen.data.AlarmDataScreen
-import com.muhammadali.alarmme.feature.main.presentaion.screen.main.MainScreen
 import com.muhammadali.alarmme.feature.main.presentaion.util.DataScreenStartMode
 import com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel.AlarmDataScreenVM
 import com.muhammadali.alarmme.feature.main.presentaion.screen.main.viewmodel.MainScreenVM
@@ -24,12 +24,8 @@ fun MainActivityNavHost(
     ) {
 
         composable(MainActivityScreens.MainScreen.rout) {
-            val viewModel = koinViewModel<MainScreenVM>()
-
-            MainScreen(
-                navController = navController,
-                presenter = viewModel
-            )
+//            val viewModel = koinViewModel<MainScreenVM>()
+            AllAlarmsScreen(navController)
         }
 
 

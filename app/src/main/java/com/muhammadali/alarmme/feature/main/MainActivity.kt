@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
-import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
+import com.muhammadali.alarmme.common.presentation.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.feature.main.presentaion.screen.navigation.MainActivityNavHost
 
 class MainActivity : ComponentActivity() {

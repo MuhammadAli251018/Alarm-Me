@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
-import com.muhammadali.alarmme.feature.main.presentaion.component.util.AlarmItemState
+import com.muhammadali.alarmme.feature.allAlarms.presentation.components.AlarmItemState
 import com.muhammadali.alarmme.feature.main.presentaion.util.TimeDateFormatter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,9 +33,9 @@ class MainScreenVM (
                    _alarms.emit(storedAlarms.map {
                        AlarmItemState(
                            it.alarmId,
-                           alarmTitle = it.title,
-                           alarmTime = timeDateFormatter.formatAlarmTimeToAnnotatedString(timeAdapter.getTimeFormat(it.time)),
-                           alarmRepeat = arrayOf(true, true, true,true, true, true, true),
+                           title = it.title,
+                           time = timeDateFormatter.formatAlarmTimeToAnnotatedString(timeAdapter.getTimeFormat(it.time)),
+                           repeat = arrayOf(true, true, true,true, true, true, true),
                            isScheduled = it.enabled
                        )
                    })

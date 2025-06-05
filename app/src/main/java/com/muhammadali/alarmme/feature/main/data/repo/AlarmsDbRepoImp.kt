@@ -1,10 +1,10 @@
 package com.muhammadali.alarmme.feature.main.data.repo
 
 import com.muhammadali.alarmme.common.util.Result
-import com.muhammadali.alarmme.feature.main.data.local.AlarmsDao
-import com.muhammadali.alarmme.feature.main.data.local.toAlarm
-import com.muhammadali.alarmme.feature.main.data.local.toAlarmEntity
-import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
+import com.muhammadali.alarmme.common.data.alarms.AlarmsDao
+import com.muhammadali.alarmme.common.data.alarms.mapper.toAlarm
+import com.muhammadali.alarmme.common.data.alarms.mapper.toAlarmEntity
+import com.muhammadali.alarmme.common.domain.Alarm
 import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

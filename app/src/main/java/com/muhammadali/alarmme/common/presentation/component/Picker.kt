@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.common.ui.component
+package com.muhammadali.alarmme.common.presentation.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.muhammadali.alarmme.R
-import com.muhammadali.alarmme.common.ui.theme.AlarmMeTheme
+import com.muhammadali.alarmme.common.presentation.ui.theme.AlarmMeTheme
 
 
 @Composable

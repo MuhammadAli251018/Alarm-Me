@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.main.presentaion.screen.main
+package com.muhammadali.alarmme.feature.allAlarms.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,41 +31,42 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.muhammadali.alarmme.R
+import com.muhammadali.alarmme.common.presentation.rememberDispatch
 import com.muhammadali.alarmme.common.presentation.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.feature.allAlarms.presentation.components.AlarmItem
-import com.muhammadali.alarmme.feature.allAlarms.presentation.components.AlarmItemContent
 import com.muhammadali.alarmme.feature.allAlarms.presentation.components.AlarmItemState
-import com.muhammadali.alarmme.feature.main.presentaion.screen.main.viewmodel.MainScreenPresenter
+import com.muhammadali.alarmme.feature.allAlarms.presentation.models.AllAlarmsEffect
+import com.muhammadali.alarmme.feature.allAlarms.presentation.models.AllAlarmsEvent
 import com.muhammadali.alarmme.feature.main.presentaion.screen.navigation.MainActivityScreens
+import kotlinx.coroutines.flow.SharedFlow
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainScreen(
-    presenter: MainScreenPresenter,
+fun AllAlarmsScreen(
     navController: NavHostController
-    ) {
-    val alarms by presenter.alarms.collectAsStateWithLifecycle(emptyList())
+) {
 
-    MainScreen(
-        navigate = {alarmId ->
-            navController.navigate(
-                route = MainActivityScreens.AlarmDataScreen.rout + "/$alarmId"
-            )
-        },
-        alarms = alarms,
-        onItemClick = presenter::onAlarmItemClick,
-        onItemSwitchClick = {   index, scheduled ->
-            presenter.onSwitchBtnAlarmItemClick(index, scheduled)
-        },
-        onAddBtnClick = presenter::onAddBtnClick
+    val viewModel = koinViewModel<AllAlarmsViewModel>()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val dispatch = viewModel.rememberDispatch()
+    val effects = viewModel.effect
+
+    effects.HandleEffects(navController)
+
+    AllAlarmsScreenContent(
+        // Todo: Change the navigation to not using routes
+        alarms = state.alarms,
+        onItemClick = { dispatch(AllAlarmsEvent.AlarmClickedEvent(index = it)) },
+        onItemSwitchClick = { dispatch(AllAlarmsEvent.AlarmEnableOrDisableEvent(index = it)) },
+        onAddBtnClick = { dispatch(AllAlarmsEvent.AddAlarmEvent) }
     )
 }
 
 @Composable
-fun MainScreen(
-    navigate: (Int) -> Unit,
+fun AllAlarmsScreenContent(
     alarms: List<AlarmItemState>,
     onItemClick: (index: Int) -> Unit,
-    onItemSwitchClick: (index: Int, isScheduled: Boolean) -> Unit,
+    onItemSwitchClick: (index: Int) -> Unit,
     onAddBtnClick: () -> Unit
 ) {
     Box(
@@ -92,23 +94,14 @@ fun MainScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             if (alarms.isNotEmpty()){
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2)
-                ) {
-                    items(items = alarms) { itemState ->
-
-                        /*AlarmItemContent(
-                            title = itemState.title,
-                            time = itemState.time,
-                            repeat = itemState.repeat,
-                            isScheduledInitValue = itemState.isScheduled,
-                            isEnabled = itemState.isScheduled,
-                            onItemClick = {
-                                onItemClick(itemState.id)
-                                navigate(itemState.id)
-                            },
-                            onSwitchClick = { onItemSwitchClick(itemState.id, it) }
-                        )*/
+                LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                    items(items = alarms) { alarm ->
+                        AlarmItem(
+                            modifier = Modifier,
+                            alarmState = alarm,
+                            onItemClick = { onItemClick(alarm.id) },
+                            onSwitchClick = { onItemSwitchClick(alarm.id) },
+                        )
                     }
                 }
             }
@@ -131,10 +124,7 @@ fun MainScreen(
                 .padding(bottom = 50.dp)
                 .size(70.dp)
                 .align(Alignment.BottomCenter),
-            onClick = {
-                onAddBtnClick()
-                navigate(-1)
-            }
+            onClick = { onAddBtnClick() }
         ) {
 
             Card (
@@ -161,19 +151,31 @@ fun MainScreen(
     }
 }
 
-
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun MainScreenPreview() {
-    AlarmMeTheme(
-        dynamicColor = false
-    ) {
-        MainScreen(
-            navigate = {},
-            alarms = emptyList(),
-            onItemClick = {},
-            onItemSwitchClick = {_,_ -> },
-            onAddBtnClick = {}
+fun AllAlarmsScreenContentPreview() {
+    AlarmMeTheme {
+        AllAlarmsScreenContent(
+            alarms = listOf(AlarmItemState.default),
+            onItemClick = {  },
+            onItemSwitchClick = {  },
+            onAddBtnClick = {  }
         )
+    }
+}
+
+@Composable
+fun SharedFlow<AllAlarmsEffect>.HandleEffects(navController: NavHostController) {
+    LaunchedEffect(Unit) {
+        collect {
+            when(it) {
+                is AllAlarmsEffect.NavigateToEditAlarmEffect -> navController.navigate(
+                    route = MainActivityScreens.AlarmDataScreen.rout + "/${it.index}"
+                )
+                AllAlarmsEffect.NavigateToNewAlarmEffect -> navController.navigate(
+                    route = MainActivityScreens.AlarmDataScreen.rout + "/-1"
+                )
+            }
+        }
     }
 }

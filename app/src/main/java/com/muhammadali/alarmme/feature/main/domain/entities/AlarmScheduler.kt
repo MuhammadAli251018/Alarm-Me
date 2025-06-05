@@ -1,5 +1,6 @@
 package com.muhammadali.alarmme.feature.main.domain.entities
 
+import com.muhammadali.alarmme.common.domain.Alarm
 import com.muhammadali.alarmme.common.util.Result
 
 interface AlarmScheduler {

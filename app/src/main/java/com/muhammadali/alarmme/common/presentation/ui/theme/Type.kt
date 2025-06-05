@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.common.ui.theme
+package com.muhammadali.alarmme.common.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

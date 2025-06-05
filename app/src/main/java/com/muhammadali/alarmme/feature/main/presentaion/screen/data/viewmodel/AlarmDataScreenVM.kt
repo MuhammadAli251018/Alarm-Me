@@ -5,12 +5,12 @@ import android.util.Log
 import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
-import com.muhammadali.alarmme.feature.main.domain.entities.AlarmPreferences
+import com.muhammadali.alarmme.common.domain.Alarm
+import com.muhammadali.alarmme.common.domain.AlarmPreferences
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
-import com.muhammadali.alarmme.feature.main.domain.entities.DaysOfWeeks
+import com.muhammadali.alarmme.common.domain.DaysOfWeeks
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
-import com.muhammadali.alarmme.feature.main.domain.entities.getFromIndex
+import com.muhammadali.alarmme.common.domain.getFromIndex
 import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
 import com.muhammadali.alarmme.feature.main.presentaion.screen.data.AlarmDataScreenPreview
 import com.muhammadali.alarmme.feature.main.presentaion.util.Ringtone
@@ -158,13 +158,17 @@ class AlarmDataScreenVM (
             alarm = if (isScheduled)
                 alarm.copy(
                     preferences = alarm.preferences.copy(
-                        repeat = AlarmPreferences.RepeatPattern.Weekly(alarm.preferences.repeat.activeDays.minus(getFromIndex(index)))
+                        repeat = AlarmPreferences.RepeatPattern.Weekly(alarm.preferences.repeat.activeDays.minus(
+                            getFromIndex(index)
+                        ))
                     )
                 )
             else
                 alarm.copy(
                     preferences = alarm.preferences.copy(
-                        repeat = AlarmPreferences.RepeatPattern.Weekly(alarm.preferences.repeat.activeDays.plus(getFromIndex(index)))
+                        repeat = AlarmPreferences.RepeatPattern.Weekly(alarm.preferences.repeat.activeDays.plus(
+                            getFromIndex(index)
+                        ))
                     )
                 )
         }
