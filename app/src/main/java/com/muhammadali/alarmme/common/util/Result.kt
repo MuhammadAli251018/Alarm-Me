@@ -52,6 +52,21 @@ sealed class Result<T> {
             (this as Success).data
         else throw (this as Failure).exception //   todo but the exception
 
+    inline fun fold(
+        onSuccess: (data: T) -> Unit,
+        onFailure: (Throwable) -> Unit
+    ) {
+        if (status == Status.Success)
+            onSuccess((this as Success).data)
+        else
+            onFailure((this as Failure).exception)
+    }
+
+    fun onSuccess() {
+        if (status == Status.Success)
+            (this as Success).data
+    }
+
 }
 
 /*data object Loading : Result<Nothing>() {

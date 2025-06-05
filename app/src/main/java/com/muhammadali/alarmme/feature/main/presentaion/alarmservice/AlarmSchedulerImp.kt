@@ -39,7 +39,7 @@ class AlarmSchedulerImp(
         }
 
         val pendingIntent = PendingIntent.getBroadcast(context,
-            alarm.alarmId,
+            alarm.id,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 

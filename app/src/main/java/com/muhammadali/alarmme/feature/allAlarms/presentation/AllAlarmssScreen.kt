@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -95,12 +96,12 @@ fun AllAlarmsScreenContent(
 
             if (alarms.isNotEmpty()){
                 LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-                    items(items = alarms) { alarm ->
+                    itemsIndexed(items = alarms) { index, alarm ->
                         AlarmItem(
                             modifier = Modifier,
                             alarmState = alarm,
-                            onItemClick = { onItemClick(alarm.id) },
-                            onSwitchClick = { onItemSwitchClick(alarm.id) },
+                            onItemClick = { onItemClick(index) },
+                            onSwitchClick = { onItemSwitchClick(index) },
                         )
                     }
                 }

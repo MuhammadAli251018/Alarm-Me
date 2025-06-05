@@ -20,7 +20,7 @@ fun AlarmEntity.toAlarm(): Alarm {
 
     )
     return Alarm(
-        alarmId = this.id,
+        id = this.id,
         title = this.title,
         time = this.time,
         enabled = this.scheduled,
@@ -30,7 +30,7 @@ fun AlarmEntity.toAlarm(): Alarm {
 
 fun Alarm.toAlarmEntity(): AlarmEntity {
     return AlarmEntity(
-        id = alarmId,
+        id = id,
         time = this.time,
         title = this.title,
         scheduled = this.enabled,

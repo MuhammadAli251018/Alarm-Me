@@ -3,6 +3,7 @@ package com.muhammadali.alarmme.feature.allAlarms.presentation.components
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import com.muhammadali.alarmme.common.data.alarms.AlarmEntity
+import com.muhammadali.alarmme.common.domain.Alarm
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 import com.muhammadali.alarmme.feature.main.presentaion.util.toAnnotatedString
 
@@ -55,6 +56,14 @@ fun String.getRepeatFromStringFormat(): Array<Boolean> {
         }
     }.toTypedArray()
 }
+
+fun Alarm.toAlarmState() = AlarmItemState(
+    id = id,
+    title = TODO(),
+    time = TODO(),
+    repeat = TODO(),
+    isScheduled = TODO()
+)
 
 fun AlarmEntity.toAlarmItemState(): AlarmItemState {
     return AlarmItemState(

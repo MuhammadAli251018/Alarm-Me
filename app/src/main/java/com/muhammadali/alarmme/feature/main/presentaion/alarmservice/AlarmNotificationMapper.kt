@@ -10,7 +10,7 @@ fun Alarm.toAlarmNotification(timeAdapter: TimeAdapter): AlarmNotification {
     val stringTime = "${localTime.hour} : ${localTime.minute}"
 
     return AlarmNotification(
-        id = alarmId,
+        id = id,
         title = title,
         time = stringTime,
         allowSnooze = preferences.snooze,

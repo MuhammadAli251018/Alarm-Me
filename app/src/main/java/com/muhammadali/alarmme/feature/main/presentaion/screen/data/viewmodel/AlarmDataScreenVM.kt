@@ -100,7 +100,7 @@ class AlarmDataScreenVM (
 
     private fun getDefaultAlarm(): Alarm {
         return Alarm(
-            alarmId = 0,
+            id = 0,
             title = "",
             time = System.currentTimeMillis(),
             enabled = true,

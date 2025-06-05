@@ -55,7 +55,7 @@ class AlarmDataScreenVMTest{
 
         override suspend fun addOrUpdateAlarm(alarm: Alarm): Result<Unit> {
             val foundAlarms = alarms.contains(returnFist = true){
-                it.alarmId == alarm.alarmId
+                it.id == alarm.id
             }
 
             if (foundAlarms.isNotEmpty())
@@ -69,7 +69,7 @@ class AlarmDataScreenVMTest{
 
         override suspend fun deleteAlarm(alarmId: Int): Result<Unit> {
             val foundAlarms = alarms.contains(returnFist = true){
-                it.alarmId == alarmId
+                it.id == alarmId
             }
 
             return if (foundAlarms.isNotEmpty()) {
@@ -88,7 +88,7 @@ class AlarmDataScreenVMTest{
 
         override fun getAlarmWithId(id: Int): Flow<Result<Alarm>> {
             val foundAlarms = alarms.contains(returnFist = true){
-                it.alarmId == id
+                it.id == id
             }
 
             return flow {
@@ -167,7 +167,7 @@ class AlarmDataScreenVMTest{
     @Test
     fun success_when_schedule_alarm() = runTest { alarmScheduler: AlarmScheduler ->
         val testAlarm = Alarm(
-            alarmId = 1,
+            id = 1,
             time = TimeAdapterImp().getTimeInMillis(LocalDateTime.now().plusMinutes(2)),
             title = "testAlarm",
             enabled = true,

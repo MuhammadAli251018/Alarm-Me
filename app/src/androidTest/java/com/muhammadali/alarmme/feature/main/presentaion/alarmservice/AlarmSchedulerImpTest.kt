@@ -35,7 +35,7 @@ class AlarmSchedulerImpTest {
         val alarm = Alarm(
             title = "TestAlarmTitle",
             time = System.currentTimeMillis() + 2.seconds.inWholeMilliseconds,
-            alarmId = 0,
+            id = 0,
             preferences = AlarmPreferences(
                 false,
                 vibration = false,

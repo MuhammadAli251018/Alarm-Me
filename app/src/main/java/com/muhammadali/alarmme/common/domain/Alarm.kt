@@ -65,9 +65,8 @@ fun getFromIndex(index: Int): DaysOfWeeks {
 
 @Serializable
 data class Alarm(
-    val alarmId: Int,
+    val id: Int,
     val title: String,
-    //Todo: Better to make it a sealed class rather than Boolean
     val enabled: Boolean,
     val time: Long,
     val preferences: AlarmPreferences,
