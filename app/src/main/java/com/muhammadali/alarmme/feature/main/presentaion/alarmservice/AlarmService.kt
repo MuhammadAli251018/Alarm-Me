@@ -8,15 +8,12 @@ import android.os.PowerManager
 import android.util.Log
 import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotification
-import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
 import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
 import kotlinx.coroutines.runBlocking
 import com.muhammadali.alarmme.common.util.Result
 import com.muhammadali.alarmme.common.util.TimeAdapterImp
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmNotificator
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
 
 
 /** this service is started for three reasons,

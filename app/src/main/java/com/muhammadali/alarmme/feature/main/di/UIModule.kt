@@ -1,27 +1,30 @@
 package com.muhammadali.alarmme.feature.main.di
 
-import android.content.Context
 import com.muhammadali.alarmme.feature.main.domain.entities.AlarmScheduler
-import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmReceiver
-import com.muhammadali.alarmme.feature.main.presentaion.alarmservice.AlarmSchedulerImp
+import com.muhammadali.alarmme.feature.main.domain.entities.TimeAdapter
+import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
+import com.muhammadali.alarmme.feature.main.presentaion.screen.data.viewmodel.AlarmDataScreenVM
+import com.muhammadali.alarmme.feature.main.presentaion.screen.main.viewmodel.MainScreenVM
 import com.muhammadali.alarmme.feature.main.presentaion.util.TimeDateFormatter
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.components.ServiceComponent
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
 
-@Module
-@InstallIn(ActivityComponent::class, ViewModelComponent::class, ServiceComponent::class)
-object UIModule {
-
-    /*@Provides
-    fun providesInitialMainUIState() = MainUIState(listOf())*/
-
-    @Provides
-    fun providesTimeFormatter(): TimeDateFormatter {
-        return TimeDateFormatter()
+val uiModule = module {
+    factory<TimeDateFormatter> {
+        TimeDateFormatter()
     }
+
+    viewModel { MainScreenVM(
+        alarmsDbRepository = get<AlarmsDBRepo>(),
+        alarmScheduler = get<AlarmScheduler>(),
+        timeAdapter = get<TimeAdapter>(),
+        timeDateFormatter = get<TimeDateFormatter>()
+    ) }
+
+    viewModel { AlarmDataScreenVM(
+        dbRepository = get<AlarmsDBRepo>(),
+        alarmScheduler = get<AlarmScheduler>(),
+        timeAdapter = get<TimeAdapter>(),
+        timeDateFormatter = get<TimeDateFormatter>()
+    ) }
 }
