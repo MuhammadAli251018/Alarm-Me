@@ -2,10 +2,10 @@ package com.muhammadali.alarmme.di
 
 import android.content.Context
 import androidx.room.Room
-import com.muhammadali.alarmme.feature.main.data.AlarmsDB
-import com.muhammadali.alarmme.feature.main.data.AlarmsDao
+import com.muhammadali.alarmme.feature.main.data.local.AlarmsDB
+import com.muhammadali.alarmme.feature.main.data.local.AlarmsDao
 import com.muhammadali.alarmme.feature.main.data.repo.AlarmsDbRepoImp
-import com.muhammadali.alarmme.feature.main.data.repo.AlarmsDbRepository
+import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,14 +18,18 @@ object DatabaseModule {
 
     @Provides
     fun provideAlarmsDB(@ApplicationContext context: Context): AlarmsDB {
-        return Room.databaseBuilder(context,
+        return Room.databaseBuilder(
+            context,
             AlarmsDB::class.java,
-            name = "alarms_db").build()
+            name = "alarms_db"
+        )
+        .fallbackToDestructiveMigration()
+        .build()
     }
 
     @Provides
     fun provideAlarmDao(alarmsDb: AlarmsDB): AlarmsDao = alarmsDb.alarmsDao()
 
     @Provides
-    fun provideAlarmDbRepo(alarmsDao: AlarmsDao): AlarmsDbRepository = AlarmsDbRepoImp(alarmsDao)
+    fun provideAlarmDbRepo(alarmsDao: AlarmsDao): AlarmsDBRepo = AlarmsDbRepoImp(alarmsDao)
 }

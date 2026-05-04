@@ -1,21 +1,68 @@
 package com.muhammadali.alarmme.feature.main.data.repo
 
-import com.muhammadali.alarmme.feature.main.data.Alarm
-import com.muhammadali.alarmme.feature.main.data.AlarmsDao
+import com.muhammadali.alarmme.common.util.Result
+import com.muhammadali.alarmme.feature.main.data.local.AlarmsDao
+import com.muhammadali.alarmme.feature.main.data.local.toAlarm
+import com.muhammadali.alarmme.feature.main.data.local.toAlarmEntity
+import com.muhammadali.alarmme.feature.main.domain.entities.Alarm
+import com.muhammadali.alarmme.feature.main.domain.repositories.AlarmsDBRepo
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
+import java.io.IOException
 
-class AlarmsDbRepoImp @Inject constructor(
-    private val alarmsDao: AlarmsDao
-) : AlarmsDbRepository {
+class AlarmsDbRepoImp(
+    private val dbDao: AlarmsDao
+) : AlarmsDBRepo {
 
-    override fun getAllAlarms(): Flow<List<Alarm>> = alarmsDao.getAllAlarms()
+    override suspend fun addOrUpdateAlarm(alarm: Alarm): Result<Unit> {
+        return try {
+            Result.success(dbDao.insertOrUpdateAlarm(alarm.toAlarmEntity()))
+        }
+        catch (e: IOException) {
+            Result.failure(Exception(""/*Todo: Handle*/))
+        }
+    }
 
-    override fun getScheduledAlarm(): Flow<List<Alarm>> = alarmsDao.getScheduledAlarm()
+    override suspend fun deleteAlarm(alarmId: Int): Result<Unit> {
+        return try {
+            Result.success(dbDao.deleteAlarm(alarmId))
+        }
+        catch (e: IOException) {
+            Result.failure(Exception(""/*Todo: Handle*/))
+        }
+    }
 
-    override fun getAlarmById(id: Int): Flow<Alarm> = alarmsDao.getAlarmById(id)
+    override fun getAllAlarms(): Flow<Result<List<Alarm>>> {
+        return flow {
+            try {
+                val result= dbDao.getAllAlarms()
 
-    override suspend fun insertOrUpdateAlarm(alarm: Alarm) = alarmsDao.insertOrUpdateAlarm(alarm)
+                result.collect { collectedAlarms ->
 
-    override suspend fun deleteAlarm(alarm: Alarm) = alarmsDao.deleteAlarm(alarm)
+                    val alarms = mutableListOf<Alarm>()
+
+                    collectedAlarms.forEach {
+                        alarms.add(it.toAlarm())
+                    }
+                    this.emit(Result.success(alarms))
+                }
+            } catch (e: IOException) {
+                emit(Result.failure(Exception(""/*Todo: Handle*/)))
+            }
+        }
+    }
+
+    override fun getAlarmWithId(id: Int): Flow<Result<Alarm>> {
+        return flow {
+            try {
+                val result= dbDao.getAlarmById(id)
+
+                result.collect { collectedAlarm ->
+                    this.emit(Result.success(collectedAlarm.toAlarm()))
+                }
+            } catch (e: IOException) {
+                emit(Result.failure(Exception(""/*Todo: Handle*/)))
+            }
+        }
+    }
 }
