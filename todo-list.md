@@ -1,0 +1,15 @@
+- [ ] Project Structure (Modules/Compose/Navigation/MVI/DI: Koin/Coroutines/)
+- [ ] Conversions(Klint):
+  - [ ] Naming (VM/UseCase/Repos/res: ic_/bg_)
+  - [ ] Git conversions(branching/commit messages)
+  - [ ] Versioning
+  - [ ] Dependency in catalog
+
+- [ ] Design system(core:ui):
+- 
+  - [ ] Screen Category API
+  - [ ] Colors & ColorScheme
+  - [ ] Typography
+  - [ ] Shapes
+  - [ ] Dimensions (Paddings and spacing)
+  - 
