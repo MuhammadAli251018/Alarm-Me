@@ -14,9 +14,9 @@ import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 
-private const val PressedAlpha = 0.12f
-private const val DisabledContainerAlpha = 0.12f
-private const val DisabledContentAlpha = 0.38f
+internal const val PressedAlpha = 0.12f
+internal const val DisabledContainerAlpha = 0.12f
+internal const val DisabledContentAlpha = 0.38f
 
 @Composable
 fun AmFilledTextButton(
