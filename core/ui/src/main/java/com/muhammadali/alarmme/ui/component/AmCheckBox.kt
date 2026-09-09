@@ -2,6 +2,7 @@ package com.muhammadali.alarmme.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -21,6 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -66,6 +69,7 @@ fun AmCheckBoxBase(
 
     }
 ) {
+    val focusRequester = remember { FocusRequester() }
     val colors = LocalAlarmMeColors.current
     var selected by remember { mutableStateOf(false) }
     val outlineColor = when {
@@ -88,7 +92,10 @@ fun AmCheckBoxBase(
             .minimumInteractiveComponentSize()
             .toggleable(
                 value = checked,
-                onValueChange = { onCheckedChange?.invoke(it) },
+                onValueChange = {
+                    onCheckedChange?.invoke(it)
+                    focusRequester.requestFocus()
+                },
                 enabled = enabled,
                 role = null,
                 interactionSource = interactionSource,
@@ -96,12 +103,15 @@ fun AmCheckBoxBase(
             )
             .size(CHECK_BOX_SIZE.dp)
             .onFocusChanged { selected = it.isFocused }
+            .focusRequester(focusRequester)
+            .focusable()
+            .border(2.dp, outlineColor, LocalAlarmMeShapes.current.extraSmall)
             .selectedOutline(
+                thickness = 2.dp,
                 color = colors.primary,
                 shape = LocalAlarmMeShapes.current.extraSmall,
-                isSelected = { selected }
+                isSelected = { selected && checked }
             )
-            .border(2.dp, outlineColor, LocalAlarmMeShapes.current.extraSmall)
             .clip(LocalAlarmMeShapes.current.extraSmall)
             .background(containerColor),
         contentAlignment = Alignment.Center
