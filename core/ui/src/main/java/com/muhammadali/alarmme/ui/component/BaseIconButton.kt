@@ -22,48 +22,32 @@ import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
-import com.muhammadali.alarmme.ui.theme.PlexMono
+import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 
-private val IconButtonTargetSize = 48.dp
-private val IconButtonVisualSize = 44.dp
-private val IconButtonShape = RoundedCornerShape(14.dp)
-
-/**
- * The family lacks a 400 weight, so the spec'd Plex Mono 400 resolves to the nearest available
- * step rather than being synthesised.
- */
-private val IconButtonGlyphStyle = TextStyle(
-    fontFamily = PlexMono,
-    fontWeight = FontWeight.Medium,
-    fontSize = 18.sp,
-    lineHeight = 18.sp
-)
+internal val IconButtonTargetSize = 48.dp
+internal val IconButtonVisualSize = 44.dp
+internal val IconButtonShape = RoundedCornerShape(14.dp)
 
 
 @Composable
-fun AmGhostIconButton(
+fun BaseIconButton(
+    containerColor: Color,
+    contentColor: Color,
+    glyphStyle: TextStyle,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     selected: Boolean = false,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
     val colors = LocalAlarmMeColors.current
     val pressed by interactionSource.collectIsPressedAsState()
-
-    val containerColor = Color.Transparent
-    val contentColor = when {
-        !enabled -> colors.onSurface.copy(alpha = DisabledContentAlpha)
-        else -> colors.onSurfaceVariant
-    }
 
     Box(
         modifier = modifier
@@ -93,7 +77,7 @@ fun AmGhostIconButton(
             contentAlignment = Alignment.Center
         ) {
             CompositionLocalProvider(LocalContentColor provides contentColor) {
-                ProvideTextStyle(IconButtonGlyphStyle) {
+                ProvideTextStyle(glyphStyle) {
                     content()
                 }
             }
@@ -107,46 +91,15 @@ fun AmGhostIconButton(
     uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
-private fun AmGhostIconButtonPreview() {
+private fun BaseIconButtonPreview() {
     AlarmMeThemeProvider {
-        AmGhostIconButton(
-            modifier = Modifier.padding(10.dp),
-            onClick = {}
-        ) {
-            Text(text = "⋮")
-        }
-    }
-}
+        val colors = LocalAlarmMeColors.current
 
-@Preview(name = "Light Mode--Pressed", showBackground = true)
-@Preview(
-    name = "Dark Mode--Pressed",
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun AmGhostIconButtonPressedPreview() {
-    AlarmMeThemeProvider {
-        AmGhostIconButton(
+        BaseIconButton(
             modifier = Modifier.padding(10.dp),
-            interactionSource = rememberPressedInteractionSource(),
-            onClick = {}
-        ) {
-            Text(text = "⋮")
-        }
-    }
-}
-
-@Preview(name = "Light Mode--Disabled", showBackground = true)
-@Preview(
-    name = "Dark Mode--Disabled",
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun AmGhostIconButtonDisabledPreview() {
-    AlarmMeThemeProvider {
-        AmGhostIconButton(
-            modifier = Modifier.padding(10.dp),
-            enabled = false,
+            containerColor = colors.surface,
+            contentColor = colors.onSurfaceVariant,
+            glyphStyle = LocalAlarmMeTypography.current.bodyLarge,
             onClick = {}
         ) {
             Text(text = "⋮")
