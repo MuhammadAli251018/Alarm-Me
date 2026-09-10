@@ -1,3 +1,5 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         google {
@@ -27,3 +29,4 @@ dependencyResolutionManagement {
 rootProject.name = "AlarmMe"
 include(":app")
 include(":core:ui")
+include(":core:mvi")
