@@ -30,3 +30,4 @@ rootProject.name = "AlarmMe"
 include(":app")
 include(":core:ui")
 include(":core:mvi")
+include(":feature:alarm-list")
