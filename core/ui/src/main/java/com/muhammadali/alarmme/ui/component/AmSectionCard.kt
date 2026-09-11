@@ -1,6 +1,7 @@
 package com.muhammadali.alarmme.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
@@ -8,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -15,17 +17,28 @@ import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
+import com.muhammadali.alarmme.utility.compose.modifyIf
+
+private val EMPTY_LAMBDA: () -> Unit = {}
 
 @Composable
 fun AmSectionCard(
     modifier: Modifier,
     shape: Shape = LocalAlarmMeShapes.current.small,
-    content: @Composable BoxScope.() -> Unit
+    containerColor: Color = LocalAlarmMeColors.current.surfaceContainer,
+    onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
+    content: @Composable BoxScope.() -> Unit,
 ) {
-    val backgroundColor = LocalAlarmMeColors.current.surfaceContainer
-
     Box(
-        modifier = modifier.clip(shape).background(backgroundColor),
+        modifier = modifier
+            .clip(shape).background(containerColor)
+            .modifyIf(onClick != null || onLongClick != null) {
+                combinedClickable(
+                    onClick = onClick ?: EMPTY_LAMBDA,
+                    onLongClick = onLongClick
+                )
+            },
         content = content
     )
 }
