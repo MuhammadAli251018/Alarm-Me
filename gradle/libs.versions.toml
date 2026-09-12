@@ -11,6 +11,11 @@ lifecycle = "2.11.0"
 activityCompose = "1.13.0"
 # Compose
 composeBom = "2026.02.01"
+# Overrides the Compose BOM (which pins 1.2.0): currentWindowAdaptiveInfoV2,
+# the non-deprecated entry point that supports Large/ExtraLarge widths, lands in 1.3.0.
+material3Adaptive = "1.3.0"
+# Matches what material3-adaptive brings in; used directly by :core:ui.
+window = "1.5.0"
 # DI
 koin = "4.2.2"
 # Navigation
@@ -37,6 +42,8 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "material3Adaptive" }
+androidx-window-core = { group = "androidx.window", name = "window-core", version.ref = "window" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -82,6 +89,8 @@ compose = [
     "androidx-compose-ui-graphics",
     "androidx-compose-foundation",
     "androidx-compose-material3",
+    "androidx-compose-material3-adaptive",
+    "androidx-window-core",
     "androidx-compose-ui-tooling-preview",
     "androidx-lifecycle-runtime-compose",
     "androidx-lifecycle-viewmodel-compose",
