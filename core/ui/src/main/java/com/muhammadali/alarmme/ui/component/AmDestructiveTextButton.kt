@@ -1,6 +1,5 @@
 package com.muhammadali.alarmme.ui.component
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -22,6 +21,7 @@ fun AmDestructiveTextButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     selected: Boolean = false,
+    textColor: Color = LocalAlarmMeColors.current.error,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: () -> Unit
 ) {
@@ -29,8 +29,7 @@ fun AmDestructiveTextButton(
     val containerColor =
         if (enabled) Color.Transparent else colors.onSurface.copy(alpha = DisabledContainerAlpha)
     val contentColor =
-        if (enabled) colors.error else colors.onSurface.copy(alpha = DisabledContentAlpha)
-
+        if (enabled) textColor else colors.onSurface.copy(alpha = DisabledContentAlpha)
     BaseTextButton(
         modifier = modifier
             .selectedOutline(
