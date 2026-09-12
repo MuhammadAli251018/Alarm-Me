@@ -35,7 +35,7 @@ internal val IconButtonShape = RoundedCornerShape(14.dp)
 
 
 @Composable
-fun BaseIconButton(
+fun IconButton(
     containerColor: Color,
     contentColor: Color,
     glyphStyle: TextStyle,
@@ -91,11 +91,11 @@ fun BaseIconButton(
     uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
-private fun BaseIconButtonPreview() {
+private fun IconButtonPreview() {
     AlarmMeThemeProvider {
         val colors = LocalAlarmMeColors.current
 
-        BaseIconButton(
+        IconButton(
             modifier = Modifier.padding(10.dp),
             containerColor = colors.surface,
             contentColor = colors.onSurfaceVariant,
