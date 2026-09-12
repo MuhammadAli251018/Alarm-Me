@@ -42,7 +42,6 @@ fun AmOutlineTextButton(
         text = text,
         containerColor = containerColor,
         contentColor = contentColor,
-        pressColor = colors.onPrimary.copy(alpha = PressedAlpha),
         enabled = enabled,
         interactionSource = interactionSource,
         onClick = onClick

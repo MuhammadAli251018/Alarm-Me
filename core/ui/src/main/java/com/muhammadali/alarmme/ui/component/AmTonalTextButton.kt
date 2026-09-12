@@ -33,7 +33,6 @@ fun AmTonalTextButton(
         text = text,
         containerColor = containerColor,
         contentColor = contentColor,
-        pressColor = colors.onSecondaryContainer.copy(alpha = PressedAlpha),
         modifier = modifier.selectedOutline(
             color = colors.primary,
             shape = LocalAlarmMeShapes.current.full,

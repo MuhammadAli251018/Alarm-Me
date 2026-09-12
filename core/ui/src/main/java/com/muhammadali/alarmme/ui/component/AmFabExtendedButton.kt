@@ -58,7 +58,6 @@ fun AmFabExtendedButton(
     BaseFabButton(
         containerColor = containerColor,
         contentColor = contentColor,
-        pressColor = colors.onPrimary.copy(alpha = PressedAlpha),
         shape = FabExtendedShape,
         glyphStyle = FabExtendedGlyphStyle,
         modifier = modifier.height(FabExtendedHeight),

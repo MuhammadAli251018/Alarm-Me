@@ -51,7 +51,6 @@ fun AmFabSmallButton(
     BaseFabButton(
         containerColor = containerColor,
         contentColor = contentColor,
-        pressColor = colors.onPrimary.copy(alpha = PressedAlpha),
         shape = FabSmallShape,
         glyphStyle = FabSmallGlyphStyle,
         modifier = modifier.size(FabSmallSize),

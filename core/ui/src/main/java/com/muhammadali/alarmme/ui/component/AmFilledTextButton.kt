@@ -8,15 +8,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 
-internal const val PressedAlpha = 0.12f
 internal const val DisabledContainerAlpha = 0.12f
 internal const val DisabledContentAlpha = 0.38f
+internal val PressedShadowColor = Color.Black.copy(alpha = 0.15f)
 
 @Composable
 fun AmFilledTextButton(
@@ -37,7 +38,6 @@ fun AmFilledTextButton(
         text = text,
         containerColor = containerColor,
         contentColor = contentColor,
-        pressColor = colors.onPrimary.copy(alpha = PressedAlpha),
         modifier = modifier.selectedOutline(
             color = colors.primary,
             shape = LocalAlarmMeShapes.current.full,
