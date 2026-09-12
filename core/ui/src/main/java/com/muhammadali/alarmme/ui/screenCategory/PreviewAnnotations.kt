@@ -10,13 +10,12 @@ import androidx.compose.ui.tooling.preview.Preview
     name = "Compact W x Compact H - Light",
     group = "Compact width",
     device = "spec:width=412dp,height=400dp,dpi=420",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Compact W x Compact H - Dark",
     group = "Compact width",
     device = "spec:width=412dp,height=400dp,dpi=420",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class CompactWidthCompactHeightPreview
@@ -28,13 +27,12 @@ annotation class CompactWidthCompactHeightPreview
     name = "Compact W x Medium H - Light",
     group = "Compact width",
     device = "spec:width=412dp,height=700dp,dpi=420",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Compact W x Medium H - Dark",
     group = "Compact width",
     device = "spec:width=412dp,height=700dp,dpi=420",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class CompactWidthMediumHeightPreview
@@ -46,13 +44,12 @@ annotation class CompactWidthMediumHeightPreview
     name = "Compact W x Expanded H - Light",
     group = "Compact width",
     device = "spec:width=412dp,height=1000dp,dpi=420",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Compact W x Expanded H - Dark",
     group = "Compact width",
     device = "spec:width=412dp,height=1000dp,dpi=420",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class CompactWidthExpandedHeightPreview
@@ -64,13 +61,12 @@ annotation class CompactWidthExpandedHeightPreview
     name = "Medium W x Compact H - Light",
     group = "Medium width",
     device = "spec:width=700dp,height=400dp,dpi=240",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Medium W x Compact H - Dark",
     group = "Medium width",
     device = "spec:width=700dp,height=400dp,dpi=240",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class MediumWidthCompactHeightPreview
@@ -82,13 +78,12 @@ annotation class MediumWidthCompactHeightPreview
     name = "Medium W x Medium H - Light",
     group = "Medium width",
     device = "spec:width=700dp,height=700dp,dpi=240",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Medium W x Medium H - Dark",
     group = "Medium width",
     device = "spec:width=700dp,height=700dp,dpi=240",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class MediumWidthMediumHeightPreview
@@ -100,13 +95,12 @@ annotation class MediumWidthMediumHeightPreview
     name = "Medium W x Expanded H - Light",
     group = "Medium width",
     device = "spec:width=700dp,height=1000dp,dpi=240",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Medium W x Expanded H - Dark",
     group = "Medium width",
     device = "spec:width=700dp,height=1000dp,dpi=240",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class MediumWidthExpandedHeightPreview
@@ -118,13 +112,12 @@ annotation class MediumWidthExpandedHeightPreview
     name = "Expanded W x Compact H - Light",
     group = "Expanded width",
     device = "spec:width=1000dp,height=400dp,dpi=240",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Expanded W x Compact H - Dark",
     group = "Expanded width",
     device = "spec:width=1000dp,height=400dp,dpi=240",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class ExpandedWidthCompactHeightPreview
@@ -136,13 +129,12 @@ annotation class ExpandedWidthCompactHeightPreview
     name = "Expanded W x Medium H - Light",
     group = "Expanded width",
     device = "spec:width=1000dp,height=700dp,dpi=240",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Expanded W x Medium H - Dark",
     group = "Expanded width",
     device = "spec:width=1000dp,height=700dp,dpi=240",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class ExpandedWidthMediumHeightPreview
@@ -154,13 +146,12 @@ annotation class ExpandedWidthMediumHeightPreview
     name = "Expanded W x Expanded H - Light",
     group = "Expanded width",
     device = "spec:width=1000dp,height=1000dp,dpi=240",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Expanded W x Expanded H - Dark",
     group = "Expanded width",
     device = "spec:width=1000dp,height=1000dp,dpi=240",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class ExpandedWidthExpandedHeightPreview
@@ -172,13 +163,12 @@ annotation class ExpandedWidthExpandedHeightPreview
     name = "Large W x Compact H - Light",
     group = "Large width",
     device = "spec:width=1400dp,height=400dp,dpi=160",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Large W x Compact H - Dark",
     group = "Large width",
     device = "spec:width=1400dp,height=400dp,dpi=160",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class LargeWidthCompactHeightPreview
@@ -190,13 +180,12 @@ annotation class LargeWidthCompactHeightPreview
     name = "Large W x Medium H - Light",
     group = "Large width",
     device = "spec:width=1400dp,height=700dp,dpi=160",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Large W x Medium H - Dark",
     group = "Large width",
     device = "spec:width=1400dp,height=700dp,dpi=160",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class LargeWidthMediumHeightPreview
@@ -208,13 +197,12 @@ annotation class LargeWidthMediumHeightPreview
     name = "Large W x Expanded H - Light",
     group = "Large width",
     device = "spec:width=1400dp,height=1000dp,dpi=160",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Large W x Expanded H - Dark",
     group = "Large width",
     device = "spec:width=1400dp,height=1000dp,dpi=160",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class LargeWidthExpandedHeightPreview
@@ -226,13 +214,12 @@ annotation class LargeWidthExpandedHeightPreview
     name = "Extra-large W x Compact H - Light",
     group = "Extra-large width",
     device = "spec:width=1800dp,height=400dp,dpi=160",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Extra-large W x Compact H - Dark",
     group = "Extra-large width",
     device = "spec:width=1800dp,height=400dp,dpi=160",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class ExtraLargeWidthCompactHeightPreview
@@ -244,13 +231,12 @@ annotation class ExtraLargeWidthCompactHeightPreview
     name = "Extra-large W x Medium H - Light",
     group = "Extra-large width",
     device = "spec:width=1800dp,height=700dp,dpi=160",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Extra-large W x Medium H - Dark",
     group = "Extra-large width",
     device = "spec:width=1800dp,height=700dp,dpi=160",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class ExtraLargeWidthMediumHeightPreview
@@ -262,13 +248,12 @@ annotation class ExtraLargeWidthMediumHeightPreview
     name = "Extra-large W x Expanded H - Light",
     group = "Extra-large width",
     device = "spec:width=1800dp,height=1000dp,dpi=160",
-    showSystemUi = true,
+    showBackground = true,
 )
 @Preview(
     name = "Extra-large W x Expanded H - Dark",
     group = "Extra-large width",
     device = "spec:width=1800dp,height=1000dp,dpi=160",
-    showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 annotation class ExtraLargeWidthExpandedHeightPreview
