@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.feature.alarmList.presentation.alarmsListHorizontalPaddings
 import com.muhammadali.alarmme.ui.component.AmDestructiveTextButton
@@ -37,6 +38,20 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
 
+
+/** Shared with [TopBarSkeleton] so the placeholder bar occupies the same box as the real one. */
+internal val TopBarContentHorizontalPadding: Dp = 8.dp
+internal val TopBarContentVerticalPadding: Dp = 12.dp
+internal val TopBarItemsSpacing: Dp = 8.dp
+
+/**
+ * The bar's labels. Shared with [TopBarSkeleton], which measures them to size its placeholder
+ * blocks, so a placeholder is always exactly as wide as the text it stands in for.
+ */
+internal const val TOP_BAR_TITLE = "Alarms"
+internal const val TOP_BAR_SELECT_LABEL = "Select"
+internal const val TOP_BAR_NEW_ALARM_LABEL = "New alarm"
+internal const val TOP_BAR_NEW_ALARM_GLYPH = "＋"
 
 @Composable
 fun AlarmsListTopBar(
@@ -102,7 +117,7 @@ fun AlarmsListTopBarSelectionMode(
             .background(colors.surfaceContainerHigh)
             .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
     ) {
         IconButton(
             modifier = Modifier,
@@ -123,7 +138,7 @@ fun AlarmsListTopBarSelectionMode(
         Box(modifier = Modifier.weight(1f)) {
            AmDestructiveTextButton(
                modifier = Modifier.align(Alignment.CenterEnd),
-               text =  "Select all",
+               text = "Select all",
                textColor = colors.onSurface,
                onClick = onSelectAll
            )
@@ -141,7 +156,10 @@ fun DefaultAlarmsListTopBarCompactAndMediumWidth(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 12.dp)
+            .padding(
+                horizontal = TopBarContentHorizontalPadding,
+                vertical = TopBarContentVerticalPadding
+            )
     ) {
         val topBarEyebrow = remember(nextAlarmTime) { nextAlarmTime.toTopBarEyebrow() }
         Text(
@@ -152,7 +170,7 @@ fun DefaultAlarmsListTopBarCompactAndMediumWidth(
 
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Alarms",
+                text = TOP_BAR_TITLE,
                 style = LocalAlarmMeTypography.current.headlineSmall,
                 color = colors.onSurface,
                 modifier = Modifier.align(Alignment.CenterStart)
@@ -160,7 +178,7 @@ fun DefaultAlarmsListTopBarCompactAndMediumWidth(
 
             AmDestructiveTextButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
-                text = "Select",
+                text = TOP_BAR_SELECT_LABEL,
                 textColor = colors.onSurface,
                 onClick = onSelectionClick
             )
@@ -181,19 +199,22 @@ fun DefaultAlarmsListTopBarCompactHeight(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 12.dp),
+            .padding(
+                horizontal = TopBarContentHorizontalPadding,
+                vertical = TopBarContentVerticalPadding
+            ),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
     ) {
         val topBarEyebrow = remember(nextAlarmTime) { nextAlarmTime.toTopBarEyebrow() }
 
         Box(Modifier.weight(1f)){
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
             ) {
                 Text(
-                    text = "Alarms",
+                    text = TOP_BAR_TITLE,
                     style = LocalAlarmMeTypography.current.headlineSmall,
                     color = colors.onSurface,
                     modifier = Modifier
@@ -208,14 +229,14 @@ fun DefaultAlarmsListTopBarCompactHeight(
         }
 
         AmDestructiveTextButton(
-            text = "Select",
+            text = TOP_BAR_SELECT_LABEL,
             textColor = colors.onSurface,
             onClick = onSelectionClick
         )
 
         AmFabExtendedButton(
-            text = "New alarm",
-            icon = { Text(text = "＋") },
+            text = TOP_BAR_NEW_ALARM_LABEL,
+            icon = { Text(text = TOP_BAR_NEW_ALARM_GLYPH) },
             onClick = onNewAlarmClick
         )
     }
@@ -233,7 +254,10 @@ fun DefaultAlarmsListTopExpandedAndBiggerWidth(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 12.dp)
+            .padding(
+                horizontal = TopBarContentHorizontalPadding,
+                vertical = TopBarContentVerticalPadding
+            )
     ) {
         val topBarEyebrow = remember(nextAlarmTime) { nextAlarmTime.toTopBarEyebrow() }
         Text(
@@ -244,7 +268,7 @@ fun DefaultAlarmsListTopExpandedAndBiggerWidth(
 
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Alarms",
+                text = TOP_BAR_TITLE,
                 style = LocalAlarmMeTypography.current.headlineSmall,
                 color = colors.onSurface,
                 modifier = Modifier.align(Alignment.CenterStart)
@@ -253,17 +277,17 @@ fun DefaultAlarmsListTopExpandedAndBiggerWidth(
             Row(
                 modifier = Modifier.align(Alignment.CenterEnd),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
             ){
                 AmDestructiveTextButton(
-                    text = "Select",
+                    text = TOP_BAR_SELECT_LABEL,
                     textColor = colors.onSurface,
                     onClick = onSelectionClick
                 )
 
                 AmFabExtendedButton(
-                    text = "New alarm",
-                    icon = { Text(text = "＋") },
+                    text = TOP_BAR_NEW_ALARM_LABEL,
+                    icon = { Text(text = TOP_BAR_NEW_ALARM_GLYPH) },
                     onClick = onNewAlarmClick
                 )
             }

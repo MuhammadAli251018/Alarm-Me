@@ -1,10 +1,5 @@
 package com.muhammadali.alarmme.feature.alarmList.presentation
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,14 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -37,7 +30,9 @@ import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmIte
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItemId
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItemsList
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItemsListState
+import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmsListSkeleton
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmsListTopBar
+import com.muhammadali.alarmme.feature.alarmList.presentation.component.TopBarSkeleton
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.rememberAlarmItemsListState
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListEvent
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListState
@@ -48,7 +43,6 @@ import com.muhammadali.alarmme.ui.component.AmOutlineTextButton
 import com.muhammadali.alarmme.ui.component.BaseTextButton
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
-import com.muhammadali.alarmme.ui.screenCategory.HeightCategory
 import com.muhammadali.alarmme.ui.screenCategory.MediumWidthMediumHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.WidthCategory
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
@@ -122,7 +116,6 @@ fun LoadedAlarmListScreenContent(
     modifier: Modifier = Modifier,
     listState: AlarmItemsListState = rememberAlarmItemsListState(),
 ) {
-    val screenCategory = currentScreenCategory()
     val selectedIds = listState.selectedAlarmItems
 
     Box(modifier) {
@@ -138,7 +131,7 @@ fun LoadedAlarmListScreenContent(
                 nextAlarmTime = nextAlarmTime,
                 onDismissSelection = { listState.clear() },
                 onSelectAll = { listState.addAll(alarms.map { it.id }) },
-                onSelectionClick = {},
+                onSelectionClick = {}, // TODO: IMPLEMENT
                 onNewAlarmClick = onNewAlarmClick
             )
 
@@ -153,8 +146,9 @@ fun LoadedAlarmListScreenContent(
 
         BottomFade(Modifier.align(Alignment.BottomCenter))
 
-        when {
-            listState.isSelectionMode -> SelectionActionBar(
+        if (listState.isSelectionMode) {
+            SelectionActionBar(
+                modifier = Modifier.align(Alignment.BottomCenter),
                 selectedCount = selectedIds.size,
                 onDisable = {
                     onDisableSelected(selectedIds.toList())
@@ -163,28 +157,35 @@ fun LoadedAlarmListScreenContent(
                 onDelete = {
                     onDeleteSelected(selectedIds.toList())
                     listState.clear()
-                },
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
-
-            screenCategory.isPortraitPhone -> AmFabButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 22.dp, bottom = 26.dp),
-                onClick = onNewAlarmClick
-            ) {
-                Text(text = "＋")
-            }
-
-            screenCategory.width == WidthCategory.Medium && !screenCategory.isLandscapePhone -> AmFabExtendedButton(
-                text = "New alarm",
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 32.dp, bottom = 30.dp),
-                icon = { Text(text = "＋") },
-                onClick = onNewAlarmClick
+                }
             )
         }
+
+        NewAlarmFabButton(
+            modifier = Modifier.align(Alignment.BottomEnd),
+            onNewAlarmClick = onNewAlarmClick
+        )
+    }
+}
+
+@Composable
+fun NewAlarmFabButton(modifier: Modifier = Modifier, onNewAlarmClick: () -> Unit) {
+    val screenCategory = currentScreenCategory()
+
+    when {
+        screenCategory.isPortraitPhone -> AmFabButton(
+            modifier = modifier.padding(end = 22.dp, bottom = 26.dp),
+            onClick = onNewAlarmClick
+        ) {
+            Text(text = "＋")
+        }
+
+        screenCategory.width == WidthCategory.Medium && !screenCategory.isLandscapePhone -> AmFabExtendedButton(
+            text = "New alarm",
+            modifier = modifier.padding(end = 32.dp, bottom = 30.dp),
+            icon = { Text(text = "＋") },
+            onClick = onNewAlarmClick
+        )
     }
 }
 
@@ -318,91 +319,25 @@ fun ErrorAlarmListScreenContent(
 /**
  * Alarms load from Room in well under 100ms, so this is a skeleton rather than a spinner — a
  * shimmering list reads calmer than a progress indicator that barely gets to show itself.
+ *
+ * It is deliberately the same shape as [LoadedAlarmListScreenContent]: same width cap, same bar,
+ * same grid, so nothing shifts when the alarms arrive. The FAB is left out — it is chrome the
+ * skeleton has no data to wait for, and a placeholder would only disable an action that works.
  */
 @Composable
 fun LoadingAlarmListScreenContent(modifier: Modifier = Modifier) {
-    val colors = LocalAlarmMeColors.current
-    val shapes = LocalAlarmMeShapes.current
-
-    val transition = rememberInfiniteTransition(label = "skeleton")
-    val shimmer by transition.animateFloat(
-        initialValue = 0.45f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(900),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "skeletonAlpha"
-    )
-
-    Box(modifier = modifier) {
+    Box(modifier) {
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
+                .fillMaxSize()
                 .widthIn(max = contentMaxWidth())
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 34.dp)
-                .alpha(shimmer)
         ) {
-            SkeletonBar(width = 150.dp, height = 11.dp)
-            Spacer(modifier = Modifier.height(8.dp))
-            SkeletonBar(width = 110.dp, height = 26.dp)
+            TopBarSkeleton(modifier = Modifier.fillMaxWidth())
 
-            Spacer(modifier = Modifier.height(22.dp))
-
-            SkeletonRowWidths.forEach { (timeWidth, subtitleWidth) ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(shapes.large)
-                        .background(colors.surface)
-                        .padding(18.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .clip(shapes.full)
-                            .background(colors.surfaceContainer)
-                    )
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(7.dp)
-                    ) {
-                        SkeletonBar(width = timeWidth, height = 22.dp)
-                        SkeletonBar(width = subtitleWidth, height = 10.dp)
-                    }
-                    Box(
-                        modifier = Modifier
-                            .width(52.dp)
-                            .height(32.dp)
-                            .clip(shapes.full)
-                            .background(colors.surfaceContainer)
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-            }
+            AlarmsListSkeleton(modifier = Modifier.weight(1f))
         }
     }
-}
-
-private val SkeletonRowWidths = listOf(
-    108.dp to 150.dp,
-    96.dp to 120.dp,
-    112.dp to 164.dp,
-    90.dp to 104.dp,
-)
-
-@Composable
-private fun SkeletonBar(width: Dp, height: Dp) {
-    Box(
-        modifier = Modifier
-            .width(width)
-            .height(height)
-            .clip(LocalAlarmMeShapes.current.small)
-            .background(LocalAlarmMeColors.current.surfaceContainer)
-    )
 }
 
 /**
@@ -410,7 +345,7 @@ private fun SkeletonBar(width: Dp, height: Dp) {
  * two-column card grid. Everything wider than that becomes margin.
  */
 @Composable
-private fun contentMaxWidth(): Dp =
+internal fun contentMaxWidth(): Dp =
     if (currentScreenCategory().isExpandedWidthOrWider) 1040.dp else 560.dp
 
 /** Shorter on expanded, where the list ends well above the bottom edge. */
@@ -444,7 +379,7 @@ private fun PreviewLoaded(
             onNewAlarmClick = {},
             onDisableSelected = {},
             onDeleteSelected = {},
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().background(LocalAlarmMeColors.current.background),
             listState = listState
         )
     }
@@ -485,11 +420,13 @@ private fun LoadedAlarmListScreenContentEmptyPreview() {
     PreviewLoaded(alarms = emptyList())
 }
 
-@CompactWidthMediumHeightPreview
+@CommonScreenCategoriesPreview
 @Composable
 private fun LoadingAlarmListScreenContentPreview() {
     AlarmMeThemeProvider {
-        LoadingAlarmListScreenContent(modifier = Modifier.fillMaxSize())
+        LoadingAlarmListScreenContent(
+            modifier = Modifier.fillMaxSize().background(LocalAlarmMeColors.current.background)
+        )
     }
 }
 
@@ -497,6 +434,9 @@ private fun LoadingAlarmListScreenContentPreview() {
 @Composable
 private fun ErrorAlarmListScreenContentPreview() {
     AlarmMeThemeProvider {
-        ErrorAlarmListScreenContent(onRetry = {}, modifier = Modifier.fillMaxSize())
+        ErrorAlarmListScreenContent(
+            onRetry = {},
+            modifier = Modifier.fillMaxSize().background(LocalAlarmMeColors.current.background)
+        )
     }
 }

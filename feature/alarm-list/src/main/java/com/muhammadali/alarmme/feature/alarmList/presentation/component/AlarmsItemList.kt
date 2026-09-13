@@ -26,6 +26,11 @@ import com.muhammadali.alarmme.ui.screenCategory.isPhone
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import kotlinx.datetime.LocalDateTime
 
+/** Shared with [AlarmsListSkeleton] so the placeholder grid lands on the same lines as the real one. */
+internal val AlarmsListVerticalPadding: Dp = 12.dp
+internal val AlarmsGridHorizontalSpacing: Dp = 16.dp
+internal val AlarmsGridVerticalSpacing: Dp = 12.dp
+
 class AlarmItemsListState(selectedAlarmItems: List<AlarmItemId>) {
     private val _selectedAlarmItems: MutableState<Set<AlarmItemId>> = mutableStateOf(selectedAlarmItems.toSet())
 
@@ -102,10 +107,13 @@ fun AlarmItemsList(
 
     LazyVerticalGrid(
         modifier = modifier,
-        contentPadding = PaddingValues(horizontal = horizontalPaddings, vertical = 12.dp),
+        contentPadding = PaddingValues(
+            horizontal = horizontalPaddings,
+            vertical = AlarmsListVerticalPadding
+        ),
         columns = GridCells.Fixed(columns),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(AlarmsGridHorizontalSpacing),
+        verticalArrangement = Arrangement.spacedBy(AlarmsGridVerticalSpacing)
     ) {
         items(
             count = alarmItems.size,
@@ -133,7 +141,7 @@ fun AlarmItemsList(
 }
 
 @Composable
-private fun alarmsListColumnsCount(): Int {
+internal fun alarmsListColumnsCount(): Int {
     val screenCategory = currentScreenCategory()
     return if (screenCategory.isExpandedWidthOrWider) 2 else 1
 }

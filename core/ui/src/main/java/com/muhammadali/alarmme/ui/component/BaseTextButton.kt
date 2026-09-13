@@ -19,12 +19,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import com.muhammadali.alarmme.utility.compose.modifyIf
+
+/** The metrics every text button variant shares, exposed so placeholders can reserve the same box. */
+object AmTextButtonDefaults {
+    val Height: Dp = 48.dp
+    val MinWidth: Dp = 88.dp
+    val ContentHorizontalPadding: Dp = 24.dp
+}
 
 /**
  * Shape, size and interaction behaviour shared by every text button variant.
@@ -54,8 +62,8 @@ fun BaseTextButton(
 
     Box(
         modifier = modifier
-            .height(48.dp)
-            .sizeIn(minWidth = 88.dp)
+            .height(AmTextButtonDefaults.Height)
+            .sizeIn(minWidth = AmTextButtonDefaults.MinWidth)
             .dropShadow(shape) {
                 color = if (pressedState.value) PressedShadowColor else Color.Transparent
             }
@@ -70,7 +78,7 @@ fun BaseTextButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            modifier = Modifier.padding(horizontal = 24.dp),
+            modifier = Modifier.padding(horizontal = AmTextButtonDefaults.ContentHorizontalPadding),
             text = text,
             style = LocalAlarmMeTypography.current.labelLarge,
             color = contentColor,

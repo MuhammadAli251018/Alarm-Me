@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
@@ -21,10 +22,13 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import com.muhammadali.alarmme.ui.theme.PlexMono
 
-private val FabExtendedHeight = 56.dp
-private val FabExtendedShape = RoundedCornerShape(20.dp)
-private val FabExtendedHorizontalPadding = 24.dp
-private val FabExtendedIconGap = 8.dp
+/** The pill's metrics, exposed so placeholders can reserve exactly the space the real FAB takes. */
+object AmFabExtendedButtonDefaults {
+    val Height: Dp = 56.dp
+    val Shape: RoundedCornerShape = RoundedCornerShape(20.dp)
+    val ContentHorizontalPadding: Dp = 24.dp
+    val IconGap: Dp = 8.dp
+}
 
 private val FabExtendedGlyphStyle = TextStyle(
     fontFamily = PlexMono,
@@ -58,16 +62,16 @@ fun AmFabExtendedButton(
     BaseFabButton(
         containerColor = containerColor,
         contentColor = contentColor,
-        shape = FabExtendedShape,
+        shape = AmFabExtendedButtonDefaults.Shape,
         glyphStyle = FabExtendedGlyphStyle,
-        modifier = modifier.height(FabExtendedHeight),
+        modifier = modifier.height(AmFabExtendedButtonDefaults.Height),
         enabled = enabled,
         interactionSource = interactionSource,
         onClick = onClick
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = FabExtendedHorizontalPadding),
-            horizontalArrangement = Arrangement.spacedBy(FabExtendedIconGap),
+            modifier = Modifier.padding(horizontal = AmFabExtendedButtonDefaults.ContentHorizontalPadding),
+            horizontalArrangement = Arrangement.spacedBy(AmFabExtendedButtonDefaults.IconGap),
             verticalAlignment = Alignment.CenterVertically
         ) {
             icon?.invoke()

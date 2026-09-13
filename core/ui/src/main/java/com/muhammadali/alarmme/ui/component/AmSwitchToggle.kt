@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
@@ -35,8 +36,12 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 
-private val TrackWidth = 52.dp
-private val TrackHeight = 32.dp
+/** The track size, exposed so placeholders can reserve exactly the space the real toggle takes. */
+object AmSwitchToggleDefaults {
+    val TrackWidth: Dp = 52.dp
+    val TrackHeight: Dp = 32.dp
+}
+
 private val TrackPadding = 2.dp
 private val TrackBorderWidth = 1.dp
 private val ThumbSize = 26.dp
@@ -86,7 +91,7 @@ fun AmSwitchToggle(
     BoxWithConstraints(
         modifier = modifier
             .minimumInteractiveComponentSize()
-            .size(TrackWidth, TrackHeight)
+            .size(AmSwitchToggleDefaults.TrackWidth, AmSwitchToggleDefaults.TrackHeight)
             .clip(shape)
             .background(trackFillColor)
             .border(TrackBorderWidth, trackOutlineColor, shape)

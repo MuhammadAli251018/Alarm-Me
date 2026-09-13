@@ -37,10 +37,12 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import kotlinx.datetime.LocalDateTime
 
-private const val ALARM_ITEM_HEIGHT = 90
-private const val ALARM_ITEM_MIN_WIDTH = 280
-private const val ALARM_ITEM_ITEMS_PADDINGS = 13
-private const val STATUS_DOT_SIZE = 8
+internal const val ALARM_ITEM_HEIGHT = 90
+internal const val ALARM_ITEM_MIN_WIDTH = 280
+internal const val ALARM_ITEM_ITEMS_PADDINGS = 13
+internal const val ALARM_ITEM_CONTENT_HORIZONTAL_PADDING = 16
+internal const val ALARM_ITEM_CONTENT_VERTICAL_PADDING = 8
+internal const val STATUS_DOT_SIZE = 8
 private const val SELECTED_RING_WIDTH = 2
 private const val OFF_HAIRLINE_WIDTH = 1
 private const val TIME_MERIDIEM_GAP = 6
@@ -126,7 +128,10 @@ fun AlarmItem(
         Row(
             modifier = Modifier
                 .matchParentSize()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(
+                    horizontal = ALARM_ITEM_CONTENT_HORIZONTAL_PADDING.dp,
+                    vertical = ALARM_ITEM_CONTENT_VERTICAL_PADDING.dp
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(ALARM_ITEM_ITEMS_PADDINGS.dp)
         ) {
