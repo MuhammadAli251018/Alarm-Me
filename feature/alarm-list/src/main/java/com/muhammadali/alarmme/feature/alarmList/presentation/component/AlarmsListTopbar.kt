@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.feature.alarmList.presentation.alarmsListHorizontalPaddings
 import com.muhammadali.alarmme.ui.component.AmDestructiveTextButton
 import com.muhammadali.alarmme.ui.component.AmFabExtendedButton
 import com.muhammadali.alarmme.ui.component.IconButton
@@ -62,7 +63,7 @@ fun AlarmsListTopBar(
     when {
         screenCategory.height == HeightCategory.Compact ->
             DefaultAlarmsListTopBarCompactHeight(
-                modifier = modifier,
+                modifier = modifier.padding(horizontal = alarmsListHorizontalPaddings()),
                 nextAlarmTime = nextAlarmTime,
                 onNewAlarmClick = onNewAlarmClick,
                 onSelectionClick = onSelectionClick
@@ -70,14 +71,14 @@ fun AlarmsListTopBar(
 
         screenCategory.width <= WidthCategory.Medium ->
             DefaultAlarmsListTopBarCompactAndMediumWidth(
-                modifier = modifier,
+                modifier = modifier.padding(horizontal = alarmsListHorizontalPaddings()),
                 nextAlarmTime = nextAlarmTime,
                 onSelectionClick = onSelectionClick
             )
 
         else ->
             DefaultAlarmsListTopExpandedAndBiggerWidth(
-                modifier = modifier,
+                modifier = modifier.padding(horizontal = alarmsListHorizontalPaddings()),
                 nextAlarmTime = nextAlarmTime,
                 onNewAlarmClick = onNewAlarmClick,
                 onSelectionClick = onSelectionClick

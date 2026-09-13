@@ -6,7 +6,7 @@ import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListSt
 import com.muhammadali.alarmme.mvi.BaseScreenModel
 
 class AlarmsListScreenModel(
-    private val alarmsProvideUseCase: AlarmsProvideUseCase
+//    private val alarmsProvideUseCase: AlarmsProvideUseCase
 ) : BaseScreenModel<AlarmsListState, AlarmsListEvent, Nothing>(
     initialState = AlarmsListState.Initial
 ) {
@@ -15,3 +15,5 @@ class AlarmsListScreenModel(
         TODO("Not yet implemented")
     }
 }
+
+

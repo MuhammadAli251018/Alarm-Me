@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.feature.alarmList.presentation.alarmsListHorizontalPaddings
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.LargeWidthExpandedHeightPreview
@@ -103,7 +104,7 @@ fun AlarmItemsList(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = horizontalPaddings, vertical = 12.dp),
         columns = GridCells.Fixed(columns),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(
@@ -128,17 +129,6 @@ fun AlarmItemsList(
                 }
             )
         }
-    }
-}
-
-@Composable
-private fun alarmsListHorizontalPaddings(): Dp {
-    val screenCategory = currentScreenCategory()
-    return when {
-        screenCategory.isPhone -> 20.dp
-        screenCategory.width == WidthCategory.Medium -> 32.dp
-        screenCategory.isExpandedWidthOrWider -> 48.dp
-        else -> 20.dp
     }
 }
 

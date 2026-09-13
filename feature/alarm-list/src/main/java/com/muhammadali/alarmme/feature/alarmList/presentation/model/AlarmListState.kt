@@ -1,8 +1,8 @@
 package com.muhammadali.alarmme.feature.alarmList.presentation.model
 
-import com.muhammadali.alarmme.feature.alarmList.presentation.NextAlarmsFireTime
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItem
 import com.muhammadali.alarmme.mvi.UiState
+import kotlinx.datetime.LocalDateTime
 
 
 sealed interface AlarmsListState : UiState {
@@ -13,8 +13,8 @@ sealed interface AlarmsListState : UiState {
     data object Loading : AlarmsListState
 
     data class Loaded(
-        val nextAlarmsFireTime: NextAlarmsFireTime,
-        val alarms: List<AlarmItem>
+        val alarms: List<AlarmItem>,
+        val nextAlarmTime: LocalDateTime?
     ) : AlarmsListState
 
     data object Error : AlarmsListState
