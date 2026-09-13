@@ -2,7 +2,6 @@ package com.muhammadali.alarmme.feature.alarmList.presentation.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,21 +37,48 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import kotlinx.datetime.LocalDateTime
 
-private const val ALARM_ITEM_HEIGHT = 100
+private const val ALARM_ITEM_HEIGHT = 90
 private const val ALARM_ITEM_MIN_WIDTH = 280
-private const val ALARM_ITEM_INTERNAL_PADDING = 16
 private const val ALARM_ITEM_ITEMS_PADDINGS = 13
 private const val STATUS_DOT_SIZE = 8
 private const val SELECTED_RING_WIDTH = 2
 private const val OFF_HAIRLINE_WIDTH = 1
 private const val TIME_MERIDIEM_GAP = 6
 
+@JvmInline
+value class AlarmItemId(val value: String)
+
 data class AlarmItem(
-    val id: String,
+    val id: AlarmItemId,
     val enabled: Boolean,
     val time: LocalDateTime,
     val description: String
 )
+
+@Composable
+fun AlarmItem(
+    modifier: Modifier,
+    alarmItem: AlarmItem,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    onCheckedChange: (Boolean) -> Unit,
+    onSelectedChange: (Boolean) -> Unit,
+    selectionMode: Boolean = false,
+    selected: Boolean = false,
+) {
+    AlarmItem(
+        modifier = modifier,
+        enabled = alarmItem.enabled,
+        time = alarmItem.time,
+        description = alarmItem.description,
+        onClick = onClick,
+        onLongClick = onLongClick,
+        onCheckedChange = onCheckedChange,
+        selectionMode = selectionMode,
+        selected = selected,
+        onSelectedChange = onSelectedChange
+    )
+}
 
 @Composable
 fun AlarmItem(
@@ -100,7 +126,7 @@ fun AlarmItem(
         Row(
             modifier = Modifier
                 .matchParentSize()
-                .padding(ALARM_ITEM_INTERNAL_PADDING.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(ALARM_ITEM_ITEMS_PADDINGS.dp)
         ) {
