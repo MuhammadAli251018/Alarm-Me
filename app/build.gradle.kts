@@ -27,6 +27,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         compose = true
@@ -37,6 +38,10 @@ android {
 }
 
 dependencies {
+    // Modules Depenency
+    implementation(projects.core.ui)
+    implementation(projects.feature.alarmList)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
     implementation(libs.bundles.compose.app)
@@ -48,6 +53,8 @@ dependencies {
     implementation(libs.bundles.coroutines)
 
     implementation(libs.bundles.voyager)
+
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
