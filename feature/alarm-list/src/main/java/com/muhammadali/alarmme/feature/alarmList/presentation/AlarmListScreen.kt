@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,10 +26,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
-import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
+import com.muhammadali.alarmme.feature.alarmList.domain.AlarmItemId
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItem
-import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItemId
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItemsList
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItemsListState
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmsListSkeleton
@@ -60,19 +62,32 @@ class AlarmListScreen : Screen {
 
     @Composable
     override fun Content() {
-        val viewModel: AlarmsListScreenModel = rememberScreenModel{ AlarmsListScreenModel() }
-        val state by viewModel.state.collectAsState()
-        val dispatch = viewModel::handleEvent
+        val screenModel: AlarmsListScreenModel = koinScreenModel()
+        val state by screenModel.state.collectAsState()
+        val dispatch = screenModel::handleEvent
 
         AlarmListScreenContent(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(LocalAlarmMeColors.current.background)
+                .imePadding()
+                .systemBarsPadding(),
             state = state,
-            onAlarmClick = {},
-            onAlarmCheckedChange = { _, _ -> },
-            onNewAlarmClick = {},
-            onDisableSelected = {},
-            onDeleteSelected = { ids -> dispatch(AlarmsListEvent.OnDeleteAlarms(ids.map { it.value })) },
-            onRetry = {},
-            modifier = Modifier.fillMaxSize().background(LocalAlarmMeColors.current.background)
+            onAlarmClick = {}, // TODO: navigate to the alarm detail screen once it exists
+            onAlarmCheckedChange = { id, enabled ->
+                dispatch(AlarmsListEvent.OnEnableOrDisableAlarm(id, enabled))
+            },
+            onNewAlarmClick = {}, // TODO: navigate to the alarm creation screen once it exists
+            onDisableSelected = { ids ->
+                dispatch(
+                    AlarmsListEvent.OnEnableOrDisableAlarms(
+                        ids = ids.map { it },
+                        enabled = false
+                    )
+                )
+            },
+            onDeleteSelected = { ids -> dispatch(AlarmsListEvent.OnDeleteAlarms(ids.map { it })) },
+            onRetry = { dispatch(AlarmsListEvent.OnRetry) },
         )
     }
 }

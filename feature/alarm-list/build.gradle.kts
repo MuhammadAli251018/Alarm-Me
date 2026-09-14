@@ -48,7 +48,8 @@ dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // Koin
-    testImplementation(platform(libs.koin.bom))
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
 
     // Voyager
     implementation(libs.bundles.voyager)

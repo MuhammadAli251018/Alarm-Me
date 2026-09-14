@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.feature.alarmList.R
+import com.muhammadali.alarmme.feature.alarmList.domain.AlarmItemId
 import com.muhammadali.alarmme.ui.component.AmCheckBox
 import com.muhammadali.alarmme.ui.component.AmSectionCard
 import com.muhammadali.alarmme.ui.component.AmStatusBadge
@@ -46,9 +47,6 @@ internal const val STATUS_DOT_SIZE = 8
 private const val SELECTED_RING_WIDTH = 2
 private const val OFF_HAIRLINE_WIDTH = 1
 private const val TIME_MERIDIEM_GAP = 6
-
-@JvmInline
-value class AlarmItemId(val value: String)
 
 data class AlarmItem(
     val id: AlarmItemId,
