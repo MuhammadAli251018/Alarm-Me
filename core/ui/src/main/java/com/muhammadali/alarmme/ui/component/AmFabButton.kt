@@ -44,14 +44,9 @@ fun AmFabButton(
     content: @Composable () -> Unit
 ) {
     val colors = LocalAlarmMeColors.current
-    val containerColor =
-        if (enabled) colors.primary else colors.onSurface.copy(alpha = DisabledContainerAlpha)
-    val contentColor =
-        if (enabled) colors.onPrimary else colors.onSurface.copy(alpha = DisabledContentAlpha)
 
     BaseFabButton(
-        containerColor = containerColor,
-        contentColor = contentColor,
+        colors = AmButtonColors.solid(colors.primary, colors.onPrimary),
         shape = FabShape,
         glyphStyle = FabGlyphStyle,
         modifier = modifier.size(FabSize),

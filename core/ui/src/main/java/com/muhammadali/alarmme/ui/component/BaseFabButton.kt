@@ -30,9 +30,8 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 
 
 @Composable
-fun BaseFabButton(
-    containerColor: Color,
-    contentColor: Color,
+internal fun BaseFabButton(
+    colors: AmButtonColors,
     shape: Shape,
     glyphStyle: TextStyle,
     modifier: Modifier = Modifier,
@@ -42,6 +41,8 @@ fun BaseFabButton(
     onClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
+    val containerColor = if (enabled) colors.containerColor else colors.disabledContainerColor
+    val contentColor = if (enabled) colors.contentColor else colors.disabledContentColor
     val pressed by interactionSource.collectIsPressedAsState()
 
     Box(
@@ -84,8 +85,7 @@ private fun BaseFabButtonPreview() {
 
         BaseFabButton(
             modifier = Modifier.size(64.dp),
-            containerColor = colors.primary,
-            contentColor = colors.onPrimary,
+            colors = AmButtonColors.solid(colors.primary, colors.onPrimary),
             shape = FabShape,
             glyphStyle = FabGlyphStyle,
             onClick = {}
@@ -109,11 +109,9 @@ private fun BaseFabButtonPressedPreview() {
             modifier = Modifier.padding(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            // no pressColor: pressed shows as a drop shadow
             BaseFabButton(
                 modifier = Modifier.size(64.dp),
-                containerColor = colors.primary,
-                contentColor = colors.onPrimary,
+                colors = AmButtonColors.solid(colors.primary, colors.onPrimary),
                 shape = FabShape,
                 glyphStyle = FabGlyphStyle,
                 interactionSource = rememberPressedInteractionSource(),
@@ -121,11 +119,9 @@ private fun BaseFabButtonPressedPreview() {
             ) {
                 Text(text = "＋")
             }
-            // explicit pressColor: pressed shows as an overlay tint
             BaseFabButton(
                 modifier = Modifier.size(64.dp),
-                containerColor = colors.primary,
-                contentColor = colors.onPrimary,
+                colors = AmButtonColors.solid(colors.primary, colors.onPrimary),
                 shape = FabShape,
                 glyphStyle = FabGlyphStyle,
                 interactionSource = rememberPressedInteractionSource(),
