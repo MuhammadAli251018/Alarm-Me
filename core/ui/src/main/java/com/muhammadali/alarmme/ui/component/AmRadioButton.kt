@@ -25,8 +25,8 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 
 private val RadioSize = 24.dp
-private val RadioDotSize = 12.dp
-private val RadioStrokeWidth = 2.dp
+private val RadioDotSize = 6.dp
+private val RadioStrokeWidth = 6.dp
 
 
 @Composable
