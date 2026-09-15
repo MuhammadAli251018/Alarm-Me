@@ -30,8 +30,8 @@ import com.muhammadali.alarmme.feature.alarmList.R
 import com.muhammadali.alarmme.feature.alarmList.domain.AlarmItemId
 import com.muhammadali.alarmme.ui.component.AmCheckBox
 import com.muhammadali.alarmme.ui.component.AmSectionCard
-import com.muhammadali.alarmme.ui.component.AmStatusBadge
 import com.muhammadali.alarmme.ui.component.AmSwitchToggle
+import com.muhammadali.alarmme.ui.component.AmBadge
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
@@ -163,8 +163,6 @@ fun AlarmItem(
 
 @Composable
 fun AlarmItemTime(time: LocalDateTime, enabled: Boolean, modifier: Modifier = Modifier) {
-    val colors = LocalAlarmMeColors.current
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.Bottom,
@@ -173,12 +171,10 @@ fun AlarmItemTime(time: LocalDateTime, enabled: Boolean, modifier: Modifier = Mo
         AlarmTimeText(time, enabled)
 
         if (!enabled) {
-            AmStatusBadge(
+            AmBadge(
                 modifier = Modifier.padding(bottom = TIME_MERIDIEM_GAP.dp),
                 text = stringResource(R.string.alarm_item_off_badge),
-                containerColor = colors.outlineVariant,
-                contentColor = colors.onSurfaceVariant,
-                borderColor = colors.outlineVariant
+                enabled = false
             )
         }
     }

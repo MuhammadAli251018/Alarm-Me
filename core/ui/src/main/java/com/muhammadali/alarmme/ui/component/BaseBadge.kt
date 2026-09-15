@@ -23,11 +23,9 @@ private val BadgeHorizontalPadding = 8.dp
 private val BadgeBorderWidth = 1.dp
 
 @Composable
-fun BaseBadge(
+internal fun BaseBadge(
     text: String,
-    containerColor: Color,
-    contentColor: Color,
-    borderColor: Color,
+    colors: AmBadgeColors,
     modifier: Modifier = Modifier
 ) {
     val shape = LocalAlarmMeShapes.current.extraSmall
@@ -35,16 +33,16 @@ fun BaseBadge(
     Box(
         modifier = modifier
             .height(BadgeHeight)
-            .border(BadgeBorderWidth, borderColor, shape)
+            .border(BadgeBorderWidth, colors.borderColor, shape)
             .clip(shape)
-            .background(containerColor),
+            .background(colors.containerColor),
         contentAlignment = Alignment.Center
     ) {
         Text(
             modifier = Modifier.padding(horizontal = BadgeHorizontalPadding),
             text = text,
             style = LocalAlarmMeTypography.current.labelSmall,
-            color = contentColor,
+            color = colors.contentColor,
         )
     }
 }
@@ -62,9 +60,11 @@ private fun BaseBadgePreview() {
         BaseBadge(
             modifier = Modifier.padding(10.dp),
             text = "OFF",
-            containerColor = Color.Transparent,
-            contentColor = colors.onSurfaceVariant,
-            borderColor = colors.outlineVariant
+            colors = AmBadgeColors(
+                containerColor = Color.Transparent,
+                contentColor = colors.onSurfaceVariant,
+                borderColor = colors.outlineVariant
+            )
         )
     }
 }
