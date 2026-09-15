@@ -38,11 +38,10 @@ import com.muhammadali.alarmme.feature.alarmList.presentation.component.TopBarSk
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.rememberAlarmItemsListState
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListEvent
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListState
+import com.muhammadali.alarmme.ui.component.AmDestructiveTextButton
 import com.muhammadali.alarmme.ui.component.AmFabButton
 import com.muhammadali.alarmme.ui.component.AmFabExtendedButton
-import com.muhammadali.alarmme.ui.component.AmFilledTextButton
 import com.muhammadali.alarmme.ui.component.AmOutlineTextButton
-import com.muhammadali.alarmme.ui.component.BaseTextButton
 import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
@@ -248,10 +247,8 @@ private fun SelectionActionBar(
                 modifier = Modifier.weight(1f),
                 onClick = onDisable
             )
-            BaseTextButton(
+            AmDestructiveTextButton(
                 text = "Delete $selectedCount",
-                containerColor = colors.errorContainer,
-                contentColor = colors.onErrorContainer,
                 modifier = Modifier.weight(1f),
                 onClick = onDelete
             )

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -25,7 +26,6 @@ import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
-import com.muhammadali.alarmme.utility.compose.modifyIf
 
 /** The metrics every text button variant shares, exposed so placeholders can reserve the same box. */
 object AmTextButtonDefaults {
@@ -37,27 +37,25 @@ object AmTextButtonDefaults {
 /**
  * Shape, size and interaction behaviour shared by every text button variant.
  *
- * It resolves no colors of its own: [containerColor], [contentColor] and [pressColor] arrive
- * fully resolved, so the calling variant owns the enabled/disabled decision. [enabled] is used
- * only to gate the click, never to pick a color.
+ * It resolves no colors of its own: [colors] arrives fully resolved (active + disabled pair), so
+ * the calling variant owns constructing it. [enabled] picks which half of [colors] is drawn and
+ * gates the click — it never resolves a color itself.
  *
  * Decoration drawn *outside* the container — selection outline, border — belongs to the variant
  * and should be applied to the [modifier] it passes down.
- *
- * @param pressColor drawn over the container while pressed; expected to carry its own alpha.
- * When `null` — the default — the button lifts with a pressed drop shadow instead of tinting.
  */
 @Composable
-fun BaseTextButton(
+internal fun BaseTextButton(
     text: String,
-    containerColor: Color,
-    contentColor: Color,
+    colors: AmButtonColors,
     modifier: Modifier = Modifier,
+    shape: Shape = LocalAlarmMeShapes.current.full,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: () -> Unit
 ) {
-    val shape = LocalAlarmMeShapes.current.full
+    val containerColor = if (enabled) colors.containerColor else colors.disabledContainerColor
+    val contentColor = if (enabled) colors.contentColor else colors.disabledContentColor
     val pressedState = interactionSource.collectIsPressedAsState()
 
     Box(
@@ -99,8 +97,7 @@ private fun BaseTextButtonPreview() {
         BaseTextButton(
             modifier = Modifier.padding(10.dp),
             text = "Save",
-            containerColor = colors.secondaryContainer,
-            contentColor = colors.onSecondaryContainer,
+            colors = AmButtonColors.solid(colors.secondaryContainer, colors.onSecondaryContainer),
             onClick = {}
         )
     }
@@ -115,27 +112,12 @@ private fun BaseTextButtonPreview() {
 private fun BaseTextButtonPressedPreview() {
     AlarmMeThemeProvider {
         val colors = LocalAlarmMeColors.current
-
-        Column(
+        BaseTextButton(
             modifier = Modifier.padding(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            // no pressColor: pressed shows as a drop shadow
-            BaseTextButton(
-                text = "Shadow",
-                containerColor = colors.secondaryContainer,
-                contentColor = colors.onSecondaryContainer,
-                interactionSource = rememberPressedInteractionSource(),
-                onClick = {}
-            )
-            // explicit pressColor: pressed shows as an overlay tint
-            BaseTextButton(
-                text = "Overlay",
-                containerColor = colors.secondaryContainer,
-                contentColor = colors.onSecondaryContainer,
-                interactionSource = rememberPressedInteractionSource(),
-                onClick = {}
-            )
-        }
+            text = "Shadow",
+            colors = AmButtonColors.solid(colors.secondaryContainer, colors.onSecondaryContainer),
+            interactionSource = rememberPressedInteractionSource(),
+            onClick = {}
+        )
     }
 }

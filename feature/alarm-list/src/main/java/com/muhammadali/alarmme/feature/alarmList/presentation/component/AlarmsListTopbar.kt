@@ -17,8 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.feature.alarmList.presentation.alarmsListHorizontalPaddings
-import com.muhammadali.alarmme.ui.component.AmDestructiveTextButton
 import com.muhammadali.alarmme.ui.component.AmFabExtendedButton
+import com.muhammadali.alarmme.ui.component.AmPlainTextButton
 import com.muhammadali.alarmme.ui.component.IconButton
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
@@ -136,10 +136,9 @@ fun AlarmsListTopBarSelectionMode(
         )
 
         Box(modifier = Modifier.weight(1f)) {
-           AmDestructiveTextButton(
+           AmPlainTextButton(
                modifier = Modifier.align(Alignment.CenterEnd),
                text = "Select all",
-               textColor = colors.onSurface,
                onClick = onSelectAll
            )
         }
@@ -176,10 +175,9 @@ fun DefaultAlarmsListTopBarCompactAndMediumWidth(
                 modifier = Modifier.align(Alignment.CenterStart)
             )
 
-            AmDestructiveTextButton(
+            AmPlainTextButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
                 text = TOP_BAR_SELECT_LABEL,
-                textColor = colors.onSurface,
                 onClick = onSelectionClick
             )
         }
@@ -228,9 +226,8 @@ fun DefaultAlarmsListTopBarCompactHeight(
             }
         }
 
-        AmDestructiveTextButton(
+        AmPlainTextButton(
             text = TOP_BAR_SELECT_LABEL,
-            textColor = colors.onSurface,
             onClick = onSelectionClick
         )
 
@@ -279,9 +276,8 @@ fun DefaultAlarmsListTopExpandedAndBiggerWidth(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
             ){
-                AmDestructiveTextButton(
+                AmPlainTextButton(
                     text = TOP_BAR_SELECT_LABEL,
-                    textColor = colors.onSurface,
                     onClick = onSelectionClick
                 )
 

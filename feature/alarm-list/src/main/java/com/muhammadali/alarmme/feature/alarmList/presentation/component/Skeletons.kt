@@ -143,7 +143,7 @@ private fun SkeletonTextBlock(text: String, style: TextStyle, modifier: Modifier
     SkeletonBlock(modifier.size(size))
 }
 
-/** The box an [com.muhammadali.alarmme.ui.component.AmDestructiveTextButton] carrying [label] fills. */
+/** The box an [com.muhammadali.alarmme.ui.component.AmPlainTextButton] carrying [label] fills. */
 @Composable
 private fun SkeletonTextButton(label: String, modifier: Modifier = Modifier) {
     val labelWidth = textSize(label, LocalAlarmMeTypography.current.labelLarge).width

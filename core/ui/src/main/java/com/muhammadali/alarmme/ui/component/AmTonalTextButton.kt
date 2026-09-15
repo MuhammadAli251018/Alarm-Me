@@ -24,15 +24,10 @@ fun AmTonalTextButton(
     onClick: () -> Unit
 ) {
     val colors = LocalAlarmMeColors.current
-    val containerColor =
-        if (enabled) colors.primaryContainer else colors.onSurface.copy(alpha = DisabledContainerAlpha)
-    val contentColor =
-        if (enabled) colors.onPrimaryContainer else colors.onSurface.copy(alpha = DisabledContentAlpha)
 
     BaseTextButton(
         text = text,
-        containerColor = containerColor,
-        contentColor = contentColor,
+        colors = AmButtonColors.solid(colors.primaryContainer, colors.onPrimaryContainer),
         modifier = modifier.selectedOutline(
             color = colors.primary,
             shape = LocalAlarmMeShapes.current.full,

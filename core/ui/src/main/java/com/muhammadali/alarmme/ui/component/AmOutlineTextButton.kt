@@ -9,7 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
@@ -26,10 +25,8 @@ fun AmOutlineTextButton(
     onClick: () -> Unit
 ) {
     val colors = LocalAlarmMeColors.current
-    val containerColor =
-        if (enabled) Color.Transparent else colors.onSurface.copy(alpha = DisabledContainerAlpha)
-    val contentColor =
-        if (enabled) colors.onSurface else colors.onSurface.copy(alpha = DisabledContentAlpha)
+    val buttonColors = AmButtonColors.outlined(colors.onSurface)
+    val borderColor = if (enabled) buttonColors.contentColor else buttonColors.disabledContentColor
 
     BaseTextButton(
         modifier = modifier
@@ -38,10 +35,9 @@ fun AmOutlineTextButton(
                 shape = LocalAlarmMeShapes.current.full,
                 isSelected = { selected }
             )
-            .border(1.dp, contentColor, LocalAlarmMeShapes.current.full),
+            .border(1.dp, borderColor, LocalAlarmMeShapes.current.full),
         text = text,
-        containerColor = containerColor,
-        contentColor = contentColor,
+        colors = buttonColors,
         enabled = enabled,
         interactionSource = interactionSource,
         onClick = onClick
