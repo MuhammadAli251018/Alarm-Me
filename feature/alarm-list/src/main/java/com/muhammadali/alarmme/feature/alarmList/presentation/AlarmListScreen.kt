@@ -43,6 +43,7 @@ import com.muhammadali.alarmme.ui.component.AmFabExtendedButton
 import com.muhammadali.alarmme.ui.component.AmFilledTextButton
 import com.muhammadali.alarmme.ui.component.AmOutlineTextButton
 import com.muhammadali.alarmme.ui.component.BaseTextButton
+import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.MediumWidthMediumHeightPreview
@@ -104,7 +105,7 @@ fun AlarmListScreenContent(
     modifier: Modifier = Modifier,
 ) {
     when (state) {
-        AlarmsListState.Error -> ErrorAlarmListScreenContent(onRetry, modifier)
+        AlarmsListState.Error -> ErrorAlarmListScreenContent(modifier, onRetry)
         AlarmsListState.Loading -> LoadingAlarmListScreenContent(modifier)
         is AlarmsListState.Loaded -> LoadedAlarmListScreenContent(
             alarms = state.alarms,
@@ -278,57 +279,16 @@ fun BottomFade(modifier: Modifier) {
 
 @Composable
 fun ErrorAlarmListScreenContent(
-    onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    onRetry: () -> Unit
 ) {
-    val colors = LocalAlarmMeColors.current
-    val typography = LocalAlarmMeTypography.current
-
-    Box(
+    ErrorScreenContent(
         modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = contentMaxWidth())
-                .padding(horizontal = 22.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(52.dp)
-                    .clip(LocalAlarmMeShapes.current.full)
-                    .background(colors.outlineVariant),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "✕",
-                    style = typography.titleMedium,
-                    color = colors.outline
-                )
-            }
-
-            Text(
-                text = "Couldn't load your alarms",
-                style = typography.titleLarge,
-                color = colors.onBackground,
-                textAlign = TextAlign.Center
-            )
-
-            Text(
-                text = "The alarm database didn't open. Your alarms are still saved — " +
-                    "nothing was deleted.",
-                style = typography.bodyMedium,
-                color = colors.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            AmFilledTextButton(text = "Try again", onClick = onRetry)
-        }
-    }
+        errorHeading = "Couldn't load your alarms",
+        errorDescription = "The alarm database didn't open. Your alarms are still saved — " +
+            "nothing was deleted.",
+        onRetry = onRetry
+    )
 }
 
 /**
@@ -355,10 +315,6 @@ fun LoadingAlarmListScreenContent(modifier: Modifier = Modifier) {
     }
 }
 
-/**
- * The single pane is capped rather than split: 560dp normally, 1040dp once there is room for the
- * two-column card grid. Everything wider than that becomes margin.
- */
 @Composable
 internal fun contentMaxWidth(): Dp =
     if (currentScreenCategory().isExpandedWidthOrWider) 1040.dp else 560.dp
@@ -440,17 +396,6 @@ private fun LoadedAlarmListScreenContentEmptyPreview() {
 private fun LoadingAlarmListScreenContentPreview() {
     AlarmMeThemeProvider {
         LoadingAlarmListScreenContent(
-            modifier = Modifier.fillMaxSize().background(LocalAlarmMeColors.current.background)
-        )
-    }
-}
-
-@CompactWidthMediumHeightPreview
-@Composable
-private fun ErrorAlarmListScreenContentPreview() {
-    AlarmMeThemeProvider {
-        ErrorAlarmListScreenContent(
-            onRetry = {},
             modifier = Modifier.fillMaxSize().background(LocalAlarmMeColors.current.background)
         )
     }
