@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.feature.alarmList.presentation.alarmsListHorizontalPaddings
 import com.muhammadali.alarmme.ui.component.AmFabExtendedButton
+import com.muhammadali.alarmme.ui.component.AmIconButton
 import com.muhammadali.alarmme.ui.component.AmPlainTextButton
-import com.muhammadali.alarmme.ui.component.IconButton
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.HeightCategory
@@ -119,12 +119,9 @@ fun AlarmsListTopBarSelectionMode(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
     ) {
-        IconButton(
+        AmIconButton(
             modifier = Modifier,
-            onClick = onDismiss,
-            containerColor = colors.surfaceContainerHigh.copy(alpha = 0.5f),
-            contentColor = colors.onSurface,
-            glyphStyle = LocalAlarmMeTypography.current.bodyLarge,
+            onClick = onDismiss
         ) {
             Text("✕")
         }

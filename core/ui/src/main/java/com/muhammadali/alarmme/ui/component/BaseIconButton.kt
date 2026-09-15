@@ -20,33 +20,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
-import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 
 internal val IconButtonTargetSize = 48.dp
 internal val IconButtonVisualSize = 44.dp
 internal val IconButtonShape = RoundedCornerShape(14.dp)
 
-
 @Composable
-fun IconButton(
-    containerColor: Color,
-    contentColor: Color,
+internal fun BaseIconButton(
+    colors: AmButtonColors,
     glyphStyle: TextStyle,
     modifier: Modifier = Modifier,
+    shape: Shape = IconButtonShape,
     enabled: Boolean = true,
     selected: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    val colors = LocalAlarmMeColors.current
+    val alarmColors = LocalAlarmMeColors.current
+    val containerColor = if (enabled) colors.containerColor else colors.disabledContainerColor
+    val contentColor = if (enabled) colors.contentColor else colors.disabledContentColor
     val pressed by interactionSource.collectIsPressedAsState()
 
     Box(
@@ -64,15 +65,15 @@ fun IconButton(
         Box(
             modifier = Modifier
                 .selectedOutline(
-                    color = colors.primary,
-                    shape = IconButtonShape,
+                    color = alarmColors.primary,
+                    shape = shape,
                     isSelected = { selected }
                 )
                 .size(IconButtonVisualSize)
-                .dropShadow(LocalAlarmMeShapes.current.medium) {
+                .dropShadow(shape) {
                     color = if (pressed) Color.Black.copy(0.15f) else Color.Transparent
                 }
-                .clip(IconButtonShape)
+                .clip(shape)
                 .background(containerColor),
             contentAlignment = Alignment.Center
         ) {
@@ -91,14 +92,13 @@ fun IconButton(
     uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
-private fun IconButtonPreview() {
+private fun BaseIconButtonPreview() {
     AlarmMeThemeProvider {
         val colors = LocalAlarmMeColors.current
 
-        IconButton(
+        BaseIconButton(
             modifier = Modifier.padding(10.dp),
-            containerColor = colors.surface,
-            contentColor = colors.onSurfaceVariant,
+            colors = AmButtonColors.solid(colors.surface, colors.onSurfaceVariant),
             glyphStyle = LocalAlarmMeTypography.current.bodyLarge,
             onClick = {}
         ) {
