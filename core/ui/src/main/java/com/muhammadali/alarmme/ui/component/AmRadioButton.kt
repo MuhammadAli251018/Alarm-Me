@@ -1,5 +1,7 @@
 package com.muhammadali.alarmme.ui.component
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -26,7 +28,10 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 
 private val RadioSize = 24.dp
 private val RadioDotSize = 6.dp
-private val RadioStrokeWidth = 6.dp
+
+private val SelectedRadioStrokeWidth = 6.dp
+
+private val UnselectedRadioStrokeWidth = 4.dp
 
 
 @Composable
@@ -60,6 +65,12 @@ fun AmRadioButton(
         Modifier
     }
 
+    val radioStrokeWidth by animateDpAsState(
+        targetValue = if (selected) SelectedRadioStrokeWidth else UnselectedRadioStrokeWidth,
+        animationSpec = tween(durationMillis = 300),
+        label = "radioStrokeWidth"
+    )
+
     Box(
         modifier = modifier
             .minimumInteractiveComponentSize()
@@ -71,17 +82,21 @@ fun AmRadioButton(
                 shape = shape,
                 isSelected = { focused }
             )
-            .border(RadioStrokeWidth, indicatorColor, shape),
+            .border(radioStrokeWidth, indicatorColor, shape),
         contentAlignment = Alignment.Center
     ) {
-        if (selected) {
-            Box(
-                modifier = Modifier
-                    .size(RadioDotSize)
-                    .clip(shape)
-                    .background(indicatorColor)
-            )
-        }
+        val dotSize by animateDpAsState(
+            targetValue = if (selected) RadioDotSize else 0.dp,
+            animationSpec = tween(durationMillis = 300),
+            label = "radioDotSize"
+        )
+
+        Box(
+            modifier = Modifier
+                .size(dotSize)
+                .clip(shape)
+                .background(indicatorColor)
+        )
     }
 }
 
@@ -98,7 +113,7 @@ private fun AmRadioButtonUnselectedPreview() {
         AmRadioButton(
             modifier = Modifier.padding(10.dp),
             selected = isSelected,
-            onClick = { isSelected = true }
+            onClick = { isSelected = !isSelected }
         )
     }
 }
@@ -116,7 +131,7 @@ private fun AmRadioButtonSelectedPreview() {
         AmRadioButton(
             modifier = Modifier.padding(10.dp),
             selected = isSelected,
-            onClick = { isSelected = true }
+            onClick = { isSelected = !isSelected }
         )
     }
 }
@@ -135,7 +150,7 @@ private fun AmRadioButtonDisabledUnselectedPreview() {
             modifier = Modifier.padding(10.dp),
             selected = isSelected,
             enabled = false,
-            onClick = { isSelected = true }
+            onClick = { isSelected = !isSelected }
         )
     }
 }
@@ -154,7 +169,7 @@ private fun AmRadioButtonDisabledSelectedPreview() {
             modifier = Modifier.padding(10.dp),
             selected = isSelected,
             enabled = false,
-            onClick = { isSelected = true }
+            onClick = { isSelected = !isSelected }
         )
     }
 }
