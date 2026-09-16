@@ -46,7 +46,7 @@ val ScreenCategory.isMediumWidth: Boolean
     get() = width >= WidthCategory.Medium && width < WidthCategory.Expanded
 
 val ScreenCategory.isLandscapePhone: Boolean
-    get() = height == HeightCategory.Compact && width < WidthCategory.Expanded
+    get() = height == HeightCategory.Compact
 
 val ScreenCategory.isPortraitPhone: Boolean
     get() = width == WidthCategory.Compact && height > HeightCategory.Compact
