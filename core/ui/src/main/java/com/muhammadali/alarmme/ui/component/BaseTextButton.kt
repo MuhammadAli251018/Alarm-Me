@@ -62,11 +62,11 @@ internal fun BaseTextButton(
         modifier = modifier
             .height(AmTextButtonDefaults.Height)
             .sizeIn(minWidth = AmTextButtonDefaults.MinWidth)
+            .clip(shape = shape)
+            .background(containerColor)
             .dropShadow(shape) {
                 color = if (pressedState.value) PressedShadowColor else Color.Transparent
             }
-            .clip(shape = shape)
-            .background(containerColor)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,

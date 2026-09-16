@@ -1,0 +1,71 @@
+package com.muhammadali.alarmme.ui.component
+
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
+import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
+
+@Composable
+fun AmOutlineButtonWithIcon(
+    modifier: Modifier = Modifier,
+    text: String,
+    icon: @Composable () -> Unit,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    onClick: () -> Unit
+) {
+    val colors = LocalAlarmMeColors.current
+
+    BaseTextWithIconButton(
+        modifier = modifier,
+        text = text,
+        colors = AmButtonColors.outlined(colors.outline),
+        icon = icon,
+        interactionSource = interactionSource,
+        onClick = onClick
+    )
+}
+
+@Preview(name = "Light Mode", showBackground = true)
+@Preview(
+    name = "Dark Mode",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AmOutlineButtonWithIconPreview() {
+    AlarmMeThemeProvider {
+        val colors = LocalAlarmMeColors.current
+
+        AmOutlineButtonWithIcon(
+            modifier = Modifier.padding(10.dp),
+            text = "Save",
+            icon = { Text(text = "＋", color = colors.onSurface) },
+            onClick = {}
+        )
+    }
+}
+
+@Preview(name = "Light Mode--Pressed", showBackground = true)
+@Preview(
+    name = "Dark Mode--Pressed",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AmOutlineButtonWithIconPressedPreview() {
+    AlarmMeThemeProvider {
+        val colors = LocalAlarmMeColors.current
+
+        AmOutlineButtonWithIcon(
+            modifier = Modifier.padding(10.dp),
+            text = "Save",
+            icon = { Text(text = "＋", color = colors.onSurface) },
+            interactionSource = rememberPressedInteractionSource(),
+            onClick = {}
+        )
+    }
+}
