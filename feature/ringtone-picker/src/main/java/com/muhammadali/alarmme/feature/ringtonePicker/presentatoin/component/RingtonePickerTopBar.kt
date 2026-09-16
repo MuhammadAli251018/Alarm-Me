@@ -12,12 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.hasCustomSoundInTopBar
 import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.screenConstraints
 import com.muhammadali.alarmme.ui.component.AmIconButton
 import com.muhammadali.alarmme.ui.component.AmOutlineButtonWithIcon
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
-import com.muhammadali.alarmme.ui.screenCategory.isExpandedWidthOrWider
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
@@ -53,7 +53,7 @@ fun RingtonePickerTopBar(
             style = typography.titleMedium
         )
 
-        if (currentScreenCategory().isExpandedWidthOrWider) {
+        if (currentScreenCategory().hasCustomSoundInTopBar()) {
             Box(modifier = Modifier.weight(1f)){
                 AmOutlineButtonWithIcon(
                     modifier = Modifier.align(Alignment.CenterEnd),

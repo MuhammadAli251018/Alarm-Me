@@ -35,6 +35,32 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
+data class RingtoneItem(
+    val id: String,
+    val title: String,
+    val description: String,
+    val duration: Duration
+)
+
+@Composable
+fun RingtoneItem(
+    modifier: Modifier = Modifier,
+    ringtone: RingtoneItem,
+    selected: Boolean,
+    playing: Boolean,
+    onClick: () -> Unit,
+    onSelect: () -> Unit
+) = RingtoneItem(
+    modifier = modifier,
+    title = ringtone.title,
+    description = ringtone.description,
+    duration = ringtone.duration,
+    selected = selected,
+    playing = playing,
+    onClick = onClick,
+    onSelect = onSelect
+)
+
 @Composable
 fun RingtoneItem(
     modifier: Modifier = Modifier,
@@ -133,9 +159,7 @@ private fun getRingtoneStatusBadge(isPlaying: Boolean, selected: Boolean): Strin
 
 private fun getRingtoneMeta(duration: Duration, description: String): String {
     val minutes = duration.inWholeMinutes.toString().padStart(2, '0')
-    val seconds = duration
-        .run { inWholeSeconds % inWholeMinutes }
-        .toString().padStart(2, '0')
+    val seconds = (duration.inWholeSeconds % 60).toString().padStart(2, '0')
     val durationFormat = "$minutes:$seconds"
     return "$description · $durationFormat"
 }
