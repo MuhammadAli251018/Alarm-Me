@@ -1,5 +1,6 @@
-package com.muhammadali.alarmme.feature.ringtonePicker.component
+package com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.component
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -146,7 +147,7 @@ private fun getRingtonePausePlayIcon(isPlaying: Boolean): String {
 @Preview(name = "Light Mode--Idle", showBackground = true)
 @Preview(
     name = "Dark Mode--Idle",
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+    uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun RingtoneItemIdlePreview() {
@@ -172,7 +173,7 @@ private fun RingtoneItemIdlePreview() {
 @Preview(name = "Light Mode--Playing", showBackground = true)
 @Preview(
     name = "Dark Mode--Playing",
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+    uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun RingtoneItemPlayingPreview() {
@@ -198,7 +199,7 @@ private fun RingtoneItemPlayingPreview() {
 @Preview(name = "Light Mode--Selected", showBackground = true)
 @Preview(
     name = "Dark Mode--Selected",
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+    uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun RingtoneItemSelectedPreview() {
@@ -224,7 +225,7 @@ private fun RingtoneItemSelectedPreview() {
 @Preview(name = "Light Mode--Selected Playing", showBackground = true)
 @Preview(
     name = "Dark Mode--Selected Playing",
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+    uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun RingtoneItemSelectedPlayingPreview() {
