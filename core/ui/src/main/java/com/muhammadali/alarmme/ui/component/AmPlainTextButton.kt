@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
@@ -20,21 +21,18 @@ fun AmPlainTextButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    selected: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: () -> Unit
 ) {
     val colors = LocalAlarmMeColors.current
 
     BaseTextButton(
-        modifier = modifier
-            .selectedOutline(
-                color = colors.primary,
-                shape = LocalAlarmMeShapes.current.full,
-                isSelected = { selected }
-            ),
+        modifier = modifier,
         text = text,
-        colors = AmButtonColors.outlined(colors.onSurface),
+        colors = AmButtonColors.solid(
+            containerColor = Color.Transparent,
+            contentColor = colors.onSurface
+        ),
         enabled = enabled,
         interactionSource = interactionSource,
         onClick = onClick
@@ -54,26 +52,6 @@ private fun AmPlainTextButtonPreview() {
             text = "Select all",
             onClick = {}
         )
-    }
-}
-
-@Preview(name = "Light Mode--Selected", showBackground = true)
-@Preview(
-    name = "Dark Mode--Selected",
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun AmPlainTextButtonSelectedPreview() {
-    var isSelected by remember { mutableStateOf(true) }
-
-    AlarmMeThemeProvider {
-        AmPlainTextButton(
-            modifier = Modifier.padding(10.dp),
-            text = "Select all",
-            selected = isSelected
-        ) {
-            isSelected = !isSelected
-        }
     }
 }
 

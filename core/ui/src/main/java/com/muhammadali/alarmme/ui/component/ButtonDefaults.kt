@@ -8,40 +8,60 @@ internal const val DisabledContainerAlpha = 0.12f
 internal const val DisabledContentAlpha = 0.38f
 internal val PressedShadowColor = Color.Black.copy(alpha = 0.15f)
 
-/**
- * The active/disabled container+content pair every button-shaped [BaseTextButton], [BaseFabButton]
- * and [BaseIconButton] variant needs. Both states travel together so the base composable can pick
- * between them off [enabled] without the caller resolving disabled alpha itself.
- */
 internal data class AmButtonColors(
     val containerColor: Color,
     val contentColor: Color,
     val disabledContainerColor: Color,
-    val disabledContentColor: Color
+    val disabledContentColor: Color,
+    val outlineColor: Color
 ) {
     companion object
 }
 
-/** A filled look: colored container, disabled state dims toward [LocalAlarmMeColors.onSurface]. */
 @Composable
-internal fun AmButtonColors.Companion.solid(containerColor: Color, contentColor: Color): AmButtonColors {
+internal fun AmButtonColors.Companion.colors(
+    containerColor: Color,
+    contentColor: Color,
+    outlineColor: Color,
+    disabledContainerColor: Color = containerColor.copy(alpha = DisabledContainerAlpha),
+    disabledContentColor: Color = contentColor.copy(alpha = DisabledContentAlpha)
+): AmButtonColors {
+    return AmButtonColors(
+        containerColor,
+        contentColor,
+        disabledContainerColor,
+        disabledContentColor,
+        outlineColor
+    )
+}
+
+@Composable
+internal fun AmButtonColors.Companion.solid(
+    containerColor: Color,
+    contentColor: Color
+): AmButtonColors {
     val onSurface = LocalAlarmMeColors.current.onSurface
     return AmButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
         disabledContainerColor = onSurface.copy(alpha = DisabledContainerAlpha),
-        disabledContentColor = onSurface.copy(alpha = DisabledContentAlpha)
+        disabledContentColor = onSurface.copy(alpha = DisabledContentAlpha),
+        outlineColor = Color.Transparent
     )
 }
 
-/** A transparent-container look: only the content color carries meaning. */
 @Composable
-internal fun AmButtonColors.Companion.outlined(contentColor: Color): AmButtonColors {
+internal fun AmButtonColors.Companion.outlined(
+    outlineColor: Color,
+    contentColor: Color = LocalAlarmMeColors.current.onSurface,
+    containerColor: Color = LocalAlarmMeColors.current.surface
+): AmButtonColors {
     val onSurface = LocalAlarmMeColors.current.onSurface
     return AmButtonColors(
-        containerColor = Color.Transparent,
+        containerColor = containerColor,
         contentColor = contentColor,
         disabledContainerColor = onSurface.copy(alpha = DisabledContainerAlpha),
-        disabledContentColor = onSurface.copy(alpha = DisabledContentAlpha)
+        disabledContentColor = onSurface.copy(alpha = DisabledContentAlpha),
+        outlineColor = outlineColor
     )
 }

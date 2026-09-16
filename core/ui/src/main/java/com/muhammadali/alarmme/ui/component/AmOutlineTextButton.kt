@@ -1,7 +1,10 @@
 package com.muhammadali.alarmme.ui.component
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,6 +18,9 @@ import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 
+private val DefaultBorderWidth = 1.dp
+private val PressedBorderWidth = 2.dp
+
 @Composable
 fun AmOutlineTextButton(
     text: String,
@@ -25,8 +31,14 @@ fun AmOutlineTextButton(
     onClick: () -> Unit
 ) {
     val colors = LocalAlarmMeColors.current
-    val buttonColors = AmButtonColors.outlined(colors.onSurface)
-    val borderColor = if (enabled) buttonColors.contentColor else buttonColors.disabledContentColor
+    val buttonColors = AmButtonColors.outlined(colors.outline)
+    val borderColor = if (enabled) buttonColors.outlineColor else buttonColors.disabledContentColor
+    val pressedState = interactionSource.collectIsPressedAsState()
+    val borderWidth by animateDpAsState(
+        targetValue = if (pressedState.value) PressedBorderWidth else DefaultBorderWidth,
+        animationSpec = tween(durationMillis = 150),
+        label = "borderWidth"
+    )
 
     BaseTextButton(
         modifier = modifier
@@ -35,7 +47,7 @@ fun AmOutlineTextButton(
                 shape = LocalAlarmMeShapes.current.full,
                 isSelected = { selected }
             )
-            .border(1.dp, borderColor, LocalAlarmMeShapes.current.full),
+            .border(borderWidth, borderColor, LocalAlarmMeShapes.current.full),
         text = text,
         colors = buttonColors,
         enabled = enabled,
