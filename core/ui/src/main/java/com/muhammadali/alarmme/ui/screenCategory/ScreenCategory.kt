@@ -41,11 +41,13 @@ data class ScreenCategory(
     }
 }
 
-/** A phone held in landscape: short window that is not wide enough to be a tablet/desktop. */
+
+val ScreenCategory.isMediumWidth: Boolean
+    get() = width >= WidthCategory.Medium && width < WidthCategory.Expanded
+
 val ScreenCategory.isLandscapePhone: Boolean
     get() = height == HeightCategory.Compact && width < WidthCategory.Expanded
 
-/** A phone held in portrait: narrow window with room to scroll vertically. */
 val ScreenCategory.isPortraitPhone: Boolean
     get() = width == WidthCategory.Compact && height > HeightCategory.Compact
 
@@ -53,6 +55,5 @@ val ScreenCategory.isPortraitPhone: Boolean
 val ScreenCategory.isPhone: Boolean
     get() = isLandscapePhone || isPortraitPhone
 
-/** Enough width for multi-pane layouts. */
 val ScreenCategory.isExpandedWidthOrWider: Boolean
     get() = width >= WidthCategory.Expanded
