@@ -34,8 +34,8 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 
 
 object AmTextWithIconButtonDefaults {
-    val Height: Dp = 48.dp
-    val MinWidth: Dp = 88.dp
+    val MinHeight: Dp = 48.dp
+    val MinWidth: Dp = 48.dp
     val ContentHorizontalPadding: Dp = 24.dp
 }
 
@@ -66,8 +66,10 @@ internal fun BaseTextWithIconButton(
 
     Box(
         modifier = modifier
-            .height(AmTextWithIconButtonDefaults.Height)
-            .sizeIn(minWidth = AmTextWithIconButtonDefaults.MinWidth)
+            .sizeIn(
+                minWidth = AmTextWithIconButtonDefaults.MinWidth,
+                minHeight = AmTextWithIconButtonDefaults.MinHeight
+            )
             .border(borderWidth, borderColor, shape)
             .clip(shape = shape)
             .background(containerColor)
