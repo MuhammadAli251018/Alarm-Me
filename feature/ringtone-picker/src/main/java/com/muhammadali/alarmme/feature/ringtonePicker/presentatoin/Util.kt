@@ -12,13 +12,13 @@ import com.muhammadali.alarmme.ui.screenCategory.isMediumWidth
 import com.muhammadali.alarmme.ui.screenCategory.isPhone
 
 private const val PHONES_SCREEN_HORIZONTAL_PADDINGS = 20
-private const val MEDIUM_SCREEN_MAX_WIDTH = 480
-private const val EXPANDED_SCREEN_MAX_WIDTH = 640
+private const val MEDIUM_SCREEN_HORIZONTAL_PADDINGS = 32
+private const val EXPANDED_SCREEN_HORIZONTAL_PADDINGS = 48
 
 internal fun Modifier.screenConstraints(screenCategory: ScreenCategory): Modifier = when {
     screenCategory.isPhone -> padding(horizontal = PHONES_SCREEN_HORIZONTAL_PADDINGS.dp)
-    screenCategory.isExpandedWidthOrWider -> sizeIn(maxWidth = EXPANDED_SCREEN_MAX_WIDTH.dp)
-    screenCategory.isMediumWidth -> sizeIn(maxWidth = MEDIUM_SCREEN_MAX_WIDTH.dp)
+    screenCategory.isExpandedWidthOrWider -> padding(horizontal = MEDIUM_SCREEN_HORIZONTAL_PADDINGS.dp)
+    screenCategory.isMediumWidth -> padding(horizontal = EXPANDED_SCREEN_HORIZONTAL_PADDINGS.dp)
     else -> this
 }
 

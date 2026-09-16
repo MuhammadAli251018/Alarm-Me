@@ -68,11 +68,7 @@ fun RingtonePickerScreenContent(
     onRetry: () -> Unit,
 ) {
     when (state) {
-        RingtonePickerState.Loading -> LoadingRingtoneScreenContent(
-            modifier = modifier,
-            onBackClick = onBackClick,
-            onCustomSoundClick = onCustomSoundClick
-        )
+        RingtonePickerState.Loading -> LoadingRingtoneScreenContent(modifier = modifier)
 
         RingtonePickerState.Error -> ErrorScreenContent(
             modifier = modifier,
@@ -95,21 +91,9 @@ fun RingtonePickerScreenContent(
 }
 
 @Composable
-fun LoadingRingtoneScreenContent(
-    modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
-    onCustomSoundClick: () -> Unit,
-) {
-    Column(modifier = modifier.fillMaxSize()) {
-        RingtonePickerTopBar(
-            modifier = Modifier.fillMaxWidth(),
-            onBackClick = onBackClick,
-            onCustomSoundClick = onCustomSoundClick
-        )
-
-        Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(color = LocalAlarmMeColors.current.primary)
-        }
+fun LoadingRingtoneScreenContent(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(color = LocalAlarmMeColors.current.primary)
     }
 }
 
@@ -133,9 +117,7 @@ fun RingtoneScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RingtonePickerTopBar(
-                modifier = Modifier
-                    .screenConstraints(screenCategory)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 onBackClick = onBackClick,
                 onCustomSoundClick = onCustomSoundClick
             )
