@@ -22,6 +22,7 @@ import com.muhammadali.alarmme.ui.component.AmSquaryFilledTextButton
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.isExpandedWidthOrWider
+import com.muhammadali.alarmme.ui.screenCategory.isLandscapePhone
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
@@ -73,7 +74,7 @@ fun ScreenDetailsTopBar(
             )
         }
 
-        if (currentScreenCategory.isExpandedWidthOrWider) {
+        if (currentScreenCategory.isExpandedWidthOrWider || currentScreenCategory.isLandscapePhone) {
 
             AmPlainTextButton(
                 text = "Delete",
