@@ -28,6 +28,7 @@ android {
 
 dependencies {
     implementation(projects.core.utility.compose)
+    implementation(projects.core.utility.kotlinDateTime)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)

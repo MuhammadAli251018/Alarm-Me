@@ -24,7 +24,7 @@ android {
 
 dependencies {
     // Datetime
-    implementation(libs.kotlinx.datetime)
+    api(libs.kotlinx.datetime)
 
     testImplementation(platform(libs.kotest.bom))
     testImplementation(platform(libs.koin.bom))
