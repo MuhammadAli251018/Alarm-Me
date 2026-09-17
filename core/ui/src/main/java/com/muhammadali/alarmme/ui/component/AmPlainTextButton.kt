@@ -19,19 +19,21 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 @Composable
 fun AmPlainTextButton(
     text: String,
+    contentColor: Color = LocalAlarmMeColors.current.onSurface,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: () -> Unit
 ) {
-    val colors = LocalAlarmMeColors.current
-
     BaseTextButton(
         modifier = modifier,
         text = text,
-        colors = AmButtonColors.solid(
+        colors = AmButtonColors.colors(
             containerColor = Color.Transparent,
-            contentColor = colors.onSurface
+            contentColor = contentColor,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = contentColor.copy(alpha = 0.55f),
+            outlineColor = Color.Transparent
         ),
         enabled = enabled,
         interactionSource = interactionSource,
