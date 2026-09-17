@@ -32,6 +32,7 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.core.mvi)
     implementation(projects.core.utility.compose)
+    implementation(projects.core.utility.kotlinDateTime)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))

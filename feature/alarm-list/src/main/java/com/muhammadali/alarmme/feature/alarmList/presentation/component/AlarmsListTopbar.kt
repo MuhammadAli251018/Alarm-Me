@@ -28,6 +28,7 @@ import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
+import com.muhammadali.alarmme.utility.kotlinDateTime.now
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
@@ -286,13 +287,6 @@ fun DefaultAlarmsListTopExpandedAndBiggerWidth(
             }
         }
     }
-}
-
-@OptIn(ExperimentalTime::class)
-fun LocalDateTime.Companion.now(): LocalDateTime {
-    val currentMoment = Clock.System.now()
-    val systemZone = TimeZone.currentSystemDefault()
-    return currentMoment.toLocalDateTime(systemZone)
 }
 
 @OptIn(ExperimentalTime::class)
