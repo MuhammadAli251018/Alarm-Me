@@ -1,5 +1,7 @@
 package com.muhammadali.alarmme.ui.component
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -11,8 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -31,6 +38,7 @@ object AmDisclosureRowDefaults {
 fun AmDisclosureRow(
     text: String,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
     trailingContent: @Composable RowScope.() -> Unit,
 ) {
@@ -42,15 +50,21 @@ fun AmDisclosureRow(
             .fillMaxWidth()
             .height(AmDisclosureRowDefaults.Height)
             .modifyIf(onClick != null) {
-                clickable(onClick = onClick ?: {})
+                clickable(onClick = onClick ?: {}, enabled = enabled)
             }
             .padding(horizontal = AmDisclosureRowDefaults.HorizontalPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val contentColor by animateColorAsState(
+            targetValue = if (enabled) colors.onSurface else colors.outline,
+            animationSpec = tween(300),
+            label = "contentColor"
+        )
+
         Text(
             text = text,
             style = typography.bodyLarge,
-            color = colors.onSurface
+            color = contentColor
         )
 
         Spacer(Modifier.weight(1f))
@@ -123,5 +137,131 @@ private fun AmDisclosureRowWithChevronPreview() {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun AmNavigationDisclosureRow(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    value: String? = null,
+    valueColor: Color = LocalAlarmMeColors.current.onSurfaceVariant,
+) {
+    val colors = LocalAlarmMeColors.current
+    val typography = LocalAlarmMeTypography.current
+
+    AmDisclosureRow(
+        text = text,
+        modifier = modifier,
+        onClick = onClick
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (value != null) {
+                Text(
+                    text = value,
+                    style = typography.bodyMedium,
+                    color = valueColor
+                )
+            }
+
+            Text(
+                text = "›",
+                style = typography.bodyLarge,
+                color = colors.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+fun AmToggleDisclosureRow(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    AmDisclosureRow(
+        text = text,
+        enabled = checked,
+        modifier = modifier
+    ) {
+        AmSwitchToggle(
+            checked = checked,
+            enabled = enabled,
+            onCheckedChange = onCheckedChange
+        )
+    }
+}
+
+@Preview(name = "Light Mode", showBackground = true)
+@Preview(
+    name = "Dark Mode",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AmNavigationDisclosureRowPreview() {
+    AlarmMeThemeProvider {
+        AmNavigationDisclosureRow(
+            text = "Sound",
+            value = "Sunrise chime",
+            valueColor = LocalAlarmMeColors.current.primary,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(name = "Light Mode--No Value", showBackground = true)
+@Preview(
+    name = "Dark Mode--No Value",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AmNavigationDisclosureRowNoValuePreview() {
+    AlarmMeThemeProvider {
+        AmNavigationDisclosureRow(
+            text = "Label",
+            onClick = {}
+        )
+    }
+}
+
+@Preview(name = "Light Mode--Checked", showBackground = true)
+@Preview(
+    name = "Dark Mode--Checked",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AmToggleDisclosureRowCheckedPreview() {
+    var isChecked by remember { mutableStateOf(true) }
+
+    AlarmMeThemeProvider {
+        AmToggleDisclosureRow(
+            text = "Gradual volume",
+            checked = isChecked,
+            onCheckedChange = { isChecked = it }
+        )
+    }
+}
+
+@Preview(name = "Light Mode--Unchecked", showBackground = true)
+@Preview(
+    name = "Dark Mode--Unchecked",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AmToggleDisclosureRowUncheckedPreview() {
+    var isChecked by remember { mutableStateOf(false) }
+
+    AlarmMeThemeProvider {
+        AmToggleDisclosureRow(
+            text = "Vibrate",
+            checked = isChecked,
+            onCheckedChange = { isChecked = it }
+        )
     }
 }
