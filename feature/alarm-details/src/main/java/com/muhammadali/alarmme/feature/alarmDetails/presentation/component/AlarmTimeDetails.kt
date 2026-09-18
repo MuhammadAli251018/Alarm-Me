@@ -30,7 +30,8 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun AlarmTimeDetails(
     modifier: Modifier,
-    time: LocalDateTime
+    time: LocalDateTime,
+    onClick: () -> Unit
 ) {
     val colors = LocalAlarmMeColors.current
     val typography = LocalAlarmMeTypography.current
@@ -38,7 +39,8 @@ fun AlarmTimeDetails(
 
     AmSectionCard(
         modifier = modifier.fillMaxWidth(),
-        shape = shapes.medium
+        shape = shapes.medium,
+        onClick = onClick
     ) {
         Column(
             modifier
@@ -122,7 +124,8 @@ private fun AlarmTimeDetailsPreview() {
     AlarmMeThemeProvider {
         AlarmTimeDetails(
             modifier = Modifier.padding(16.dp),
-            time = LocalDateTime(PreviewDate, LocalTime(7, 5))
+            time = LocalDateTime(PreviewDate, LocalTime(7, 5)),
+            onClick = {}
         )
     }
 }
@@ -138,7 +141,8 @@ private fun AlarmTimeDetailsMidnightPreview() {
     AlarmMeThemeProvider {
         AlarmTimeDetails(
             modifier = Modifier.padding(16.dp),
-            time = LocalDateTime(PreviewDate, LocalTime(0, 40))
+            time = LocalDateTime(PreviewDate, LocalTime(0, 40)),
+            onClick = {}
         )
     }
 }
@@ -154,7 +158,8 @@ private fun AlarmTimeDetailsNoonPreview() {
     AlarmMeThemeProvider {
         AlarmTimeDetails(
             modifier = Modifier.padding(16.dp),
-            time = LocalDateTime(PreviewDate, LocalTime(12, 0))
+            time = LocalDateTime(PreviewDate, LocalTime(12, 0)),
+            onClick = {}
         )
     }
 }

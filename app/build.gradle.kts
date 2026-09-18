@@ -42,6 +42,7 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.feature.alarmList)
     implementation(projects.feature.ringtonePicker)
+    implementation(projects.feature.alarmDetails)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)

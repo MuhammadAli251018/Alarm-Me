@@ -88,6 +88,7 @@ class AlarmListScreen : Screen {
             },
             onDeleteSelected = { ids -> dispatch(AlarmsListEvent.OnDeleteAlarms(ids.map { it })) },
             onRetry = { dispatch(AlarmsListEvent.OnRetry) },
+            onDismiss = { /*TODO*/ }
         )
     }
 }
@@ -101,10 +102,11 @@ fun AlarmListScreenContent(
     onDisableSelected: (List<AlarmItemId>) -> Unit,
     onDeleteSelected: (List<AlarmItemId>) -> Unit,
     onRetry: () -> Unit,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (state) {
-        AlarmsListState.Error -> ErrorAlarmListScreenContent(modifier, onRetry)
+        AlarmsListState.Error -> ErrorAlarmListScreenContent(modifier, onRetry, onDismiss)
         AlarmsListState.Loading -> LoadingAlarmListScreenContent(modifier)
         is AlarmsListState.Loaded -> LoadedAlarmListScreenContent(
             alarms = state.alarms,
@@ -277,14 +279,16 @@ fun BottomFade(modifier: Modifier) {
 @Composable
 fun ErrorAlarmListScreenContent(
     modifier: Modifier = Modifier,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     ErrorScreenContent(
         modifier = modifier,
         errorHeading = "Couldn't load your alarms",
         errorDescription = "The alarm database didn't open. Your alarms are still saved — " +
             "nothing was deleted.",
-        onRetry = onRetry
+        onRetry = onRetry,
+        onDismiss = onDismiss
     )
 }
 

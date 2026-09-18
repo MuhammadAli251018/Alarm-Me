@@ -1,54 +1,100 @@
 package com.muhammadali.alarmme.feature.alarmDetails.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
+import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetails
+import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsId
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.AlarmSettingsDetails
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.AlarmTimeDetails
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.ScheduleDetails
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.ScreenDetailsTopBar
+import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEvent
+import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsState
+import com.muhammadali.alarmme.ui.component.AmPlainTextButton
+import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import com.muhammadali.alarmme.ui.screenCategory.ScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.isExpandedWidthOrWider
 import com.muhammadali.alarmme.ui.screenCategory.isLandscapePhone
+import com.muhammadali.alarmme.ui.screenCategory.isMediumWidth
+import com.muhammadali.alarmme.ui.screenCategory.isPhone
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
-import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import org.koin.core.parameter.parametersOf
 
-class AlarmDetailsScreen : Screen {
+class AlarmDetailsScreen(val alarmId: AlarmDetailsId) : Screen {
 
     @Composable
     override fun Content() {
-        TODO("Not yet implemented")
+        val screenModel: AlarmDetailsScreenModel =
+            koinScreenModel(parameters = { parametersOf(alarmId) })
+        val state by screenModel.state.collectAsState()
+        val dispatch = screenModel::handleEvent
+
+        AlarmDetailsScreenContent(
+            modifier = Modifier
+                .imePadding()
+                .systemBarsPadding()
+                .fillMaxSize()
+                .background(LocalAlarmMeColors.current.background),
+            state = state,
+            onBackClick = {}, // TODO: navigate back once navigation is wired up
+            onAlarmTimeClick = { dispatch(AlarmDetailsEvent.OnAlarmTimeClick) },
+            onSaveClick = { dispatch(AlarmDetailsEvent.OnSaveClick) },
+            onDeleteClick = { dispatch(AlarmDetailsEvent.OnDeleteClick) },
+            onDayToggle = { day -> dispatch(AlarmDetailsEvent.OnDayToggle(day)) },
+            onCustomDateToggle = { enabled -> dispatch(AlarmDetailsEvent.OnCustomDateToggle(enabled)) },
+            onCustomDateRowClick = { dispatch(AlarmDetailsEvent.OnCustomDateRowClick) },
+            onSoundClick = { dispatch(AlarmDetailsEvent.OnSoundClick) },
+            onSnoozeClick = { dispatch(AlarmDetailsEvent.OnSnoozeClick) },
+            onGradualVolumeToggle = { enabled -> dispatch(AlarmDetailsEvent.OnGradualVolumeToggle(enabled)) },
+            onVibrateToggle = { enabled -> dispatch(AlarmDetailsEvent.OnVibrateToggle(enabled)) },
+            onLabelClick = { dispatch(AlarmDetailsEvent.OnLabelClick) },
+            onRetry = { dispatch(AlarmDetailsEvent.OnRetry) },
+            onDismiss = { /*TODO*/ }
+        )
     }
 }
+private const val PHONES_SCREEN_HORIZONTAL_PADDINGS = 20
+private const val MEDIUM_SCREEN_HORIZONTAL_PADDINGS = 32
+private const val EXPANDED_SCREEN_HORIZONTAL_PADDINGS = 48
 
-/** Left-pane width in [AlarmDetailsHorizontalContent], keyed off the same breakpoint the design uses. */
-private val LandscapePhoneLeftPaneWidth = 352.dp
-private val ExpandedLeftPaneWidth = 480.dp
+
+internal fun Modifier.screenConstraints(screenCategory: ScreenCategory): Modifier = when {
+    screenCategory.isPhone -> padding(horizontal = PHONES_SCREEN_HORIZONTAL_PADDINGS.dp)
+    screenCategory.isExpandedWidthOrWider -> padding(horizontal = MEDIUM_SCREEN_HORIZONTAL_PADDINGS.dp)
+    screenCategory.isMediumWidth -> padding(horizontal = EXPANDED_SCREEN_HORIZONTAL_PADDINGS.dp)
+    else -> this
+}
 
 /** The single-column layout's content, capped/centered from medium width up, per the design. */
 private val VerticalContentMaxWidth = 480.dp
@@ -56,20 +102,67 @@ private val VerticalContentMaxWidth = 480.dp
 @Composable
 fun AlarmDetailsScreenContent(
     modifier: Modifier = Modifier,
-    alarmTitle: String,
-    canSave: Boolean,
-    time: LocalDateTime,
-    repeatDays: Set<DayOfWeek>,
-    customDateEnabled: Boolean,
-    customDateLabel: String,
-    soundLabel: String,
-    snoozeLabel: String,
-    gradualVolumeEnabled: Boolean,
-    vibrateEnabled: Boolean,
-    alarmLabel: String,
+    state: AlarmDetailsState,
+    onBackClick: () -> Unit,
+    onSaveClick: () -> Unit,
+    onAlarmTimeClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onDayToggle: (DayOfWeek) -> Unit,
+    onCustomDateToggle: (Boolean) -> Unit,
+    onCustomDateRowClick: () -> Unit,
+    onSoundClick: () -> Unit,
+    onSnoozeClick: () -> Unit,
+    onGradualVolumeToggle: (Boolean) -> Unit,
+    onVibrateToggle: (Boolean) -> Unit,
+    onLabelClick: () -> Unit,
+    onRetry: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    when (state) {
+        AlarmDetailsState.Loading -> LoadingAlarmDetailsScreenContent(modifier = modifier)
+
+        AlarmDetailsState.Error -> ErrorScreenContent(
+            modifier = modifier,
+            errorHeading = "Couldn't load this alarm",
+            errorDescription = "Something went wrong while loading it. Nothing was changed.",
+            onRetry = onRetry,
+            onDismiss = onDismiss
+        )
+
+        is AlarmDetailsState.Loaded -> AlarmDetailsLoadedContent(
+            modifier = modifier,
+            state = state,
+            onBackClick = onBackClick,
+            onSaveClick = onSaveClick,
+            onDeleteClick = onDeleteClick,
+            onAlarmTimeClick = onAlarmTimeClick,
+            onDayToggle = onDayToggle,
+            onCustomDateToggle = onCustomDateToggle,
+            onCustomDateRowClick = onCustomDateRowClick,
+            onSoundClick = onSoundClick,
+            onSnoozeClick = onSnoozeClick,
+            onGradualVolumeToggle = onGradualVolumeToggle,
+            onVibrateToggle = onVibrateToggle,
+            onLabelClick = onLabelClick
+        )
+    }
+}
+
+@Composable
+fun LoadingAlarmDetailsScreenContent(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(color = LocalAlarmMeColors.current.primary)
+    }
+}
+
+@Composable
+fun AlarmDetailsLoadedContent(
+    modifier: Modifier = Modifier,
+    state: AlarmDetailsState.Loaded,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    onAlarmTimeClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
     onCustomDateRowClick: () -> Unit,
@@ -80,12 +173,13 @@ fun AlarmDetailsScreenContent(
     onLabelClick: () -> Unit,
 ) {
     val screenCategory = currentScreenCategory()
+    val draft = state.draft
 
     Column(modifier = modifier.fillMaxSize()) {
         ScreenDetailsTopBar(
-            modifier = Modifier.fillMaxWidth(),
-            alarmTitle = alarmTitle,
-            canSave = canSave,
+            modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth(),
+            alarmTitle = draft.label,
+            canSave = state.canSave,
             onBackClick = onBackClick,
             onSaveButtonClick = onSaveClick,
             onDeleteButtonClick = onDeleteClick
@@ -94,15 +188,8 @@ fun AlarmDetailsScreenContent(
         if (screenCategory.isLandscapePhone || screenCategory.isExpandedWidthOrWider) {
             AlarmDetailsHorizontalContent(
                 modifier = Modifier.fillMaxSize(),
-                time = time,
-                repeatDays = repeatDays,
-                customDateEnabled = customDateEnabled,
-                customDateLabel = customDateLabel,
-                soundLabel = soundLabel,
-                snoozeLabel = snoozeLabel,
-                gradualVolumeEnabled = gradualVolumeEnabled,
-                vibrateEnabled = vibrateEnabled,
-                alarmLabel = alarmLabel,
+                draft = draft,
+                onAlarmTimeClick = onAlarmTimeClick,
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
                 onCustomDateRowClick = onCustomDateRowClick,
@@ -114,16 +201,11 @@ fun AlarmDetailsScreenContent(
             )
         } else {
             AlarmDetailsVerticalContent(
-                modifier = Modifier.fillMaxSize(),
-                time = time,
-                repeatDays = repeatDays,
-                customDateEnabled = customDateEnabled,
-                customDateLabel = customDateLabel,
-                soundLabel = soundLabel,
-                snoozeLabel = snoozeLabel,
-                gradualVolumeEnabled = gradualVolumeEnabled,
-                vibrateEnabled = vibrateEnabled,
-                alarmLabel = alarmLabel,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .screenConstraints(screenCategory),
+                draft = draft,
+                onAlarmTimeClick = onAlarmTimeClick,
                 onDeleteClick = onDeleteClick,
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
@@ -141,16 +223,8 @@ fun AlarmDetailsScreenContent(
 /** Compact-portrait and medium-width: one scrolling column, capped/centered past medium width. */
 @Composable
 private fun AlarmDetailsVerticalContent(
-    modifier: Modifier = Modifier,
-    time: LocalDateTime,
-    repeatDays: Set<DayOfWeek>,
-    customDateEnabled: Boolean,
-    customDateLabel: String,
-    soundLabel: String,
-    snoozeLabel: String,
-    gradualVolumeEnabled: Boolean,
-    vibrateEnabled: Boolean,
-    alarmLabel: String,
+    draft: AlarmDetails,
+    onAlarmTimeClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
@@ -160,10 +234,8 @@ private fun AlarmDetailsVerticalContent(
     onGradualVolumeToggle: (Boolean) -> Unit,
     onVibrateToggle: (Boolean) -> Unit,
     onLabelClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val colors = LocalAlarmMeColors.current
-    val typography = LocalAlarmMeTypography.current
-
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -171,13 +243,17 @@ private fun AlarmDetailsVerticalContent(
             .padding(horizontal = 24.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
-        AlarmTimeDetails(modifier = Modifier.fillMaxWidth(), time = time)
+        AlarmTimeDetails(
+            modifier = Modifier.fillMaxWidth(),
+            time = draft.time,
+            onClick = onAlarmTimeClick
+        )
 
         ScheduleDetails(
             modifier = Modifier.fillMaxWidth(),
-            repeatDays = repeatDays,
-            customDateEnabled = customDateEnabled,
-            customDateLabel = customDateLabel,
+            repeatDays = draft.repeatDays,
+            customDateEnabled = draft.customDateEnabled,
+            customDateLabel = draft.customDates.toCustomDateLabel(),
             onDayToggle = onDayToggle,
             onCustomDateToggle = onCustomDateToggle,
             onCustomDateRowClick = onCustomDateRowClick
@@ -185,11 +261,11 @@ private fun AlarmDetailsVerticalContent(
 
         AlarmSettingsDetails(
             modifier = Modifier.fillMaxWidth(),
-            soundLabel = soundLabel,
-            snoozeLabel = snoozeLabel,
-            gradualVolumeEnabled = gradualVolumeEnabled,
-            vibrateEnabled = vibrateEnabled,
-            alarmLabel = alarmLabel,
+            soundLabel = draft.soundName,
+            snoozeLabel = draft.toSnoozeLabel(),
+            gradualVolumeEnabled = draft.gradualVolumeEnabled,
+            vibrateEnabled = draft.vibrateEnabled,
+            alarmLabel = draft.label,
             onSoundClick = onSoundClick,
             onSnoozeClick = onSnoozeClick,
             onGradualVolumeToggle = onGradualVolumeToggle,
@@ -197,35 +273,19 @@ private fun AlarmDetailsVerticalContent(
             onLabelClick = onLabelClick
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .clickable(onClick = onDeleteClick),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Delete alarm",
-                style = typography.labelLarge,
-                color = colors.error
-            )
-        }
+        AmPlainTextButton(
+            text = "Delete alarm",
+            contentColor = LocalAlarmMeColors.current.error,
+            onClick = onDeleteClick
+        )
     }
 }
 
 /** Landscape-phone and expanded-width: two independently-scrolling panes side by side. */
 @Composable
 private fun AlarmDetailsHorizontalContent(
-    modifier: Modifier = Modifier,
-    time: LocalDateTime,
-    repeatDays: Set<DayOfWeek>,
-    customDateEnabled: Boolean,
-    customDateLabel: String,
-    soundLabel: String,
-    snoozeLabel: String,
-    gradualVolumeEnabled: Boolean,
-    vibrateEnabled: Boolean,
-    alarmLabel: String,
+    draft: AlarmDetails,
+    onAlarmTimeClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
     onCustomDateRowClick: () -> Unit,
@@ -234,19 +294,15 @@ private fun AlarmDetailsHorizontalContent(
     onGradualVolumeToggle: (Boolean) -> Unit,
     onVibrateToggle: (Boolean) -> Unit,
     onLabelClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = LocalAlarmMeColors.current
     val screenCategory = currentScreenCategory()
-    val leftPaneWidth = if (screenCategory.isExpandedWidthOrWider) {
-        ExpandedLeftPaneWidth
-    } else {
-        LandscapePhoneLeftPaneWidth
-    }
 
     Row(modifier = modifier) {
         Column(
             modifier = Modifier
-                .width(leftPaneWidth)
+                .leftPaneWidth(screenCategory)
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
                 .drawBehind {
@@ -260,13 +316,17 @@ private fun AlarmDetailsHorizontalContent(
                 .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            AlarmTimeDetails(modifier = Modifier.fillMaxWidth(), time = time)
+            AlarmTimeDetails(
+                modifier = Modifier.fillMaxWidth(),
+                time = draft.time,
+                onClick = onAlarmTimeClick
+            )
 
             ScheduleDetails(
                 modifier = Modifier.fillMaxWidth(),
-                repeatDays = repeatDays,
-                customDateEnabled = customDateEnabled,
-                customDateLabel = customDateLabel,
+                repeatDays = draft.repeatDays,
+                customDateEnabled = draft.customDateEnabled,
+                customDateLabel = draft.customDates.toCustomDateLabel(),
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
                 onCustomDateRowClick = onCustomDateRowClick
@@ -282,11 +342,11 @@ private fun AlarmDetailsHorizontalContent(
         ) {
             AlarmSettingsDetails(
                 modifier = Modifier.fillMaxWidth(),
-                soundLabel = soundLabel,
-                snoozeLabel = snoozeLabel,
-                gradualVolumeEnabled = gradualVolumeEnabled,
-                vibrateEnabled = vibrateEnabled,
-                alarmLabel = alarmLabel,
+                soundLabel = draft.soundName,
+                snoozeLabel = draft.toSnoozeLabel(),
+                gradualVolumeEnabled = draft.gradualVolumeEnabled,
+                vibrateEnabled = draft.vibrateEnabled,
+                alarmLabel = draft.label,
                 onSoundClick = onSoundClick,
                 onSnoozeClick = onSnoozeClick,
                 onGradualVolumeToggle = onGradualVolumeToggle,
@@ -297,37 +357,67 @@ private fun AlarmDetailsHorizontalContent(
     }
 }
 
+/** Left-pane width in [AlarmDetailsHorizontalContent], keyed off the same breakpoint the design uses. */
+private val LandscapePhoneLeftPaneWidth = 352.dp
+private val ExpandedLeftPaneWidth = 480.dp
+
+
+private fun Modifier.leftPaneWidth(screenCategory: ScreenCategory): Modifier {
+    val width = if (screenCategory.isExpandedWidthOrWider)
+        ExpandedLeftPaneWidth
+    else
+        LandscapePhoneLeftPaneWidth
+
+    return this.width(width)
+}
+
+private fun AlarmDetails.toSnoozeLabel(): String =
+    "$snoozeDurationMinutes min · $snoozeCount times"
+
+private fun List<LocalDate>.toCustomDateLabel(): String {
+    if (isEmpty()) return "No dates set"
+    val month = first().month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
+    return "$month " + joinToString(", ") { it.day.toString() }
+}
+
 private val PreviewDate = LocalDate(2026, 9, 17)
 
-private fun previewRepeatDays(): Set<DayOfWeek> = setOf(
-    DayOfWeek.MONDAY,
-    DayOfWeek.TUESDAY,
-    DayOfWeek.WEDNESDAY,
-    DayOfWeek.THURSDAY,
-    DayOfWeek.FRIDAY
+private fun previewAlarmDetails(): AlarmDetails = AlarmDetails(
+    id = AlarmDetailsId("weekday"),
+    label = "Weekday mornings",
+    time = LocalDateTime(PreviewDate, LocalTime(6, 40)),
+    repeatDays = setOf(
+        DayOfWeek.MONDAY,
+        DayOfWeek.TUESDAY,
+        DayOfWeek.WEDNESDAY,
+        DayOfWeek.THURSDAY,
+        DayOfWeek.FRIDAY
+    ),
+    customDateEnabled = false,
+    customDates = listOf(
+        LocalDate(2026, 9, 20),
+        LocalDate(2026, 9, 24),
+        LocalDate(2026, 9, 28)
+    ),
+    soundName = "Sunrise chime",
+    snoozeDurationMinutes = 9,
+    snoozeCount = 3,
+    gradualVolumeEnabled = true,
+    vibrateEnabled = false,
 )
 
 @Composable
-private fun PreviewAlarmDetailsScreen(canSave: Boolean = true) {
+private fun PreviewAlarmDetailsScreen(state: AlarmDetailsState) {
     AlarmMeThemeProvider {
         AlarmDetailsScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .background(LocalAlarmMeColors.current.background),
-            alarmTitle = "Weekday mornings, gently",
-            canSave = canSave,
-            time = LocalDateTime(PreviewDate, LocalTime(6, 40)),
-            repeatDays = previewRepeatDays(),
-            customDateEnabled = false,
-            customDateLabel = "Sep 20, 24, 28",
-            soundLabel = "Sunrise chime",
-            snoozeLabel = "9 min · 3 times",
-            gradualVolumeEnabled = true,
-            vibrateEnabled = false,
-            alarmLabel = "Weekday mornings",
+            state = state,
             onBackClick = {},
             onSaveClick = {},
             onDeleteClick = {},
+            onAlarmTimeClick = {},
             onDayToggle = {},
             onCustomDateToggle = {},
             onCustomDateRowClick = {},
@@ -335,7 +425,9 @@ private fun PreviewAlarmDetailsScreen(canSave: Boolean = true) {
             onSnoozeClick = {},
             onGradualVolumeToggle = {},
             onVibrateToggle = {},
-            onLabelClick = {}
+            onLabelClick = {},
+            onRetry = {},
+            onDismiss = {}
         )
     }
 }
@@ -347,5 +439,31 @@ private fun PreviewAlarmDetailsScreen(canSave: Boolean = true) {
 @CommonScreenCategoriesPreview
 @Composable
 private fun AlarmDetailsScreenContentPreview() {
-    PreviewAlarmDetailsScreen()
+    val details = previewAlarmDetails()
+    PreviewAlarmDetailsScreen(AlarmDetailsState.Loaded(original = details, draft = details))
+}
+
+/** A dirty draft (custom date toggled on) so Save shows enabled. */
+@CommonScreenCategoriesPreview
+@Composable
+private fun AlarmDetailsScreenContentUnsavedChangesPreview() {
+    val details = previewAlarmDetails()
+    PreviewAlarmDetailsScreen(
+        AlarmDetailsState.Loaded(
+            original = details,
+            draft = details.copy(customDateEnabled = true)
+        )
+    )
+}
+
+@CommonScreenCategoriesPreview
+@Composable
+private fun AlarmDetailsScreenContentLoadingPreview() {
+    PreviewAlarmDetailsScreen(AlarmDetailsState.Loading)
+}
+
+@CommonScreenCategoriesPreview
+@Composable
+private fun AlarmDetailsScreenContentErrorPreview() {
+    PreviewAlarmDetailsScreen(AlarmDetailsState.Error)
 }

@@ -2,6 +2,7 @@ package com.muhammadali.alarmme.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +34,8 @@ fun ErrorScreenContent(
     modifier: Modifier,
     errorHeading: String,
     errorDescription: String,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     val colors = LocalAlarmMeColors.current
     val typography = LocalAlarmMeTypography.current
@@ -53,7 +55,8 @@ fun ErrorScreenContent(
                 modifier = Modifier
                     .size(52.dp)
                     .border(1.dp, colors.outlineVariant, LocalAlarmMeShapes.current.full)
-                    .clip(LocalAlarmMeShapes.current.full),
+                    .clip(LocalAlarmMeShapes.current.full)
+                    .clickable(onClick = onDismiss),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -100,6 +103,7 @@ private fun ErrorAlarmListScreenContentPreview() {
             errorDescription = "The alarm database didn't open. Your alarms are still saved — " +
                 "nothing was deleted.",
             onRetry = {},
+            onDismiss = {}
         )
     }
 }

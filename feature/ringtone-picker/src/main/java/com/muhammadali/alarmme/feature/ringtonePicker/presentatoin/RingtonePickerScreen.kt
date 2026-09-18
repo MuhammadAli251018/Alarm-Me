@@ -53,6 +53,7 @@ class RingtonePickerScreen : Screen {
             onRingtoneSelect = { id -> dispatch(RingtonePickerEvent.OnRingtoneSelect(id)) },
             onCustomSoundClick = {}, // TODO: open the custom sound picker once it exists
             onRetry = { dispatch(RingtonePickerEvent.OnRetry) },
+            onDismiss = { /*TODO*/ }
         )
     }
 }
@@ -66,6 +67,7 @@ fun RingtonePickerScreenContent(
     onRingtoneSelect: (String) -> Unit,
     onCustomSoundClick: () -> Unit,
     onRetry: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     when (state) {
         RingtonePickerState.Loading -> LoadingRingtoneScreenContent(modifier = modifier)
@@ -74,7 +76,8 @@ fun RingtonePickerScreenContent(
             modifier = modifier,
             errorHeading = "Couldn't load ringtones",
             errorDescription = "Something went wrong while loading the sounds. Nothing was changed.",
-            onRetry = onRetry
+            onRetry = onRetry,
+            onDismiss = onDismiss
         )
 
         is RingtonePickerState.Loaded -> RingtoneScreenContent(
@@ -221,7 +224,8 @@ private fun RingtonePickerScreenContentLoadingPreview() {
             onRingtoneClick = {},
             onRingtoneSelect = {},
             onCustomSoundClick = {},
-            onRetry = {}
+            onRetry = {},
+            onDismiss = {}
         )
     }
 }
@@ -239,7 +243,8 @@ private fun RingtonePickerScreenContentErrorPreview() {
             onRingtoneClick = {},
             onRingtoneSelect = {},
             onCustomSoundClick = {},
-            onRetry = {}
+            onRetry = {},
+            onDismiss = {}
         )
     }
 }
