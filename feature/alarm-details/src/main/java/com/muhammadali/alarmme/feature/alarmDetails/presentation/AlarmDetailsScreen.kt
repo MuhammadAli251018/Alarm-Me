@@ -173,12 +173,12 @@ fun AlarmDetailsLoadedContent(
     onLabelClick: () -> Unit,
 ) {
     val screenCategory = currentScreenCategory()
-    val draft = state.alarmDetails
+    val alarmDetails = state.alarmDetails
 
     Column(modifier = modifier.fillMaxSize()) {
         ScreenDetailsTopBar(
             modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth(),
-            alarmTitle = draft.label,
+            alarmTitle = alarmDetails.label,
             canSave = state.canSave,
             onBackClick = onBackClick,
             onSaveButtonClick = onSaveClick,
@@ -188,7 +188,7 @@ fun AlarmDetailsLoadedContent(
         if (screenCategory.isLandscapePhone || screenCategory.isExpandedWidthOrWider) {
             AlarmDetailsHorizontalContent(
                 modifier = Modifier.fillMaxSize(),
-                draft = draft,
+                alarmDetails = alarmDetails,
                 onAlarmTimeClick = onAlarmTimeClick,
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
@@ -204,7 +204,7 @@ fun AlarmDetailsLoadedContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .screenConstraints(screenCategory),
-                draft = draft,
+                alarmDetails = alarmDetails,
                 onAlarmTimeClick = onAlarmTimeClick,
                 onDeleteClick = onDeleteClick,
                 onDayToggle = onDayToggle,
@@ -223,7 +223,7 @@ fun AlarmDetailsLoadedContent(
 /** Compact-portrait and medium-width: one scrolling column, capped/centered past medium width. */
 @Composable
 private fun AlarmDetailsVerticalContent(
-    draft: AlarmDetails,
+    alarmDetails: AlarmDetails,
     onAlarmTimeClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
@@ -245,15 +245,15 @@ private fun AlarmDetailsVerticalContent(
     ) {
         AlarmTimeDetails(
             modifier = Modifier.fillMaxWidth(),
-            time = draft.time,
+            time = alarmDetails.time,
             onClick = onAlarmTimeClick
         )
 
         ScheduleDetails(
             modifier = Modifier.fillMaxWidth(),
-            repeatDays = draft.repeatDays,
-            customDateEnabled = draft.customDateEnabled,
-            customDateLabel = draft.customDates.toCustomDateLabel(),
+            repeatDays = alarmDetails.repeatDays,
+            customDateEnabled = alarmDetails.customDateEnabled,
+            customDateLabel = alarmDetails.customDates.toCustomDateLabel(),
             onDayToggle = onDayToggle,
             onCustomDateToggle = onCustomDateToggle,
             onCustomDateRowClick = onCustomDateRowClick
@@ -261,11 +261,11 @@ private fun AlarmDetailsVerticalContent(
 
         AlarmSettingsDetails(
             modifier = Modifier.fillMaxWidth(),
-            soundLabel = draft.soundName,
-            snoozeLabel = draft.toSnoozeLabel(),
-            gradualVolumeEnabled = draft.gradualVolumeEnabled,
-            vibrateEnabled = draft.vibrateEnabled,
-            alarmLabel = draft.label,
+            soundLabel = alarmDetails.soundName,
+            snoozeLabel = alarmDetails.toSnoozeLabel(),
+            gradualVolumeEnabled = alarmDetails.gradualVolumeEnabled,
+            vibrateEnabled = alarmDetails.vibrateEnabled,
+            alarmLabel = alarmDetails.label,
             onSoundClick = onSoundClick,
             onSnoozeClick = onSnoozeClick,
             onGradualVolumeToggle = onGradualVolumeToggle,
@@ -284,7 +284,7 @@ private fun AlarmDetailsVerticalContent(
 /** Landscape-phone and expanded-width: two independently-scrolling panes side by side. */
 @Composable
 private fun AlarmDetailsHorizontalContent(
-    draft: AlarmDetails,
+    alarmDetails: AlarmDetails,
     onAlarmTimeClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
@@ -318,15 +318,15 @@ private fun AlarmDetailsHorizontalContent(
         ) {
             AlarmTimeDetails(
                 modifier = Modifier.fillMaxWidth(),
-                time = draft.time,
+                time = alarmDetails.time,
                 onClick = onAlarmTimeClick
             )
 
             ScheduleDetails(
                 modifier = Modifier.fillMaxWidth(),
-                repeatDays = draft.repeatDays,
-                customDateEnabled = draft.customDateEnabled,
-                customDateLabel = draft.customDates.toCustomDateLabel(),
+                repeatDays = alarmDetails.repeatDays,
+                customDateEnabled = alarmDetails.customDateEnabled,
+                customDateLabel = alarmDetails.customDates.toCustomDateLabel(),
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
                 onCustomDateRowClick = onCustomDateRowClick
@@ -342,11 +342,11 @@ private fun AlarmDetailsHorizontalContent(
         ) {
             AlarmSettingsDetails(
                 modifier = Modifier.fillMaxWidth(),
-                soundLabel = draft.soundName,
-                snoozeLabel = draft.toSnoozeLabel(),
-                gradualVolumeEnabled = draft.gradualVolumeEnabled,
-                vibrateEnabled = draft.vibrateEnabled,
-                alarmLabel = draft.label,
+                soundLabel = alarmDetails.soundName,
+                snoozeLabel = alarmDetails.toSnoozeLabel(),
+                gradualVolumeEnabled = alarmDetails.gradualVolumeEnabled,
+                vibrateEnabled = alarmDetails.vibrateEnabled,
+                alarmLabel = alarmDetails.label,
                 onSoundClick = onSoundClick,
                 onSnoozeClick = onSnoozeClick,
                 onGradualVolumeToggle = onGradualVolumeToggle,
