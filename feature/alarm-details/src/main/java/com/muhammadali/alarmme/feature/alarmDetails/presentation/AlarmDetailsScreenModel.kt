@@ -19,6 +19,7 @@ class AlarmDetailsScreenModel(
 ) {
 
     private var observeJob: Job? = null
+    private var original: AlarmDetails? = null
 
     init {
         observeAlarmDetails()
@@ -57,10 +58,7 @@ class AlarmDetailsScreenModel(
             AlarmDetailsEvent.OnSaveClick -> {
                 val loaded = state.value as? AlarmDetailsState.Loaded ?: return
                 screenModelScope.launch {
-                    alarmDetailsUseCase.saveAlarmDetails(loaded.draft)
-                    updateStateIfInstanceOf<AlarmDetailsState.Loaded> {
-                        copy(original = draft)
-                    }
+                    alarmDetailsUseCase.saveAlarmDetails(loaded.alarmDetails)
                 }
             }
 
@@ -74,7 +72,10 @@ class AlarmDetailsScreenModel(
     }
 
     private inline fun updateDraft(crossinline reducer: (AlarmDetails) -> AlarmDetails) {
-        updateStateIfInstanceOf<AlarmDetailsState.Loaded> { copy(draft = reducer(draft)) }
+        updateStateIfInstanceOf<AlarmDetailsState.Loaded> {
+            val draft = reducer(alarmDetails)
+            copy(alarmDetails = draft, canSave = draft != original)
+        }
     }
 
     /**
@@ -89,10 +90,11 @@ class AlarmDetailsScreenModel(
             alarmDetailsUseCase.getAlarmDetails(alarmId)
                 .catch { _state.value = AlarmDetailsState.Error }
                 .collect { details ->
+                    original = details
                     _state.value = if (details == null) {
                         AlarmDetailsState.Error
                     } else {
-                        AlarmDetailsState.Loaded(original = details, draft = details)
+                        AlarmDetailsState.Loaded(alarmDetails = details, canSave = false)
                     }
                 }
         }

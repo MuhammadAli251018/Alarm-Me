@@ -11,11 +11,9 @@ sealed interface AlarmDetailsState : UiState {
     data object Loading : AlarmDetailsState
 
     data class Loaded(
-        val original: AlarmDetails,
-        val draft: AlarmDetails,
-    ) : AlarmDetailsState {
-        val canSave: Boolean get() = draft != original
-    }
+        val alarmDetails: AlarmDetails,
+        val canSave: Boolean,
+    ) : AlarmDetailsState
 
     data object Error : AlarmDetailsState
 }

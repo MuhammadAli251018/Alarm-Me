@@ -173,7 +173,7 @@ fun AlarmDetailsLoadedContent(
     onLabelClick: () -> Unit,
 ) {
     val screenCategory = currentScreenCategory()
-    val draft = state.draft
+    val draft = state.alarmDetails
 
     Column(modifier = modifier.fillMaxSize()) {
         ScreenDetailsTopBar(
@@ -440,7 +440,7 @@ private fun PreviewAlarmDetailsScreen(state: AlarmDetailsState) {
 @Composable
 private fun AlarmDetailsScreenContentPreview() {
     val details = previewAlarmDetails()
-    PreviewAlarmDetailsScreen(AlarmDetailsState.Loaded(original = details, draft = details))
+    PreviewAlarmDetailsScreen(AlarmDetailsState.Loaded(alarmDetails = details, canSave = false))
 }
 
 /** A dirty draft (custom date toggled on) so Save shows enabled. */
@@ -450,8 +450,8 @@ private fun AlarmDetailsScreenContentUnsavedChangesPreview() {
     val details = previewAlarmDetails()
     PreviewAlarmDetailsScreen(
         AlarmDetailsState.Loaded(
-            original = details,
-            draft = details.copy(customDateEnabled = true)
+            alarmDetails = details.copy(customDateEnabled = true),
+            canSave = true
         )
     )
 }
