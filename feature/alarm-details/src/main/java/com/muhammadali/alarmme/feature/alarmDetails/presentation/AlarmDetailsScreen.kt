@@ -240,7 +240,7 @@ private fun AlarmDetailsVerticalContent(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .widthIn(max = VerticalContentMaxWidth)
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AlarmTimeDetails(

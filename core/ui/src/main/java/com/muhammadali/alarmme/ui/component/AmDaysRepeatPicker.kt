@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.ScreenCategory
+import com.muhammadali.alarmme.ui.screenCategory.WidthCategory
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.isExpandedWidthOrWider
 import com.muhammadali.alarmme.ui.screenCategory.isLandscapePhone
@@ -48,7 +49,7 @@ fun AmDaysRepeatPicker(
         modifier = modifier
             .fillMaxWidth()
             .alpha(if (enabled) 1f else DisabledChipAlpha),
-        horizontalArrangement = Arrangement.spacedBy(chipGap(screenCategory))
+        horizontalArrangement = Arrangement.chipsArrangement(screenCategory)
     ) {
         DayOfWeek.entries.forEach { day ->
             RepeatDayChip(
@@ -64,6 +65,14 @@ fun AmDaysRepeatPicker(
                 onToggle = { onDayToggle(day) }
             )
         }
+    }
+}
+
+private fun Arrangement.chipsArrangement(screenCategory: ScreenCategory): Arrangement.Horizontal {
+    return if (screenCategory.width <= WidthCategory.Compact) {
+        SpaceBetween
+    } else {
+        spacedBy(chipGap(screenCategory))
     }
 }
 
