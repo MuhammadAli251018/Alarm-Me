@@ -19,6 +19,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -36,6 +40,8 @@ import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDeta
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsState
 import com.muhammadali.alarmme.ui.component.AmPlainTextButton
 import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
+import com.muhammadali.alarmme.ui.screen.VerticalDatePickerBottomSheet
+import com.muhammadali.alarmme.ui.screen.VerticalDatePickerDialog
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.ScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
@@ -73,7 +79,7 @@ class AlarmDetailsScreen(val alarmId: AlarmDetailsId) : Screen {
             onDeleteClick = { dispatch(AlarmDetailsEvent.OnDeleteClick) },
             onDayToggle = { day -> dispatch(AlarmDetailsEvent.OnDayToggle(day)) },
             onCustomDateToggle = { enabled -> dispatch(AlarmDetailsEvent.OnCustomDateToggle(enabled)) },
-            onCustomDateRowClick = { dispatch(AlarmDetailsEvent.OnCustomDateRowClick) },
+            onCustomDatesChanged = { dates -> dispatch(AlarmDetailsEvent.OnCustomDatesChanged(dates)) },
             onSoundClick = { dispatch(AlarmDetailsEvent.OnSoundClick) },
             onSnoozeClick = { dispatch(AlarmDetailsEvent.OnSnoozeClick) },
             onGradualVolumeToggle = { enabled -> dispatch(AlarmDetailsEvent.OnGradualVolumeToggle(enabled)) },
@@ -109,7 +115,7 @@ fun AlarmDetailsScreenContent(
     onDeleteClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
-    onCustomDateRowClick: () -> Unit,
+    onCustomDatesChanged: (Set<LocalDate>) -> Unit,
     onSoundClick: () -> Unit,
     onSnoozeClick: () -> Unit,
     onGradualVolumeToggle: (Boolean) -> Unit,
@@ -138,7 +144,7 @@ fun AlarmDetailsScreenContent(
             onAlarmTimeClick = onAlarmTimeClick,
             onDayToggle = onDayToggle,
             onCustomDateToggle = onCustomDateToggle,
-            onCustomDateRowClick = onCustomDateRowClick,
+            onCustomDatesChanged = onCustomDatesChanged,
             onSoundClick = onSoundClick,
             onSnoozeClick = onSnoozeClick,
             onGradualVolumeToggle = onGradualVolumeToggle,
@@ -165,7 +171,7 @@ fun AlarmDetailsLoadedContent(
     onAlarmTimeClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
-    onCustomDateRowClick: () -> Unit,
+    onCustomDatesChanged: (Set<LocalDate>) -> Unit,
     onSoundClick: () -> Unit,
     onSnoozeClick: () -> Unit,
     onGradualVolumeToggle: (Boolean) -> Unit,
@@ -174,6 +180,8 @@ fun AlarmDetailsLoadedContent(
 ) {
     val screenCategory = currentScreenCategory()
     val alarmDetails = state.alarmDetails
+    var showCustomDatePicker by rememberSaveable { mutableStateOf(false) }
+    val isHorizontalScreen = screenCategory.isLandscapePhone || screenCategory.isExpandedWidthOrWider
 
     Column(modifier = modifier.fillMaxSize()) {
         ScreenDetailsTopBar(
@@ -185,14 +193,14 @@ fun AlarmDetailsLoadedContent(
             onDeleteButtonClick = onDeleteClick
         )
 
-        if (screenCategory.isLandscapePhone || screenCategory.isExpandedWidthOrWider) {
+        if (isHorizontalScreen) {
             AlarmDetailsHorizontalContent(
                 modifier = Modifier.fillMaxSize(),
                 alarmDetails = alarmDetails,
                 onAlarmTimeClick = onAlarmTimeClick,
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
-                onCustomDateRowClick = onCustomDateRowClick,
+                onCustomDateRowClick = { showCustomDatePicker = true },
                 onSoundClick = onSoundClick,
                 onSnoozeClick = onSnoozeClick,
                 onGradualVolumeToggle = onGradualVolumeToggle,
@@ -209,7 +217,7 @@ fun AlarmDetailsLoadedContent(
                 onDeleteClick = onDeleteClick,
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
-                onCustomDateRowClick = onCustomDateRowClick,
+                onCustomDateRowClick = { showCustomDatePicker = true },
                 onSoundClick = onSoundClick,
                 onSnoozeClick = onSnoozeClick,
                 onGradualVolumeToggle = onGradualVolumeToggle,
@@ -217,6 +225,48 @@ fun AlarmDetailsLoadedContent(
                 onLabelClick = onLabelClick
             )
         }
+    }
+
+    if (showCustomDatePicker) {
+        var draftDates by remember { mutableStateOf(alarmDetails.customDates.toSet()) }
+
+        AlarmDatePicker(
+            isHorizontal = isHorizontalScreen,
+            draftDates = draftDates,
+            onDateToggle = { date ->
+                draftDates = if (date in draftDates) draftDates - date else draftDates + date
+            },
+            onSave = { dates ->
+                onCustomDatesChanged(dates)
+                showCustomDatePicker = false
+            },
+            onDismiss = { showCustomDatePicker = false }
+        )
+    }
+}
+
+@Composable
+fun AlarmDatePicker(
+    isHorizontal: Boolean,
+    draftDates: Set<LocalDate>,
+    onDateToggle: (LocalDate) -> Unit,
+    onSave: (Set<LocalDate>) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (isHorizontal) {
+        VerticalDatePickerDialog(
+            selectedDates = draftDates,
+            onDateToggle = onDateToggle,
+            onSave = onSave,
+            onDismiss = onDismiss
+        )
+    } else {
+        VerticalDatePickerBottomSheet(
+            selectedDates = draftDates,
+            onDateToggle = onDateToggle,
+            onSave = onSave,
+            onDismiss = onDismiss
+        )
     }
 }
 
@@ -420,7 +470,7 @@ private fun PreviewAlarmDetailsScreen(state: AlarmDetailsState) {
             onAlarmTimeClick = {},
             onDayToggle = {},
             onCustomDateToggle = {},
-            onCustomDateRowClick = {},
+            onCustomDatesChanged = {},
             onSoundClick = {},
             onSnoozeClick = {},
             onGradualVolumeToggle = {},

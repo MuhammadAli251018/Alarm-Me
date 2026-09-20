@@ -2,6 +2,7 @@ package com.muhammadali.alarmme.feature.alarmDetails.presentation.model
 
 import com.muhammadali.alarmme.mvi.UiEvent
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 
 sealed interface AlarmDetailsEvent : UiEvent {
 
@@ -14,8 +15,8 @@ sealed interface AlarmDetailsEvent : UiEvent {
     /** The "Custom date" switch was flipped. */
     data class OnCustomDateToggle(val enabled: Boolean) : AlarmDetailsEvent
 
-    /** The custom-date row was tapped. */
-    data object OnCustomDateRowClick : AlarmDetailsEvent
+    /** The date-picker's Save was tapped with this selection. */
+    data class OnCustomDatesChanged(val dates: Set<LocalDate>) : AlarmDetailsEvent
 
     /** The Sound row was tapped. */
     data object OnSoundClick : AlarmDetailsEvent

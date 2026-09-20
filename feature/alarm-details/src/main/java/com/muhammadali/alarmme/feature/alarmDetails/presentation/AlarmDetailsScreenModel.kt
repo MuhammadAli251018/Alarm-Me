@@ -49,8 +49,11 @@ class AlarmDetailsScreenModel(
                 draft.copy(vibrateEnabled = event.enabled)
             }
 
-            // TODO: wire once the date picker / ringtone picker / snooze / label flows exist.
-            AlarmDetailsEvent.OnCustomDateRowClick,
+            is AlarmDetailsEvent.OnCustomDatesChanged -> updateDraft { draft ->
+                draft.copy(customDates = event.dates.sorted())
+            }
+
+            // TODO: wire once the ringtone picker / snooze / label flows exist.
             AlarmDetailsEvent.OnSoundClick,
             AlarmDetailsEvent.OnSnoozeClick,
             AlarmDetailsEvent.OnLabelClick -> Unit
