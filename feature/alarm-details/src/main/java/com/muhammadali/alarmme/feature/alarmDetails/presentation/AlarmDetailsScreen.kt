@@ -426,8 +426,13 @@ private fun AlarmDetails.toSnoozeLabel(): String =
 
 private fun List<LocalDate>.toCustomDateLabel(): String {
     if (isEmpty()) return "No dates set"
-    val month = first().month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-    return "$month " + joinToString(", ") { it.day.toString() }
+    return sorted()
+        .groupBy { it.month }
+        .entries
+        .joinToString(" · ") { (month, dates) ->
+            val monthName = month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
+            "$monthName " + dates.joinToString(", ") { it.day.toString() }
+        }
 }
 
 private val PreviewDate = LocalDate(2026, 9, 17)
