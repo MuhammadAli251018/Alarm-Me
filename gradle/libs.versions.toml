@@ -24,6 +24,8 @@ voyager = "2.2.21-1.10.3"
 coroutines = "1.11.0"
 # Datetime
 datetime = "0.8.0"
+# Calendar
+kizitonwoseCalendar = "2.7.0"
 # Test
 kotest = "6.2.4"
 
@@ -74,6 +76,9 @@ desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", ver
 
 # Datetime
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
+
+# Calendar
+kizitonwose-calendar-compose = { group = "com.kizitonwose.calendar", name = "compose", version.ref = "kizitonwoseCalendar" }
 
 # Kotest
 kotest-bom = { group = "io.kotest", name = "kotest-bom", version.ref = "kotest" }

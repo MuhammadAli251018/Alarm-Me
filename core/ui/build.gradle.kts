@@ -17,6 +17,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         compose = true
@@ -34,6 +35,13 @@ dependencies {
     implementation(libs.bundles.compose)
 
     debugImplementation(libs.bundles.compose.debug)
+
+    // Datetime
+    implementation(libs.kotlinx.datetime)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    // Calendar
+    implementation(libs.kizitonwose.calendar.compose)
 
     testImplementation(platform(libs.kotest.bom))
     testImplementation(platform(libs.koin.bom))
