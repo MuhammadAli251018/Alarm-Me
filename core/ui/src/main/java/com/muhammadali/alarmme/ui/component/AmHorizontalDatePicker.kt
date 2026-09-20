@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,7 +36,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toKotlinLocalDate
 
 private val ColumnGap = 20.dp
-private val SelectedColumnWidth = 100.dp
+private val SelectedColumnWidth = 80.dp
 private val DividerWidth = 1.dp
 
 @Composable
@@ -85,6 +86,7 @@ fun AmHorizontalDatePicker(
                 contentHeightMode = ContentHeightMode.Wrap,
                 dayContent = { day ->
                     DatePickerDayCell(
+                        modifier = Modifier.padding(2.dp),
                         day = day,
                         selected = selectedDates.contains(day.date.toKotlinLocalDate()),
                         isToday = day.date.toKotlinLocalDate() == today,
@@ -103,8 +105,8 @@ fun AmHorizontalDatePicker(
         )
 
         Column(
-            modifier = Modifier.width(SelectedColumnWidth),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.weight(0.35f),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SelectedDatesEyebrow(count = selectedDates.size)
 
@@ -117,7 +119,9 @@ fun AmHorizontalDatePicker(
                     key = { it.toString() }
                 ) { date ->
                     SelectedDateChip(
-                        modifier = Modifier.width(80.dp),
+                        modifier = Modifier
+                            .sizeIn(minWidth = 85.dp)
+                            .fillMaxWidth(0.5f),
                         date = date,
                         enabled = enabled,
                         onRemove = { onDateToggle(date) }
