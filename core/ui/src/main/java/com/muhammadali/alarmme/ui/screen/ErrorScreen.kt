@@ -1,5 +1,6 @@
 package com.muhammadali.alarmme.ui.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,6 +40,8 @@ fun ErrorScreenContent(
 ) {
     val colors = LocalAlarmMeColors.current
     val typography = LocalAlarmMeTypography.current
+
+    BackHandler(onBack = onDismiss)
 
     Box(
         modifier = modifier,
