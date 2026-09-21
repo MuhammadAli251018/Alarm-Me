@@ -30,6 +30,7 @@ rootProject.name = "AlarmMe"
 include(":app")
 include(":core:ui")
 include(":core:mvi")
+include(":core:navigation")
 include(":core:utility:compose")
 include(":core:utility:kotlin-date-time")
 include(":feature:alarm-list")
