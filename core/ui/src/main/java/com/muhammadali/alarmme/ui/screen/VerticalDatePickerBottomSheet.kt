@@ -41,7 +41,8 @@ fun VerticalDatePickerBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        modifier = modifier
+        modifier = modifier,
+        containerColor = LocalAlarmMeColors.current.surface
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),

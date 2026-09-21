@@ -36,6 +36,7 @@ fun VerticalDatePickerDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier,
+        containerColor = LocalAlarmMeColors.current.surface,
         title = { Text(text = "Set Time", style = typography.titleLarge) },
         text = {
             AmVerticalDatePicker(
