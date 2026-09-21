@@ -17,10 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
 import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.component.RingtoneItem
 import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.component.RingtoneItemsList
 import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.component.RingtonePickerTopBar
@@ -42,13 +42,14 @@ class RingtonePickerScreen : Screen {
         val screenModel: RingtonePickerScreenModel = koinScreenModel()
         val state by screenModel.state.collectAsState()
         val dispatch = screenModel::handleEvent
+        val navigator = LocalNavigator.current
 
         RingtonePickerScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .background(LocalAlarmMeColors.current.background),
             state = state,
-            onBackClick = {}, // TODO: navigate back once navigation is wired up
+            onBackClick = { navigator?.pop() },
             onRingtoneClick = { id -> dispatch(RingtonePickerEvent.OnRingtoneClick(id)) },
             onRingtoneSelect = { id -> dispatch(RingtonePickerEvent.OnRingtoneSelect(id)) },
             onCustomSoundClick = {}, // TODO: open the custom sound picker once it exists

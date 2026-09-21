@@ -19,7 +19,7 @@ class RingtonePickerScreenModel(
     private var observeJob: Job? = null
 
     init {
-        observeRingtones()
+        loadRingtones()
     }
 
     override fun handleEvent(event: RingtonePickerEvent) {
@@ -33,11 +33,11 @@ class RingtonePickerScreenModel(
                 ringtoneProvideUseCase.selectRingtone(event.id)
             }
 
-            RingtonePickerEvent.OnRetry -> observeRingtones()
+            RingtonePickerEvent.OnRetry -> loadRingtones()
         }
     }
 
-    private fun observeRingtones() {
+    private fun loadRingtones() {
         observeJob?.cancel()
         _state.value = RingtonePickerState.Loading
         observeJob = screenModelScope.launch {
