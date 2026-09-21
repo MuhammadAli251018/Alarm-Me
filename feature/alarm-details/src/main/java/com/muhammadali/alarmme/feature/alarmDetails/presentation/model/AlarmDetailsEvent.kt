@@ -3,11 +3,12 @@ package com.muhammadali.alarmme.feature.alarmDetails.presentation.model
 import com.muhammadali.alarmme.mvi.UiEvent
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 
 sealed interface AlarmDetailsEvent : UiEvent {
 
-    /** The alarm time was tapped. */
-    data object OnAlarmTimeClick : AlarmDetailsEvent
+    /** The time-picker's Save was tapped with this time. */
+    data class OnAlarmTimeChanged(val time: LocalDateTime) : AlarmDetailsEvent
 
     /** A repeat-day chip was tapped — flip its membership in the draft's repeat days. */
     data class OnDayToggle(val day: DayOfWeek) : AlarmDetailsEvent

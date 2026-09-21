@@ -40,6 +40,8 @@ import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDeta
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsState
 import com.muhammadali.alarmme.ui.component.AmPlainTextButton
 import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
+import com.muhammadali.alarmme.ui.screen.TimePickerBottomSheet
+import com.muhammadali.alarmme.ui.screen.TimePickerDialog
 import com.muhammadali.alarmme.ui.screen.VerticalDatePickerBottomSheet
 import com.muhammadali.alarmme.ui.screen.VerticalDatePickerDialog
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
@@ -74,7 +76,7 @@ class AlarmDetailsScreen(val alarmId: AlarmDetailsId) : Screen {
                 .background(LocalAlarmMeColors.current.background),
             state = state,
             onBackClick = {}, // TODO: navigate back once navigation is wired up
-            onAlarmTimeClick = { dispatch(AlarmDetailsEvent.OnAlarmTimeClick) },
+            onAlarmTimeChanged = { time -> dispatch(AlarmDetailsEvent.OnAlarmTimeChanged(time)) },
             onSaveClick = { dispatch(AlarmDetailsEvent.OnSaveClick) },
             onDeleteClick = { dispatch(AlarmDetailsEvent.OnDeleteClick) },
             onDayToggle = { day -> dispatch(AlarmDetailsEvent.OnDayToggle(day)) },
@@ -111,7 +113,7 @@ fun AlarmDetailsScreenContent(
     state: AlarmDetailsState,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
-    onAlarmTimeClick: () -> Unit,
+    onAlarmTimeChanged: (LocalDateTime) -> Unit,
     onDeleteClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
@@ -141,7 +143,7 @@ fun AlarmDetailsScreenContent(
             onBackClick = onBackClick,
             onSaveClick = onSaveClick,
             onDeleteClick = onDeleteClick,
-            onAlarmTimeClick = onAlarmTimeClick,
+            onAlarmTimeChanged = onAlarmTimeChanged,
             onDayToggle = onDayToggle,
             onCustomDateToggle = onCustomDateToggle,
             onCustomDatesChanged = onCustomDatesChanged,
@@ -168,7 +170,7 @@ fun AlarmDetailsLoadedContent(
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onAlarmTimeClick: () -> Unit,
+    onAlarmTimeChanged: (LocalDateTime) -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
     onCustomDatesChanged: (Set<LocalDate>) -> Unit,
@@ -181,6 +183,7 @@ fun AlarmDetailsLoadedContent(
     val screenCategory = currentScreenCategory()
     val alarmDetails = state.alarmDetails
     var showCustomDatePicker by rememberSaveable { mutableStateOf(false) }
+    var showTimePicker by rememberSaveable { mutableStateOf(false) }
     val isHorizontalScreen = screenCategory.isLandscapePhone || screenCategory.isExpandedWidthOrWider
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -197,7 +200,7 @@ fun AlarmDetailsLoadedContent(
             AlarmDetailsHorizontalContent(
                 modifier = Modifier.fillMaxSize(),
                 alarmDetails = alarmDetails,
-                onAlarmTimeClick = onAlarmTimeClick,
+                onAlarmTimeClick = { showTimePicker = true },
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
                 onCustomDateRowClick = { showCustomDatePicker = true },
@@ -213,7 +216,7 @@ fun AlarmDetailsLoadedContent(
                     .fillMaxSize()
                     .screenConstraints(screenCategory),
                 alarmDetails = alarmDetails,
-                onAlarmTimeClick = onAlarmTimeClick,
+                onAlarmTimeClick = { showTimePicker = true },
                 onDeleteClick = onDeleteClick,
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
@@ -243,6 +246,27 @@ fun AlarmDetailsLoadedContent(
             onDismiss = { showCustomDatePicker = false }
         )
     }
+
+    if (showTimePicker) {
+        var draftHour by remember { mutableStateOf(alarmDetails.time.toHour12()) }
+        var draftMinute by remember { mutableStateOf(alarmDetails.time.minute) }
+        var draftIsAm by remember { mutableStateOf(alarmDetails.time.isAm()) }
+
+        AlarmTimePicker(
+            isHorizontal = isHorizontalScreen,
+            hour = draftHour,
+            minute = draftMinute,
+            isAm = draftIsAm,
+            onHourChange = { draftHour = it },
+            onMinuteChange = { draftMinute = it },
+            onAmPmChange = { draftIsAm = it },
+            onSave = {
+                onAlarmTimeChanged(alarmDetails.time.withTime(draftHour, draftMinute, draftIsAm))
+                showTimePicker = false
+            },
+            onDismiss = { showTimePicker = false }
+        )
+    }
 }
 
 @Composable
@@ -264,6 +288,43 @@ fun AlarmDatePicker(
         VerticalDatePickerBottomSheet(
             selectedDates = draftDates,
             onDateToggle = onDateToggle,
+            onSave = onSave,
+            onDismiss = onDismiss
+        )
+    }
+}
+
+@Composable
+fun AlarmTimePicker(
+    isHorizontal: Boolean,
+    hour: Int,
+    minute: Int,
+    isAm: Boolean,
+    onHourChange: (Int) -> Unit,
+    onMinuteChange: (Int) -> Unit,
+    onAmPmChange: (Boolean) -> Unit,
+    onSave: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (isHorizontal) {
+        TimePickerDialog(
+            hour = hour,
+            minute = minute,
+            isAm = isAm,
+            onHourChange = onHourChange,
+            onMinuteChange = onMinuteChange,
+            onAmPmChange = onAmPmChange,
+            onSave = onSave,
+            onDismiss = onDismiss
+        )
+    } else {
+        TimePickerBottomSheet(
+            hour = hour,
+            minute = minute,
+            isAm = isAm,
+            onHourChange = onHourChange,
+            onMinuteChange = onMinuteChange,
+            onAmPmChange = onAmPmChange,
             onSave = onSave,
             onDismiss = onDismiss
         )
@@ -435,6 +496,22 @@ private fun List<LocalDate>.toCustomDateLabel(): String {
         }
 }
 
+private fun LocalDateTime.toHour12(): Int {
+    val h = hour % 12
+    return if (h == 0) 12 else h
+}
+
+private fun LocalDateTime.isAm(): Boolean = hour < 12
+
+private fun LocalDateTime.withTime(hour12: Int, minute: Int, isAm: Boolean): LocalDateTime {
+    val hour24 = when {
+        isAm && hour12 == 12 -> 0
+        !isAm && hour12 != 12 -> hour12 + 12
+        else -> hour12
+    }
+    return LocalDateTime(date, LocalTime(hour24, minute))
+}
+
 private val PreviewDate = LocalDate(2026, 9, 17)
 
 private fun previewAlarmDetails(): AlarmDetails = AlarmDetails(
@@ -472,7 +549,7 @@ private fun PreviewAlarmDetailsScreen(state: AlarmDetailsState) {
             onBackClick = {},
             onSaveClick = {},
             onDeleteClick = {},
-            onAlarmTimeClick = {},
+            onAlarmTimeChanged = {},
             onDayToggle = {},
             onCustomDateToggle = {},
             onCustomDatesChanged = {},

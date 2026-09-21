@@ -53,6 +53,10 @@ class AlarmDetailsScreenModel(
                 draft.copy(customDates = event.dates.sorted())
             }
 
+            is AlarmDetailsEvent.OnAlarmTimeChanged -> updateDraft { draft ->
+                draft.copy(time = event.time)
+            }
+
             // TODO: wire once the ringtone picker / snooze / label flows exist.
             AlarmDetailsEvent.OnSoundClick,
             AlarmDetailsEvent.OnSnoozeClick,
@@ -70,7 +74,6 @@ class AlarmDetailsScreenModel(
             }
 
             AlarmDetailsEvent.OnRetry -> observeAlarmDetails()
-            AlarmDetailsEvent.OnAlarmTimeClick -> { /*TODO*/ }
         }
     }
 
