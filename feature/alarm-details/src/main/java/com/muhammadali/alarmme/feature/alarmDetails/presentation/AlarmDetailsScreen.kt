@@ -1,5 +1,6 @@
 package com.muhammadali.alarmme.feature.alarmDetails.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,9 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetails
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsId
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.AlarmSettingsDetails
@@ -38,6 +41,8 @@ import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.Sched
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.ScreenDetailsTopBar
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEvent
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsState
+import com.muhammadali.alarmme.navigation.NavDestination
+import com.muhammadali.alarmme.navigation.navigateTo
 import com.muhammadali.alarmme.ui.component.AmPlainTextButton
 import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screen.TimePickerBottomSheet
@@ -59,14 +64,28 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import org.koin.core.parameter.parametersOf
 
-class AlarmDetailsScreen(val alarmId: AlarmDetailsId) : Screen {
+
+class AlarmDetailsScreen(
+    val startMode: StartMode,
+    val ringtonePickerDestination: NavDestination
+) : Screen {
+
+    sealed interface StartMode {
+        data object New : StartMode
+        data class Edit(val alarmId: AlarmDetailsId) : StartMode
+    }
 
     @Composable
     override fun Content() {
         val screenModel: AlarmDetailsScreenModel =
-            koinScreenModel(parameters = { parametersOf(alarmId) })
+            koinScreenModel(parameters = { parametersOf(startMode) })
         val state by screenModel.state.collectAsState()
         val dispatch = screenModel::handleEvent
+        val navigator = LocalNavigator.current
+        val context = LocalContext.current
+        val missingNavigatorToast = remember {
+            Toast.makeText(context, "Navigator not found, can not navigate", Toast.LENGTH_SHORT)
+        }
 
         AlarmDetailsScreenContent(
             modifier = Modifier
@@ -75,20 +94,20 @@ class AlarmDetailsScreen(val alarmId: AlarmDetailsId) : Screen {
                 .fillMaxSize()
                 .background(LocalAlarmMeColors.current.background),
             state = state,
-            onBackClick = {}, // TODO: navigate back once navigation is wired up
+            onBackClick = { navigator?.pop() ?: missingNavigatorToast.show() },
             onAlarmTimeChanged = { time -> dispatch(AlarmDetailsEvent.OnAlarmTimeChanged(time)) },
             onSaveClick = { dispatch(AlarmDetailsEvent.OnSaveClick) },
             onDeleteClick = { dispatch(AlarmDetailsEvent.OnDeleteClick) },
             onDayToggle = { day -> dispatch(AlarmDetailsEvent.OnDayToggle(day)) },
             onCustomDateToggle = { enabled -> dispatch(AlarmDetailsEvent.OnCustomDateToggle(enabled)) },
             onCustomDatesChanged = { dates -> dispatch(AlarmDetailsEvent.OnCustomDatesChanged(dates)) },
-            onSoundClick = { dispatch(AlarmDetailsEvent.OnSoundClick) },
+            onSoundClick = { navigator?.navigateTo(ringtonePickerDestination)  ?: missingNavigatorToast.show() },
             onSnoozeClick = { dispatch(AlarmDetailsEvent.OnSnoozeClick) },
             onGradualVolumeToggle = { enabled -> dispatch(AlarmDetailsEvent.OnGradualVolumeToggle(enabled)) },
             onVibrateToggle = { enabled -> dispatch(AlarmDetailsEvent.OnVibrateToggle(enabled)) },
             onLabelClick = { dispatch(AlarmDetailsEvent.OnLabelClick) },
             onRetry = { dispatch(AlarmDetailsEvent.OnRetry) },
-            onDismiss = { /*TODO*/ }
+            onDismiss = { navigator?.pop() ?: missingNavigatorToast.show()}
         )
     }
 }

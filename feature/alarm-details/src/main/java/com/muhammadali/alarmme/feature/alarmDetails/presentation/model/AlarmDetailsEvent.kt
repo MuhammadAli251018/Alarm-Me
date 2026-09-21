@@ -19,9 +19,6 @@ sealed interface AlarmDetailsEvent : UiEvent {
     /** The date-picker's Save was tapped with this selection. */
     data class OnCustomDatesChanged(val dates: Set<LocalDate>) : AlarmDetailsEvent
 
-    /** The Sound row was tapped. */
-    data object OnSoundClick : AlarmDetailsEvent
-
     /** The Snooze row was tapped. */
     data object OnSnoozeClick : AlarmDetailsEvent
 

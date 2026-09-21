@@ -9,8 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
@@ -18,36 +19,61 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.ExperimentalTime
-import kotlinx.datetime.DayOfWeek
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /** Long enough for the loading skeleton to be seen, short enough not to be in the way. */
 private val INITIAL_LOAD_DELAY: Duration = 600.milliseconds
 
-/**
- * An [AlarmDetailsUseCase] that keeps everything in memory.
- *
- * It exists so the alarm details screen can be driven by hand — editing and saving all work —
- * while the real data layer is still missing. Nothing survives process death, and it is
- * deliberately the only place that knows that: swapping it for the real implementation in
- * `alarmDetailsModule` is the whole migration.
- */
+
+@OptIn(ExperimentalTime::class, ExperimentalUuidApi::class)
+private fun AlarmDetails.Companion.new(): AlarmDetails = AlarmDetails(
+    id = AlarmDetailsId(Uuid.random().toString()),
+    label = "Untitled Alarm",
+    time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+    repeatDays = emptySet(),
+    customDateEnabled = false,
+    customDates = emptyList(),
+    soundName = "",
+    snoozeDurationMinutes = 0,
+    snoozeCount = 2,
+    gradualVolumeEnabled = false,
+    vibrateEnabled = true,
+)
+
 class InMemoryAlarmDetailsUseCase(
     initialAlarmDetails: List<AlarmDetails> = sampleAlarmDetails(),
     private val initialLoadDelay: Duration = INITIAL_LOAD_DELAY,
 ) : AlarmDetailsUseCase {
 
     private val alarmDetails = MutableStateFlow(initialAlarmDetails.associateBy { it.id })
+    private var draftAlarmDetails = MutableStateFlow(emptyList<AlarmDetails>().associateBy { it.id })
 
-    override fun getAlarmDetails(id: AlarmDetailsId): Flow<AlarmDetails?> = flow {
+    override fun getAlarmDetails(id: AlarmDetailsId): Flow<Result<AlarmDetails>> = flow {
         delay(initialLoadDelay)
-        emitAll(alarmDetails.map { it[id] })
+        emitAll(alarmDetails.map { runCatching { it[id]!! } })
+    }
+
+    override suspend fun draftNewAlarm(): Flow<AlarmDetails> {
+        var id: AlarmDetailsId? = null
+
+        draftAlarmDetails.update { draftAlarms ->
+            val newAlarm = AlarmDetails.new().also { id = it.id }
+            draftAlarms + (newAlarm.id to newAlarm)
+        }
+        return draftAlarmDetails.mapNotNull { it[id] }
     }
 
     override suspend fun saveAlarmDetails(details: AlarmDetails) {
         alarmDetails.update { current -> current + (details.id to details) }
+
+        if (details.id in draftAlarmDetails.value) {
+            draftAlarmDetails.update { current -> current - details.id }
+        }
     }
 
     override suspend fun deleteAlarmDetails(id: AlarmDetailsId) {
+        draftAlarmDetails.update { current -> current - id }
         alarmDetails.update { current -> current - id }
     }
 }

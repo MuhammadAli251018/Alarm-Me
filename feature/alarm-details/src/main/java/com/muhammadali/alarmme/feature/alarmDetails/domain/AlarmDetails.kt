@@ -19,4 +19,6 @@ data class AlarmDetails(
     val snoozeCount: Int,
     val gradualVolumeEnabled: Boolean,
     val vibrateEnabled: Boolean,
-)
+) {
+    companion object;
+}
