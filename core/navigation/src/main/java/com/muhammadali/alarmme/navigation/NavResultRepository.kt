@@ -51,21 +51,17 @@ fun ProvideNavResultRepository(
 }
 
 @Composable
-fun AwaitNavResult(
-    vararg keys: NavResultKey<out NavigationResult>,
-    onResultReceived: (key: NavResultKey<out NavigationResult>, result: NavigationResult) -> Unit
+fun <T: NavigationResult> AwaitNavResult(
+    key: NavResultKey<T>,
+    onResultReceived: (result: T) -> Unit
 ) {
     val repository = LocalNavResultRepository.current
     val currentOnResultReceived by rememberUpdatedState(onResultReceived)
 
-    LaunchedEffect(keys.toList()) {
-        for (key in keys) {
-            launch {
-                repository.awaitResult(key).collect {
-                    currentOnResultReceived(key, it)
-                    repository.consume(key)
-                }
-            }
+    LaunchedEffect(key) {
+        repository.awaitResult(key).collect {
+            currentOnResultReceived(it)
+            repository.consume(key)
         }
     }
 }

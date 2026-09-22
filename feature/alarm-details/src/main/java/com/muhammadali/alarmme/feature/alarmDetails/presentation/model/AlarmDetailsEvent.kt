@@ -1,5 +1,6 @@
 package com.muhammadali.alarmme.feature.alarmDetails.presentation.model
 
+import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.Ringtone
 import com.muhammadali.alarmme.mvi.UiEvent
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -39,4 +40,6 @@ sealed interface AlarmDetailsEvent : UiEvent {
 
     /** "Try again" from the error state: start observing this alarm's details over. */
     data object OnRetry : AlarmDetailsEvent
+
+    data class OnRingtoneUpdated(val pickerRingtone: Ringtone) : AlarmDetailsEvent
 }

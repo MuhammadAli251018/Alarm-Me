@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.RingtonePickerScreen
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetails
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsId
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.AlarmSettingsDetails
@@ -41,6 +42,7 @@ import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.Sched
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.ScreenDetailsTopBar
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEvent
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsState
+import com.muhammadali.alarmme.navigation.AwaitNavResult
 import com.muhammadali.alarmme.navigation.NavDestination
 import com.muhammadali.alarmme.navigation.navigateTo
 import com.muhammadali.alarmme.ui.component.AmPlainTextButton
@@ -85,6 +87,10 @@ class AlarmDetailsScreen(
         val context = LocalContext.current
         val missingNavigatorToast = remember {
             Toast.makeText(context, "Navigator not found, can not navigate", Toast.LENGTH_SHORT)
+        }
+
+        AwaitNavResult(RingtonePickerScreen.RINGTONE_NAV_RESULT_KEY) { result ->
+            dispatch(AlarmDetailsEvent.OnRingtoneUpdated(result.ringtone))
         }
 
         AlarmDetailsScreenContent(

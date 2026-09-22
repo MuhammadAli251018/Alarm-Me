@@ -26,6 +26,7 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 @Composable
 fun RingtonePickerTopBar(
     modifier: Modifier = Modifier,
+    canSave: Boolean,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
     onCustomSoundClick: () -> Unit
@@ -64,6 +65,7 @@ fun RingtonePickerTopBar(
                 AmPlainTextButton(
                     text = "Save",
                     contentColor = colors.primary,
+                    enabled = canSave,
                     onClick = onSaveClick
                 )
 
@@ -96,6 +98,7 @@ private fun RingtonePickerTopBarPreview() {
             modifier = Modifier
                 .background(LocalAlarmMeColors.current.background)
                 .screenConstraints(screenCategory),
+            canSave = true,
             onBackClick = {},
             onSaveClick = {},
             onCustomSoundClick = {}

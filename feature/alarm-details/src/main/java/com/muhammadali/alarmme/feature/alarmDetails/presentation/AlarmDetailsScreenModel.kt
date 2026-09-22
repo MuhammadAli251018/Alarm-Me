@@ -4,6 +4,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetails
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsId
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsUseCase
+import com.muhammadali.alarmme.feature.alarmDetails.domain.RingtoneProvideUseCase
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEvent
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsState
 import com.muhammadali.alarmme.mvi.BaseScreenModel
@@ -16,7 +17,8 @@ import kotlin.time.Duration.Companion.seconds
 
 class AlarmDetailsScreenModel(
     private val startMode: AlarmDetailsScreen.StartMode,
-    private val alarmDetailsUseCase: AlarmDetailsUseCase
+    private val alarmDetailsUseCase: AlarmDetailsUseCase,
+    private val ringtoneProvideUseCase: RingtoneProvideUseCase
 ) : BaseScreenModel<AlarmDetailsState, AlarmDetailsEvent, Nothing>(
     initialState = AlarmDetailsState.Initial
 ) {
@@ -82,6 +84,16 @@ class AlarmDetailsScreenModel(
             }
 
             AlarmDetailsEvent.OnRetry -> loadAlarmDetails()
+
+            is AlarmDetailsEvent.OnRingtoneUpdated -> {
+                screenModelScope.launch {
+                    val ringtoneDetails =
+                        ringtoneProvideUseCase.getRingtonesDetails(event.pickerRingtone.ringtoneId)
+                            ?: return@launch
+
+                    updateDraft { draft -> draft.copy(soundName = ringtoneDetails.name) }
+                }
+            }
         }
     }
 
