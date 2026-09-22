@@ -12,12 +12,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -84,18 +86,36 @@ internal fun sampleAlarmDetails(
 ): List<AlarmDetails> {
     val now = Clock.System.now()
 
+    fun at(offset: Duration): LocalDateTime = (now + offset).toLocalDateTime(timeZone)
+
+    val weekdays = setOf(
+        DayOfWeek.MONDAY,
+        DayOfWeek.TUESDAY,
+        DayOfWeek.WEDNESDAY,
+        DayOfWeek.THURSDAY,
+        DayOfWeek.FRIDAY,
+    )
+    val everyDay = DayOfWeek.entries.toSet()
+
     return listOf(
         AlarmDetails(
+            id = AlarmDetailsId("gym"),
+            label = "Gym — leave by six",
+            time = at(7.hours + 26.minutes),
+            repeatDays = setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY),
+            customDateEnabled = false,
+            customDates = emptyList(),
+            soundName = "Morning pulse",
+            snoozeDurationMinutes = 5,
+            snoozeCount = 2,
+            gradualVolumeEnabled = false,
+            vibrateEnabled = true,
+        ),
+        AlarmDetails(
             id = AlarmDetailsId("weekday"),
-            label = "Weekday mornings",
-            time = (now + 7.hours).toLocalDateTime(timeZone),
-            repeatDays = setOf(
-                DayOfWeek.MONDAY,
-                DayOfWeek.TUESDAY,
-                DayOfWeek.WEDNESDAY,
-                DayOfWeek.THURSDAY,
-                DayOfWeek.FRIDAY
-            ),
+            label = "Weekday mornings, gently",
+            time = at(9.hours),
+            repeatDays = weekdays,
             customDateEnabled = false,
             customDates = emptyList(),
             soundName = "Sunrise chime",
@@ -103,6 +123,97 @@ internal fun sampleAlarmDetails(
             snoozeCount = 3,
             gradualVolumeEnabled = true,
             vibrateEnabled = false,
-        )
+        ),
+        AlarmDetails(
+            id = AlarmDetailsId("standup"),
+            label = "Standup in five",
+            time = at(12.hours + 15.minutes),
+            repeatDays = weekdays,
+            customDateEnabled = false,
+            customDates = emptyList(),
+            soundName = "Notification ping",
+            snoozeDurationMinutes = 3,
+            snoozeCount = 1,
+            gradualVolumeEnabled = false,
+            vibrateEnabled = true,
+        ),
+        AlarmDetails(
+            id = AlarmDetailsId("meds"),
+            label = "Meds",
+            time = at(15.hours),
+            repeatDays = everyDay,
+            customDateEnabled = false,
+            customDates = emptyList(),
+            soundName = "Gentle bell",
+            snoozeDurationMinutes = 10,
+            snoozeCount = 3,
+            gradualVolumeEnabled = true,
+            vibrateEnabled = true,
+        ),
+        AlarmDetails(
+            id = AlarmDetailsId("bread"),
+            label = "Take the bread out",
+            time = at(18.hours + 5.minutes),
+            repeatDays = emptySet(),
+            customDateEnabled = true,
+            customDates = listOf(at(18.hours + 5.minutes).date),
+            soundName = "Kitchen timer",
+            snoozeDurationMinutes = 0,
+            snoozeCount = 0,
+            gradualVolumeEnabled = false,
+            vibrateEnabled = false,
+        ),
+        AlarmDetails(
+            id = AlarmDetailsId("laundry"),
+            label = "Move the laundry over before it sits too long",
+            time = at(21.hours + 20.minutes),
+            repeatDays = setOf(DayOfWeek.SUNDAY),
+            customDateEnabled = false,
+            customDates = emptyList(),
+            soundName = "Soft marimba",
+            snoozeDurationMinutes = 15,
+            snoozeCount = 2,
+            gradualVolumeEnabled = false,
+            vibrateEnabled = true,
+        ),
+        AlarmDetails(
+            id = AlarmDetailsId("bins"),
+            label = "Bins out",
+            time = at(26.hours + 10.minutes),
+            repeatDays = setOf(DayOfWeek.WEDNESDAY),
+            customDateEnabled = false,
+            customDates = emptyList(),
+            soundName = "Reminder chirp",
+            snoozeDurationMinutes = 5,
+            snoozeCount = 1,
+            gradualVolumeEnabled = false,
+            vibrateEnabled = true,
+        ),
+        AlarmDetails(
+            id = AlarmDetailsId("winddown"),
+            label = "Wind down, screens off",
+            time = at(30.hours + 45.minutes),
+            repeatDays = everyDay,
+            customDateEnabled = false,
+            customDates = emptyList(),
+            soundName = "Calm waves",
+            snoozeDurationMinutes = 0,
+            snoozeCount = 0,
+            gradualVolumeEnabled = true,
+            vibrateEnabled = false,
+        ),
+        AlarmDetails(
+            id = AlarmDetailsId("kettle"),
+            label = "Kettle off",
+            time = at(33.hours + 30.minutes),
+            repeatDays = everyDay,
+            customDateEnabled = false,
+            customDates = emptyList(),
+            soundName = "Whistle",
+            snoozeDurationMinutes = 2,
+            snoozeCount = 1,
+            gradualVolumeEnabled = false,
+            vibrateEnabled = true,
+        ),
     )
 }
