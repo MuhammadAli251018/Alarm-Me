@@ -40,6 +40,7 @@ android {
 dependencies {
     // Modules Depenency
     implementation(projects.core.ui)
+    implementation(projects.core.navigation)
     implementation(projects.feature.alarmList)
     implementation(projects.feature.ringtonePicker)
     implementation(projects.feature.alarmDetails)

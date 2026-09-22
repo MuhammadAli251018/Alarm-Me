@@ -5,7 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import cafe.adriel.voyager.navigator.Navigator
+import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsId
+import com.muhammadali.alarmme.feature.alarmDetails.presentation.AlarmDetailsScreen
 import com.muhammadali.alarmme.feature.alarmList.presentation.AlarmListScreen
+import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.RingtonePickerScreen
+import com.muhammadali.alarmme.navigation.ProvideNavResultRepository
+import com.muhammadali.alarmme.navigation.screenDestination
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 
 class MainActivity : ComponentActivity() {
@@ -14,7 +19,24 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AlarmMeThemeProvider {
-                Navigator(AlarmListScreen())
+                ProvideNavResultRepository {
+                    Navigator(
+                        AlarmListScreen(
+                            alarmDetailsDestination = { alarmId ->
+                                screenDestination {
+                                    AlarmDetailsScreen(
+                                        startMode = if (alarmId != null) {
+                                            AlarmDetailsScreen.StartMode.Edit(AlarmDetailsId(alarmId.value))
+                                        } else {
+                                            AlarmDetailsScreen.StartMode.New
+                                        },
+                                        ringtonePickerDestination = screenDestination { RingtonePickerScreen() }
+                                    )
+                                }
+                            }
+                        )
+                    )
+                }
             }
         }
     }
