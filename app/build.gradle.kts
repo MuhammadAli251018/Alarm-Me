@@ -41,8 +41,8 @@ dependencies {
     // Modules Depenency
     implementation(projects.core.ui)
     implementation(projects.core.navigation)
+    implementation(projects.core.screens.ringtonePicker)
     implementation(projects.feature.alarmList)
-    implementation(projects.feature.ringtonePicker)
     implementation(projects.feature.alarmDetails)
 
     implementation(platform(libs.androidx.compose.bom))

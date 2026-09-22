@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.model
+package com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.model
 
 import com.muhammadali.alarmme.mvi.UiEvent
 

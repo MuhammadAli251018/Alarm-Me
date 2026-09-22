@@ -1,6 +1,6 @@
-package com.muhammadali.alarmme.feature.ringtonePicker.domain
+package com.muhammadali.alarmme.core.screens.ringtonePicker.domain
 
-import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.component.RingtoneItem
+import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.component.RingtoneItem
 import kotlinx.coroutines.flow.Flow
 
 interface RingtoneProvideUseCase {

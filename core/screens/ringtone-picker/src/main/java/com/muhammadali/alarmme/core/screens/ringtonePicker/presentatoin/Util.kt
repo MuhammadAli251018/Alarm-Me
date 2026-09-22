@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.feature.ringtonePicker.presentatoin
+package com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn

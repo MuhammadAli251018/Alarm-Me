@@ -1,9 +1,9 @@
-package com.muhammadali.alarmme.feature.ringtonePicker.presentatoin
+package com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin
 
 import cafe.adriel.voyager.core.model.screenModelScope
-import com.muhammadali.alarmme.feature.ringtonePicker.domain.RingtoneProvideUseCase
-import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.model.RingtonePickerEvent
-import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.model.RingtonePickerState
+import com.muhammadali.alarmme.core.screens.ringtonePicker.domain.RingtoneProvideUseCase
+import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.model.RingtonePickerEvent
+import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.model.RingtonePickerState
 import com.muhammadali.alarmme.mvi.BaseScreenModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch

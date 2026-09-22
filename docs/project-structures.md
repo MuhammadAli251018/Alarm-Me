@@ -23,8 +23,8 @@ include(":app")
 include(":core:ui")
 include(":core:mvi")
 include(":core:utility:compose")
+include(":core:screens:ringtone-picker")
 include(":feature:alarm-list")
-include(":feature:ringtone-picker")
 // ...
 include(":feature:xxx")
 ```
@@ -43,10 +43,16 @@ reverse, and never `feature:* → feature:*`.
   - `core:utility:compose` — small, dependency-free Compose extensions (e.g.
     `Modifier.modifyIf`). Sibling `core:utility:<concern>` modules should be added if a
     non-Compose utility need shows up, rather than growing this one.
-- **`feature:*`** — depends on `core:ui`, `core:mvi`, `core:utility:compose` only. Each
-  is split into `domain/ → data/ → presentation/`, plus `di/` exposing one Koin module
-  registered in `AlarmMeApplication`. `feature:alarm-list` and `feature:ringtone-picker`
-  are the reference layout; `feature:alarm-details` is a stub still to be built out the
+  - `core:screens:*` — shared, fully-built screens (same internal shape as a feature:
+    `domain/ → data/ → presentation/` + `di/`) that more than one `feature:*` module
+    needs to navigate to or depend on directly. Unlike the rest of `core:*`, a
+    `core:screens:*` module *does* carry feature-shaped knowledge — it's promoted here
+    specifically so features can depend on it without violating the no-`feature →
+    feature` rule. `core:screens:ringtone-picker` is the reference layout.
+- **`feature:*`** — depends on `core:ui`, `core:mvi`, `core:utility:compose`, and
+  `core:screens:*` only. Each is split into `domain/ → data/ → presentation/`, plus
+  `di/` exposing one Koin module registered in `AlarmMeApplication`. `feature:alarm-list`
+  is the reference layout; `feature:alarm-details` is a stub still to be built out the
   same way.
 - **`app`** — composition root only: starts Koin, hosts the root Voyager `Navigator`.
   The one module allowed to depend on more than one feature.
@@ -92,8 +98,8 @@ directly rather than this doc for the complete set.
 
 | Thing | Convention | Example |
 |---|---|---|
-| Gradle module | `core:<name>` / `feature:<kebab-case>` | `feature:ringtone-picker` |
-| Package | `com.muhammadali.alarmme.<segment>`, camelCase | `feature.ringtonePicker` |
+| Gradle module | `core:<name>` / `feature:<kebab-case>` | `core:screens:ringtone-picker` |
+| Package | `com.muhammadali.alarmme.<segment>`, camelCase | `core.screens.ringtonePicker` |
 | Screen | `XScreen.kt` (Voyager `Screen`) | `RingtonePickerScreen` |
 | Screen model | `XScreenModel.kt` | `RingtonePickerScreenModel` |
 | State / Event | `XState.kt` / `XEvent.kt`, events prefixed `On*` | `RingtonePickerState` |
@@ -104,4 +110,5 @@ directly rather than this doc for the complete set.
 
 Known inconsistencies (match what's already in the file you're editing, don't add a
 third variant): `feature:alarm-list` mixes `AlarmListState` with `AlarmsListScreenModel`;
-`feature:ringtone-picker`'s `presentation` package is spelled `presentatoin` throughout.
+`core:screens:ringtone-picker`'s `presentation` package is spelled `presentatoin`
+throughout.
