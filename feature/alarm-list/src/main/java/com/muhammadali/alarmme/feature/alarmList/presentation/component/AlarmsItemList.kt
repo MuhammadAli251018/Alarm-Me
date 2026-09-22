@@ -2,7 +2,9 @@ package com.muhammadali.alarmme.feature.alarmList.presentation.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
@@ -138,6 +140,8 @@ fun AlarmItemsList(
                 }
             )
         }
+
+        item { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
 
