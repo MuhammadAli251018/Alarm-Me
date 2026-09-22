@@ -16,6 +16,7 @@ import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.hasCustomSoun
 import com.muhammadali.alarmme.feature.ringtonePicker.presentatoin.screenConstraints
 import com.muhammadali.alarmme.ui.component.AmIconButton
 import com.muhammadali.alarmme.ui.component.AmOutlineButtonWithIcon
+import com.muhammadali.alarmme.ui.component.AmPlainTextButton
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
@@ -26,6 +27,7 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 fun RingtonePickerTopBar(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
+    onSaveClick: () -> Unit,
     onCustomSoundClick: () -> Unit
 ) {
     val typography = LocalAlarmMeTypography.current
@@ -53,20 +55,31 @@ fun RingtonePickerTopBar(
             style = typography.titleMedium
         )
 
-        if (currentScreenCategory().hasCustomSoundInTopBar()) {
-            Box(modifier = Modifier.weight(1f)){
-                AmOutlineButtonWithIcon(
-                    modifier = Modifier.align(Alignment.CenterEnd),
-                    text = "Custom Sound",
-                    icon = {
-                        Text(
-                            text = "+",
-                            style = typography.labelSmall,
-                            color = colors.primary
-                        )
-                    },
-                    onClick = onCustomSoundClick
+        Box(modifier = Modifier.weight(1f)) {
+            Row(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                AmPlainTextButton(
+                    text = "Save",
+                    contentColor = colors.primary,
+                    onClick = onSaveClick
                 )
+
+                if (currentScreenCategory().hasCustomSoundInTopBar()) {
+                    AmOutlineButtonWithIcon(
+                        text = "Custom Sound",
+                        icon = {
+                            Text(
+                                text = "+",
+                                style = typography.labelSmall,
+                                color = colors.primary
+                            )
+                        },
+                        onClick = onCustomSoundClick
+                    )
+                }
             }
         }
     }
@@ -84,6 +97,7 @@ private fun RingtonePickerTopBarPreview() {
                 .background(LocalAlarmMeColors.current.background)
                 .screenConstraints(screenCategory),
             onBackClick = {},
+            onSaveClick = {},
             onCustomSoundClick = {}
         )
     }

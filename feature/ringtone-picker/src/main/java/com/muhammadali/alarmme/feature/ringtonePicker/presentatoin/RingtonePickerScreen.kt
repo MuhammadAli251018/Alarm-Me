@@ -50,6 +50,7 @@ class RingtonePickerScreen : Screen {
                 .background(LocalAlarmMeColors.current.background),
             state = state,
             onBackClick = { navigator?.pop() },
+            onSaveClick = { navigator?.pop() },
             onRingtoneClick = { id -> dispatch(RingtonePickerEvent.OnRingtoneClick(id)) },
             onRingtoneSelect = { id -> dispatch(RingtonePickerEvent.OnRingtoneSelect(id)) },
             onCustomSoundClick = {}, // TODO: open the custom sound picker once it exists
@@ -64,6 +65,7 @@ fun RingtonePickerScreenContent(
     modifier: Modifier = Modifier,
     state: RingtonePickerState,
     onBackClick: () -> Unit,
+    onSaveClick: () -> Unit,
     onRingtoneClick: (String) -> Unit,
     onRingtoneSelect: (String) -> Unit,
     onCustomSoundClick: () -> Unit,
@@ -87,6 +89,7 @@ fun RingtonePickerScreenContent(
             selectedRingtoneId = state.selectedRingtoneId,
             playingRingtoneId = state.playingRingtoneId,
             onBackClick = onBackClick,
+            onSaveClick = onSaveClick,
             onRingtoneClick = onRingtoneClick,
             onRingtoneSelect = onRingtoneSelect,
             onCustomSoundClick = onCustomSoundClick
@@ -108,6 +111,7 @@ fun RingtoneScreenContent(
     selectedRingtoneId: String?,
     playingRingtoneId: String?,
     onBackClick: () -> Unit,
+    onSaveClick: () -> Unit,
     onRingtoneClick: (String) -> Unit,
     onRingtoneSelect: (String) -> Unit,
     onCustomSoundClick: () -> Unit,
@@ -123,6 +127,7 @@ fun RingtoneScreenContent(
             RingtonePickerTopBar(
                 modifier = Modifier.fillMaxWidth(),
                 onBackClick = onBackClick,
+                onSaveClick = onSaveClick,
                 onCustomSoundClick = onCustomSoundClick
             )
 
@@ -188,6 +193,7 @@ private fun PreviewRingtoneScreen(
             selectedRingtoneId = selectedRingtoneId,
             playingRingtoneId = playingRingtoneId,
             onBackClick = {},
+            onSaveClick = {},
             onRingtoneClick = {},
             onRingtoneSelect = {},
             onCustomSoundClick = {}
@@ -222,6 +228,7 @@ private fun RingtonePickerScreenContentLoadingPreview() {
                 .background(LocalAlarmMeColors.current.background),
             state = RingtonePickerState.Loading,
             onBackClick = {},
+            onSaveClick = {},
             onRingtoneClick = {},
             onRingtoneSelect = {},
             onCustomSoundClick = {},
@@ -241,6 +248,7 @@ private fun RingtonePickerScreenContentErrorPreview() {
                 .background(LocalAlarmMeColors.current.background),
             state = RingtonePickerState.Error,
             onBackClick = {},
+            onSaveClick = {},
             onRingtoneClick = {},
             onRingtoneSelect = {},
             onCustomSoundClick = {},
