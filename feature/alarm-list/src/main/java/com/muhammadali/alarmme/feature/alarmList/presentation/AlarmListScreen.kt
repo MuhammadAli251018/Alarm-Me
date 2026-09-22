@@ -5,29 +5,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.Text
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
 import com.muhammadali.alarmme.feature.alarmList.domain.AlarmItemId
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItem
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItemsList
@@ -38,6 +35,8 @@ import com.muhammadali.alarmme.feature.alarmList.presentation.component.TopBarSk
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.rememberAlarmItemsListState
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListEvent
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListState
+import com.muhammadali.alarmme.navigation.NavDestination
+import com.muhammadali.alarmme.navigation.navigateTo
 import com.muhammadali.alarmme.ui.component.AmDestructiveTextButton
 import com.muhammadali.alarmme.ui.component.AmFabButton
 import com.muhammadali.alarmme.ui.component.AmFabExtendedButton
@@ -54,17 +53,19 @@ import com.muhammadali.alarmme.ui.screenCategory.isPhone
 import com.muhammadali.alarmme.ui.screenCategory.isPortraitPhone
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
-import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
-import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import kotlinx.datetime.LocalDateTime
 
-class AlarmListScreen : Screen {
+class AlarmListScreen(
+    private val alarmDetailsDestination: (AlarmItemId?) -> NavDestination
+) : Screen {
 
     @Composable
     override fun Content() {
         val screenModel: AlarmsListScreenModel = koinScreenModel()
         val state by screenModel.state.collectAsState()
         val dispatch = screenModel::handleEvent
+        val navigator = LocalNavigator.current
+
 
         AlarmListScreenContent(
             modifier = Modifier
@@ -73,11 +74,11 @@ class AlarmListScreen : Screen {
                 .imePadding()
                 .systemBarsPadding(),
             state = state,
-            onAlarmClick = {}, // TODO: navigate to the alarm detail screen once it exists
+            onAlarmClick = { id -> navigator?.navigateTo(alarmDetailsDestination(id)) },
             onAlarmCheckedChange = { id, enabled ->
                 dispatch(AlarmsListEvent.OnEnableOrDisableAlarm(id, enabled))
             },
-            onNewAlarmClick = {}, // TODO: navigate to the alarm creation screen once it exists
+            onNewAlarmClick = { navigator?.navigateTo(alarmDetailsDestination(null)) },
             onDisableSelected = { ids ->
                 dispatch(
                     AlarmsListEvent.OnEnableOrDisableAlarms(

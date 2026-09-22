@@ -2,7 +2,6 @@ package com.muhammadali.alarmme.feature.alarmList.presentation
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.muhammadali.alarmme.feature.alarmList.domain.Alarm
-import com.muhammadali.alarmme.feature.alarmList.domain.AlarmItemId
 import com.muhammadali.alarmme.feature.alarmList.domain.AlarmsProvideUseCase
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItem
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListEvent
@@ -20,9 +19,7 @@ class AlarmsListScreenModel(
 
     private var observeJob: Job? = null
 
-    init {
-        observeAlarms()
-    }
+    init { loadAlarms() }
 
     override fun handleEvent(event: AlarmsListEvent) {
         when (event) {
@@ -40,15 +37,11 @@ class AlarmsListScreenModel(
                 alarmsProvideUseCase.deleteAlarms(event.ids)
             }
 
-            AlarmsListEvent.OnRetry -> observeAlarms()
+            AlarmsListEvent.OnRetry -> loadAlarms()
         }
     }
 
-    /**
-     * Restartable on purpose: the only way out of [AlarmsListState.Error] is to drop the failed
-     * collection and subscribe again, which is what "Try again" does.
-     */
-    private fun observeAlarms() {
+    private fun loadAlarms() {
         observeJob?.cancel()
         _state.value = AlarmsListState.Loading
 
@@ -60,10 +53,7 @@ class AlarmsListScreenModel(
     }
 }
 
-/**
- * The next alarm is the soonest *enabled* one; with none armed the top bar falls back to its
- * "NO ALARMS ARMED" eyebrow, so a null here is a supported state rather than a gap.
- */
+
 private fun List<Alarm>.toLoadedState(): AlarmsListState.Loaded = AlarmsListState.Loaded(
     alarms = map { alarm ->
         AlarmItem(
