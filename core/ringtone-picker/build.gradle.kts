@@ -33,6 +33,7 @@ dependencies {
     implementation(projects.core.mvi)
     implementation(projects.core.utility.compose)
     implementation(projects.core.navigation)
+    implementation(projects.core.alarms.domain)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))

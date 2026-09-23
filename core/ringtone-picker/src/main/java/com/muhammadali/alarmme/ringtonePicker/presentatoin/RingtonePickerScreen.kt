@@ -21,15 +21,16 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.RingtoneItem
-import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.RingtoneItemsList
-import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.RingtonePickerTopBar
-import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.previewRingtones
-import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtonePickerEvent
-import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtonePickerState
+import com.muhammadali.alarmme.alarms.domain.RingtoneId
 import com.muhammadali.alarmme.navigation.LocalNavResultRepository
 import com.muhammadali.alarmme.navigation.NavResultKey
 import com.muhammadali.alarmme.navigation.NavigationResult
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.RingtoneItemsList
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.RingtonePickerTopBar
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.previewRingtones
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtoneItemState
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtonePickerEvent
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtonePickerState
 import com.muhammadali.alarmme.ui.component.AmOutlineButtonBar
 import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
@@ -38,9 +39,8 @@ import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 
-data class PickedRingtoneResult(val ringtone: Ringtone) : NavigationResult
-
-data class Ringtone(val ringtoneId: String)
+/** What the picker hands back to whoever navigated to it. */
+data class PickedRingtoneResult(val ringtoneId: RingtoneId) : NavigationResult
 
 class RingtonePickerScreen : Screen {
 
@@ -63,12 +63,12 @@ class RingtonePickerScreen : Screen {
             state = state,
             onBackClick = { navigator?.pop() },
             onSaveClick = {
-                val state = state as? RingtonePickerState.Loaded ?: return@RingtonePickerScreenContent
-                val selectedRingtoneId = state.selectedRingtoneId ?: return@RingtonePickerScreenContent
+                val loaded = state as? RingtonePickerState.Loaded ?: return@RingtonePickerScreenContent
+                val selectedRingtoneId = loaded.selectedRingtoneId ?: return@RingtonePickerScreenContent
 
                 navResultRepository.save(
                     RINGTONE_NAV_RESULT_KEY,
-                    PickedRingtoneResult(Ringtone(selectedRingtoneId))
+                    PickedRingtoneResult(selectedRingtoneId)
                 )
 
                 navigator?.pop()
@@ -88,8 +88,8 @@ fun RingtonePickerScreenContent(
     state: RingtonePickerState,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
-    onRingtoneClick: (String) -> Unit,
-    onRingtoneSelect: (String) -> Unit,
+    onRingtoneClick: (RingtoneId) -> Unit,
+    onRingtoneSelect: (RingtoneId) -> Unit,
     onCustomSoundClick: () -> Unit,
     onRetry: () -> Unit,
     onDismiss: () -> Unit
@@ -130,14 +130,14 @@ fun LoadingRingtoneScreenContent(modifier: Modifier = Modifier) {
 @Composable
 fun RingtoneScreenContent(
     modifier: Modifier = Modifier,
-    ringtones: List<RingtoneItem>,
-    selectedRingtoneId: String?,
-    playingRingtoneId: String?,
+    ringtones: List<RingtoneItemState>,
+    selectedRingtoneId: RingtoneId?,
+    playingRingtoneId: RingtoneId?,
     canSave: Boolean,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
-    onRingtoneClick: (String) -> Unit,
-    onRingtoneSelect: (String) -> Unit,
+    onRingtoneClick: (RingtoneId) -> Unit,
+    onRingtoneSelect: (RingtoneId) -> Unit,
     onCustomSoundClick: () -> Unit,
 ) {
     val screenCategory = currentScreenCategory()
@@ -205,9 +205,9 @@ fun RingtoneScreenContent(
 
 @Composable
 private fun PreviewRingtoneScreen(
-    ringtones: List<RingtoneItem> = previewRingtones(),
-    selectedRingtoneId: String? = "sunrise-chime",
-    playingRingtoneId: String? = "morning-birds",
+    ringtones: List<RingtoneItemState> = previewRingtones(),
+    selectedRingtoneId: RingtoneId? = RingtoneId("sunrise-chime"),
+    playingRingtoneId: RingtoneId? = RingtoneId("morning-birds"),
 ) {
     AlarmMeThemeProvider {
         RingtoneScreenContent(
@@ -242,6 +242,13 @@ private fun RingtoneScreenContentPreview() {
 @Composable
 private fun RingtoneScreenContentMediumWidthPreview() {
     PreviewRingtoneScreen()
+}
+
+/** How the picker now opens: nothing picked, so Save is disabled. */
+@CommonScreenCategoriesPreview
+@Composable
+private fun RingtoneScreenContentNoSelectionPreview() {
+    PreviewRingtoneScreen(selectedRingtoneId = null, playingRingtoneId = null)
 }
 
 @CommonScreenCategoriesPreview

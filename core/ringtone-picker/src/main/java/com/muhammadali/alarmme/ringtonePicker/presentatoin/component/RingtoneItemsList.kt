@@ -8,8 +8,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.alarms.domain.RingtoneId
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtoneItemState
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
-import com.muhammadali.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.MediumWidthMediumHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.isExpandedWidthOrWider
@@ -19,11 +20,11 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun RingtoneItemsList(
     modifier: Modifier = Modifier,
-    ringtones: List<RingtoneItem>,
-    selectedRingtoneId: String?,
-    playingRingtoneId: String?,
-    onRingtoneClick: (String) -> Unit,
-    onRingtoneSelect: (String) -> Unit,
+    ringtones: List<RingtoneItemState>,
+    selectedRingtoneId: RingtoneId?,
+    playingRingtoneId: RingtoneId?,
+    onRingtoneClick: (RingtoneId) -> Unit,
+    onRingtoneSelect: (RingtoneId) -> Unit,
 ) {
     val screenCategory = currentScreenCategory()
 
@@ -34,7 +35,7 @@ fun RingtoneItemsList(
         ),
         contentPadding = PaddingValues(vertical = 4.dp)
     ) {
-        items(ringtones, key = { it.id }) { ringtone ->
+        items(ringtones, key = { it.id.value }) { ringtone ->
             RingtoneItem(
                 modifier = Modifier.fillMaxWidth(),
                 ringtone = ringtone,
@@ -47,12 +48,12 @@ fun RingtoneItemsList(
     }
 }
 
-internal fun previewRingtones(): List<RingtoneItem> = listOf(
-    RingtoneItem("sunrise-chime", "Sunrise chime", "Gentle", 42.seconds),
-    RingtoneItem("slow-bell", "Slow bell", "Gentle", 64.seconds),
-    RingtoneItem("morning-birds", "Morning birds", "Natural", 130.seconds),
-    RingtoneItem("ocean-drift", "Ocean drift", "Ambient", 90.seconds),
-    RingtoneItem("woodland-whistle", "Woodland whistle", "Natural", 55.seconds),
+internal fun previewRingtones(): List<RingtoneItemState> = listOf(
+    RingtoneItemState(RingtoneId("sunrise-chime"), "Sunrise chime", 42.seconds),
+    RingtoneItemState(RingtoneId("slow-bell"), "Slow bell", 64.seconds),
+    RingtoneItemState(RingtoneId("morning-birds"), "Morning birds", 130.seconds),
+    RingtoneItemState(RingtoneId("ocean-drift"), "Ocean drift", 90.seconds),
+    RingtoneItemState(RingtoneId("woodland-whistle"), "Woodland whistle", null),
 )
 
 /** The list across screen categories: [CommonScreenCategoriesPreview]'s three buckets cover the
@@ -63,8 +64,8 @@ private fun RingtoneItemsListPreview() {
     AlarmMeThemeProvider {
         RingtoneItemsList(
             ringtones = previewRingtones(),
-            selectedRingtoneId = "sunrise-chime",
-            playingRingtoneId = "morning-birds",
+            selectedRingtoneId = RingtoneId("sunrise-chime"),
+            playingRingtoneId = RingtoneId("morning-birds"),
             onRingtoneClick = {},
             onRingtoneSelect = {}
         )
@@ -79,7 +80,22 @@ private fun RingtoneItemsListMediumWidthPreview() {
     AlarmMeThemeProvider {
         RingtoneItemsList(
             ringtones = previewRingtones(),
-            selectedRingtoneId = "sunrise-chime",
+            selectedRingtoneId = RingtoneId("sunrise-chime"),
+            playingRingtoneId = null,
+            onRingtoneClick = {},
+            onRingtoneSelect = {}
+        )
+    }
+}
+
+/** Nothing picked yet — the state the picker now opens in, with Save disabled. */
+@CommonScreenCategoriesPreview
+@Composable
+private fun RingtoneItemsListNoSelectionPreview() {
+    AlarmMeThemeProvider {
+        RingtoneItemsList(
+            ringtones = previewRingtones(),
+            selectedRingtoneId = null,
             playingRingtoneId = null,
             onRingtoneClick = {},
             onRingtoneSelect = {}

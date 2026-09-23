@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtoneItemState
 import com.muhammadali.alarmme.ui.component.AmBadge
 import com.muhammadali.alarmme.ui.component.AmRadioButton
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
@@ -36,17 +37,10 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-data class RingtoneItem(
-    val id: String,
-    val title: String,
-    val description: String,
-    val duration: Duration
-)
-
 @Composable
 fun RingtoneItem(
     modifier: Modifier = Modifier,
-    ringtone: RingtoneItem,
+    ringtone: RingtoneItemState,
     selected: Boolean,
     playing: Boolean,
     onClick: () -> Unit,
@@ -54,7 +48,6 @@ fun RingtoneItem(
 ) = RingtoneItem(
     modifier = modifier,
     title = ringtone.title,
-    description = ringtone.description,
     duration = ringtone.duration,
     selected = selected,
     playing = playing,
@@ -66,8 +59,7 @@ fun RingtoneItem(
 fun RingtoneItem(
     modifier: Modifier = Modifier,
     title: String,
-    description: String,
-    duration: Duration,
+    duration: Duration?,
     selected: Boolean,
     playing: Boolean,
     onClick: () -> Unit,
@@ -125,11 +117,14 @@ fun RingtoneItem(
                     color = colors.onSurface
                 )
 
-                Text(
-                    text = getRingtoneMeta(duration, description),
-                    style = typography.bodySmall,
-                    color = colors.onSurfaceVariant
-                )
+                val meta = getRingtoneMeta(duration)
+                if (meta.isNotEmpty()) {
+                    Text(
+                        text = meta,
+                        style = typography.bodySmall,
+                        color = colors.onSurfaceVariant
+                    )
+                }
             }
         }
 
@@ -162,11 +157,13 @@ private fun getRingtoneStatusBadge(isPlaying: Boolean, selected: Boolean): Strin
     }
 }
 
-private fun getRingtoneMeta(duration: Duration, description: String): String {
+/** `"00:42"`, or empty when the sound's length isn't known. */
+private fun getRingtoneMeta(duration: Duration?): String {
+    if (duration == null) return ""
+
     val minutes = duration.inWholeMinutes.toString().padStart(2, '0')
     val seconds = (duration.inWholeSeconds % 60).toString().padStart(2, '0')
-    val durationFormat = "$minutes:$seconds"
-    return "$description · $durationFormat"
+    return "$minutes:$seconds"
 }
 
 private fun getRingtonePausePlayIcon(isPlaying: Boolean): String {
@@ -189,7 +186,6 @@ private fun RingtoneItemIdlePreview() {
                 .background(LocalAlarmMeColors.current.surface)
                 .padding(10.dp),
             title = "Chimes",
-            description = "Default",
             duration = 45.seconds,
             selected = isSelected,
             playing = isPlaying,
@@ -215,7 +211,6 @@ private fun RingtoneItemPlayingPreview() {
                 .background(LocalAlarmMeColors.current.surface)
                 .padding(10.dp),
             title = "Daybreak",
-            description = "Nature",
             duration = 32.seconds,
             selected = isSelected,
             playing = isPlaying,
@@ -241,7 +236,6 @@ private fun RingtoneItemSelectedPreview() {
                 .background(LocalAlarmMeColors.current.surface)
                 .padding(10.dp),
             title = "Morning Glow",
-            description = "Classic",
             duration = 58.seconds,
             selected = isSelected,
             playing = isPlaying,
@@ -267,12 +261,34 @@ private fun RingtoneItemSelectedPlayingPreview() {
                 .background(LocalAlarmMeColors.current.surface)
                 .padding(10.dp),
             title = "Kettle Drum",
-            description = "Percussion",
             duration = 21.seconds,
             selected = isSelected,
             playing = isPlaying,
             onClick = { isPlaying = !isPlaying },
             onSelect = { isSelected = !isSelected }
+        )
+    }
+}
+
+/** No known length — the meta line is omitted rather than rendered empty. */
+@Preview(name = "Light Mode--No Duration", showBackground = true)
+@Preview(
+    name = "Dark Mode--No Duration",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun RingtoneItemNoDurationPreview() {
+    AlarmMeThemeProvider {
+        RingtoneItem(
+            modifier = Modifier
+                .background(LocalAlarmMeColors.current.surface)
+                .padding(10.dp),
+            title = "Soft Piano",
+            duration = null,
+            selected = false,
+            playing = false,
+            onClick = {},
+            onSelect = {}
         )
     }
 }
