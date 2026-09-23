@@ -101,7 +101,8 @@ directly rather than this doc for the complete set.
 | Screen model | `XScreenModel.kt` | `RingtonePickerScreenModel` |
 | State / Event | `XState.kt` / `XEvent.kt`, events prefixed `On*` | `RingtonePickerState` |
 | DI module | `XModule.kt` → `val xModule = module { ... }` | `RingtonePickerModule` |
-| Domain / data | `XUseCase` (interface) / `InMemoryXUseCase` (impl) | `RingtoneProvideUseCase` |
+| Domain / data | `XUseCase` (interface) / `XUseCaseImpl` (impl) | `RingtoneProvideUseCase` |
+| Repository | `XRepository` (interface) / `MockXRepository` (mock) | `AlarmsRepository` |
 | Design-system atom | `Am<Name>`, shared internals `Base<Name>` | `AmFabButton` / `BaseTextButton` |
 | Preview | `private`, suffixed `Preview`; fixtures via `previewX()` | `previewRingtones()` |
 

@@ -42,6 +42,8 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.core.navigation)
     implementation(projects.core.ringtonePicker)
+    implementation(projects.core.alarms.domain)
+    implementation(projects.core.alarms.dataMocks)
     implementation(projects.feature.alarmList)
     implementation(projects.feature.alarmDetails)
 
