@@ -16,42 +16,41 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.muhammadali.alarmme.feature.alarmList.domain.AlarmItemId
+import com.muhammadali.alarmme.alarms.domain.AlarmId
 import com.muhammadali.alarmme.feature.alarmList.presentation.alarmsListHorizontalPaddings
+import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmItemState
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.LargeWidthExpandedHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.MediumWidthMediumHeightPreview
-import com.muhammadali.alarmme.ui.screenCategory.WidthCategory
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.isExpandedWidthOrWider
-import com.muhammadali.alarmme.ui.screenCategory.isPhone
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 /** Shared with [AlarmsListSkeleton] so the placeholder grid lands on the same lines as the real one. */
 internal val AlarmsListVerticalPadding: Dp = 12.dp
 internal val AlarmsGridHorizontalSpacing: Dp = 16.dp
 internal val AlarmsGridVerticalSpacing: Dp = 12.dp
 
-class AlarmItemsListState(selectedAlarmItems: List<AlarmItemId>) {
-    private val _selectedAlarmItems: MutableState<Set<AlarmItemId>> = mutableStateOf(selectedAlarmItems.toSet())
+class AlarmItemsListState(selectedAlarmItems: List<AlarmId>) {
+    private val _selectedAlarmItems: MutableState<Set<AlarmId>> = mutableStateOf(selectedAlarmItems.toSet())
 
-    val selectedAlarmItems: Set<AlarmItemId>
+    val selectedAlarmItems: Set<AlarmId>
         get() = _selectedAlarmItems.value
 
     val isSelectionMode: Boolean
         get() = _selectedAlarmItems.value.isNotEmpty()
 
-    fun add(alarmItemId: AlarmItemId) {
+    fun add(alarmItemId: AlarmId) {
         _selectedAlarmItems.value += alarmItemId
     }
 
-    fun remove(alarmItemId: AlarmItemId) {
+    fun remove(alarmItemId: AlarmId) {
         _selectedAlarmItems.value -= alarmItemId
     }
 
-    fun addAll(alarmItemIds: List<AlarmItemId>) {
+    fun addAll(alarmItemIds: List<AlarmId>) {
         _selectedAlarmItems.value += alarmItemIds
     }
 
@@ -59,11 +58,11 @@ class AlarmItemsListState(selectedAlarmItems: List<AlarmItemId>) {
         _selectedAlarmItems.value = emptySet()
     }
 
-    fun addOrRemove(alarmItemId: AlarmItemId) {
+    fun addOrRemove(alarmItemId: AlarmId) {
         if (isSelected(alarmItemId)) remove(alarmItemId) else add(alarmItemId)
     }
 
-    fun isSelected(alarmItemId: AlarmItemId): Boolean {
+    fun isSelected(alarmItemId: AlarmId): Boolean {
         return _selectedAlarmItems.value.contains(alarmItemId)
     }
 
@@ -74,22 +73,22 @@ class AlarmItemsListState(selectedAlarmItems: List<AlarmItemId>) {
          */
         val Saver: Saver<AlarmItemsListState, Any> = listSaver(
             save = { state -> state.selectedAlarmItems.map { it.value } },
-            restore = { ids -> AlarmItemsListState(ids.map(::AlarmItemId)) }
+            restore = { ids -> AlarmItemsListState(ids.map(::AlarmId)) }
         )
     }
 }
 
-operator fun AlarmItemsListState.plusAssign(alarmItemId: AlarmItemId) {
+operator fun AlarmItemsListState.plusAssign(alarmItemId: AlarmId) {
     add(alarmItemId)
 }
 
-operator fun AlarmItemsListState.minusAssign(alarmItemId: AlarmItemId) {
+operator fun AlarmItemsListState.minusAssign(alarmItemId: AlarmId) {
     remove(alarmItemId)
 }
 
 @Composable
 fun rememberAlarmItemsListState(
-    selectedAlarmItems: List<AlarmItemId> = emptyList()
+    selectedAlarmItems: List<AlarmId> = emptyList()
 ): AlarmItemsListState {
     return rememberSaveable(selectedAlarmItems, saver = AlarmItemsListState.Saver) {
         AlarmItemsListState(selectedAlarmItems)
@@ -99,9 +98,9 @@ fun rememberAlarmItemsListState(
 
 @Composable
 fun AlarmItemsList(
-    alarmItems: List<AlarmItem>,
-    onAlarmClick: (AlarmItemId) -> Unit,
-    onAlarmCheckedChange: (AlarmItemId, Boolean) -> Unit,
+    alarmItems: List<AlarmItemState>,
+    onAlarmClick: (AlarmId) -> Unit,
+    onAlarmCheckedChange: (AlarmId, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     alarmsListState: AlarmItemsListState = rememberAlarmItemsListState(),
 ) {
@@ -154,89 +153,89 @@ internal fun alarmsListColumnsCount(): Int {
  * A spread of alarms covering both enabled states and a range of description lengths, so previews
  * exercise the OFF badge, the disabled styling, and description truncation in the narrow buckets.
  */
-private fun previewAlarmItems(): List<AlarmItem> = listOf(
-    AlarmItem(
-        id = AlarmItemId("gym"),
+private fun previewAlarmItems(): List<AlarmItemState> = listOf(
+    AlarmItemState(
+        id = AlarmId("gym"),
         enabled = true,
-        time = LocalDateTime(2026, 9, 11, 5, 30),
+        time = LocalTime(5, 30),
         description = "Mon, Wed, Fri · Gym — leave by six"
     ),
-    AlarmItem(
-        id = AlarmItemId("weekday"),
+    AlarmItemState(
+        id = AlarmId("weekday"),
         enabled = true,
-        time = LocalDateTime(2026, 9, 11, 6, 40),
+        time = LocalTime(6, 40),
         description = "Mon–Fri · Weekday mornings, gently"
     ),
-    AlarmItem(
-        id = AlarmItemId("weekend"),
+    AlarmItemState(
+        id = AlarmId("weekend"),
         enabled = true,
-        time = LocalDateTime(2026, 9, 11, 7, 15),
+        time = LocalTime(7, 15),
         description = "Sat, Sun"
     ),
-    AlarmItem(
-        id = AlarmItemId("bread"),
+    AlarmItemState(
+        id = AlarmId("bread"),
         enabled = false,
-        time = LocalDateTime(2026, 9, 11, 13, 5),
+        time = LocalTime(13, 5),
         description = "Thu 10 Sep · Take the bread out"
     ),
-    AlarmItem(
-        id = AlarmItemId("winddown"),
+    AlarmItemState(
+        id = AlarmId("winddown"),
         enabled = false,
-        time = LocalDateTime(2026, 9, 11, 21, 45),
+        time = LocalTime(21, 45),
         description = "Every day · Wind down, screens off, curtains drawn"
     ),
-    AlarmItem(
-        id = AlarmItemId("kettle"),
+    AlarmItemState(
+        id = AlarmId("kettle"),
         enabled = true,
-        time = LocalDateTime(2026, 9, 11, 22, 30),
+        time = LocalTime(22, 30),
         description = "Every day · Kettle off"
     ),
-    AlarmItem(
-        id = AlarmItemId("dawn"),
+    AlarmItemState(
+        id = AlarmId("dawn"),
         enabled = true,
-        time = LocalDateTime(2026, 9, 11, 4, 45),
+        time = LocalTime(4, 45),
         description = "Sat · Airport run"
     ),
-    AlarmItem(
-        id = AlarmItemId("standup"),
+    AlarmItemState(
+        id = AlarmId("standup"),
         enabled = true,
-        time = LocalDateTime(2026, 9, 11, 9, 55),
+        time = LocalTime(9, 55),
         description = "Mon–Fri · Standup in five"
     ),
-    AlarmItem(
-        id = AlarmItemId("meds"),
+    AlarmItemState(
+        id = AlarmId("meds"),
         enabled = true,
-        time = LocalDateTime(2026, 9, 11, 12, 0),
+        time = LocalTime(12, 0),
         description = "Every day"
     ),
-    AlarmItem(
-        id = AlarmItemId("laundry"),
+    AlarmItemState(
+        id = AlarmId("laundry"),
         enabled = false,
-        time = LocalDateTime(2026, 9, 11, 15, 20),
+        time = LocalTime(15, 20),
         description = "Sun · Move the laundry over before it sits too long"
     ),
-    AlarmItem(
-        id = AlarmItemId("call"),
+    AlarmItemState(
+        id = AlarmId("call"),
         enabled = false,
-        time = LocalDateTime(2026, 9, 11, 18, 30),
+        time = LocalTime(18, 30),
         description = "Tue · Call home"
     ),
-    AlarmItem(
-        id = AlarmItemId("bins"),
+    AlarmItemState(
+        id = AlarmId("bins"),
         enabled = true,
-        time = LocalDateTime(2026, 9, 11, 19, 10),
+        time = LocalTime(19, 10),
         description = "Wed · Bins out"
     ),
-    AlarmItem(
-        id = AlarmItemId("stretch"),
+    AlarmItemState(
+        id = AlarmId("stretch"),
         enabled = false,
-        time = LocalDateTime(2026, 9, 11, 20, 5),
+        time = LocalTime(20, 5),
         description = "Mon, Thu · Stretch — ten minutes, no excuses"
     ),
-    AlarmItem(
-        id = AlarmItemId("lights"),
+    AlarmItemState(
+        id = AlarmId("lights"),
         enabled = true,
-        time = LocalDateTime(2026, 9, 11, 23, 15),
+        time = LocalTime(23, 15),
         description = "Every day · Lights out"
     ),
 )
@@ -281,7 +280,7 @@ private fun AlarmItemsListSelectionModePreview() {
     AlarmMeThemeProvider {
         AlarmItemsList(
             alarmsListState = rememberAlarmItemsListState(
-                selectedAlarmItems = listOf(AlarmItemId("gym"), AlarmItemId("bread"))
+                selectedAlarmItems = listOf(AlarmId("gym"), AlarmId("bread"))
             ),
             alarmItems = previewAlarmItems(),
             onAlarmClick = {},

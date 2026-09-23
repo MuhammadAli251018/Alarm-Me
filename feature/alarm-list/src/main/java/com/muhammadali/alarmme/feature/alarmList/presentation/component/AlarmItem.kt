@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.feature.alarmList.R
-import com.muhammadali.alarmme.feature.alarmList.domain.AlarmItemId
+import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmItemState
 import com.muhammadali.alarmme.ui.component.AmCheckBox
 import com.muhammadali.alarmme.ui.component.AmSectionCard
 import com.muhammadali.alarmme.ui.component.AmSwitchToggle
@@ -36,7 +36,7 @@ import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 internal const val ALARM_ITEM_HEIGHT = 90
 internal const val ALARM_ITEM_MIN_WIDTH = 280
@@ -48,17 +48,10 @@ private const val SELECTED_RING_WIDTH = 2
 private const val OFF_HAIRLINE_WIDTH = 1
 private const val TIME_MERIDIEM_GAP = 6
 
-data class AlarmItem(
-    val id: AlarmItemId,
-    val enabled: Boolean,
-    val time: LocalDateTime,
-    val description: String
-)
-
 @Composable
 fun AlarmItem(
     modifier: Modifier,
-    alarmItem: AlarmItem,
+    alarmItem: AlarmItemState,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
@@ -84,7 +77,7 @@ fun AlarmItem(
 fun AlarmItem(
     modifier: Modifier,
     enabled: Boolean,
-    time: LocalDateTime,
+    time: LocalTime,
     description: String,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
@@ -162,7 +155,7 @@ fun AlarmItem(
 }
 
 @Composable
-fun AlarmItemTime(time: LocalDateTime, enabled: Boolean, modifier: Modifier = Modifier) {
+fun AlarmItemTime(time: LocalTime, enabled: Boolean, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.Bottom,
@@ -190,7 +183,7 @@ fun StatusDot(color: Color, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AlarmTimeText(time: LocalDateTime, enabled: Boolean) {
+fun AlarmTimeText(time: LocalTime, enabled: Boolean) {
     val colors = LocalAlarmMeColors.current
     val timeString = remember(time) { time.toFormattedString() }
     val meridiem = remember(time) { if (time.hour < 12) "AM" else "PM" }
@@ -210,9 +203,9 @@ fun AlarmTimeText(time: LocalDateTime, enabled: Boolean) {
     )
 }
 
-private fun LocalDateTime.toFormattedString(): String {
-    val hour = if (time.hour % 12 == 0) 12 else time.hour % 12
-    return "$hour:${time.minute.toString().padStart(2, '0')}"
+private fun LocalTime.toFormattedString(): String {
+    val hourInTwelves = if (hour % 12 == 0) 12 else hour % 12
+    return "$hourInTwelves:${minute.toString().padStart(2, '0')}"
 }
 
 @Preview(name = "Light Mode--Default Enabled", showBackground = true)
@@ -228,7 +221,7 @@ private fun AlarmItemDefaultEnabledPreview() {
         AlarmItem(
             modifier = Modifier.padding(10.dp).width(350.dp),
             enabled = isEnabled,
-            time = LocalDateTime(2026, 9, 11, 6, 40),
+            time = LocalTime(6, 40),
             description = "Mon–Fri · Weekday mornings, gently",
             onClick = {},
             onLongClick = {},
@@ -250,7 +243,7 @@ private fun AlarmItemDefaultDisabledPreview() {
         AlarmItem(
             modifier = Modifier.padding(10.dp).width(350.dp),
             enabled = isEnabled,
-            time = LocalDateTime(2026, 9, 11, 13, 5),
+            time = LocalTime(13, 5),
             description = "Thu 10 Sep · Take the bread out",
             onClick = {},
             onLongClick = {},
@@ -272,7 +265,7 @@ private fun AlarmItemSelectionUnselectedEnabledPreview() {
         AlarmItem(
             modifier = Modifier.padding(10.dp).width(350.dp),
             enabled = true,
-            time = LocalDateTime(2026, 9, 11, 7, 15),
+            time = LocalTime(7, 15),
             description = "Sat, Sun",
             onClick = {},
             onLongClick = {},
@@ -297,7 +290,7 @@ private fun AlarmItemSelectionUnselectedDisabledPreview() {
         AlarmItem(
             modifier = Modifier.padding(10.dp).width(350.dp),
             enabled = false,
-            time = LocalDateTime(2026, 9, 11, 21, 45),
+            time = LocalTime(21, 45),
             description = "Every day · Wind down",
             onClick = {},
             onLongClick = {},
@@ -322,7 +315,7 @@ private fun AlarmItemSelectionSelectedEnabledPreview() {
         AlarmItem(
             modifier = Modifier.padding(10.dp).width(350.dp),
             enabled = true,
-            time = LocalDateTime(2026, 9, 11, 5, 30),
+            time = LocalTime(5, 30),
             description = "Mon, Wed, Fri · Gym — leave by six",
             onClick = {},
             onLongClick = {},
@@ -347,7 +340,7 @@ private fun AlarmItemSelectionSelectedDisabledPreview() {
         AlarmItem(
             modifier = Modifier.padding(10.dp).width(350.dp),
             enabled = false,
-            time = LocalDateTime(2026, 9, 11, 22, 30),
+            time = LocalTime(22, 30),
             description = "Every day · Kettle off",
             onClick = {},
             onLongClick = {},

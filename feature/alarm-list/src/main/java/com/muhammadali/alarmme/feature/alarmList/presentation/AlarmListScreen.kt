@@ -25,14 +25,14 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.muhammadali.alarmme.feature.alarmList.domain.AlarmItemId
-import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItem
+import com.muhammadali.alarmme.alarms.domain.AlarmId
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItemsList
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItemsListState
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmsListSkeleton
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmsListTopBar
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.TopBarSkeleton
 import com.muhammadali.alarmme.feature.alarmList.presentation.component.rememberAlarmItemsListState
+import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmItemState
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListEvent
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListState
 import com.muhammadali.alarmme.navigation.NavDestination
@@ -54,9 +54,10 @@ import com.muhammadali.alarmme.ui.screenCategory.isPortraitPhone
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 class AlarmListScreen(
-    private val alarmDetailsDestination: (AlarmItemId?) -> NavDestination
+    private val alarmDetailsDestination: (AlarmId?) -> NavDestination
 ) : Screen {
 
     @Composable
@@ -80,14 +81,9 @@ class AlarmListScreen(
             },
             onNewAlarmClick = { navigator?.navigateTo(alarmDetailsDestination(null)) },
             onDisableSelected = { ids ->
-                dispatch(
-                    AlarmsListEvent.OnEnableOrDisableAlarms(
-                        ids = ids.map { it },
-                        enabled = false
-                    )
-                )
+                dispatch(AlarmsListEvent.OnEnableOrDisableAlarms(ids = ids, enabled = false))
             },
-            onDeleteSelected = { ids -> dispatch(AlarmsListEvent.OnDeleteAlarms(ids.map { it })) },
+            onDeleteSelected = { ids -> dispatch(AlarmsListEvent.OnDeleteAlarms(ids)) },
             onRetry = { dispatch(AlarmsListEvent.OnRetry) },
             onDismiss = { /*TODO*/ }
         )
@@ -97,11 +93,11 @@ class AlarmListScreen(
 @Composable
 fun AlarmListScreenContent(
     state: AlarmsListState,
-    onAlarmClick: (AlarmItemId) -> Unit,
-    onAlarmCheckedChange: (AlarmItemId, Boolean) -> Unit,
+    onAlarmClick: (AlarmId) -> Unit,
+    onAlarmCheckedChange: (AlarmId, Boolean) -> Unit,
     onNewAlarmClick: () -> Unit,
-    onDisableSelected: (List<AlarmItemId>) -> Unit,
-    onDeleteSelected: (List<AlarmItemId>) -> Unit,
+    onDisableSelected: (Set<AlarmId>) -> Unit,
+    onDeleteSelected: (Set<AlarmId>) -> Unit,
     onRetry: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -124,13 +120,13 @@ fun AlarmListScreenContent(
 
 @Composable
 fun LoadedAlarmListScreenContent(
-    alarms: List<AlarmItem>,
+    alarms: List<AlarmItemState>,
     nextAlarmTime: LocalDateTime?,
-    onAlarmClick: (AlarmItemId) -> Unit,
-    onAlarmCheckedChange: (AlarmItemId, Boolean) -> Unit,
+    onAlarmClick: (AlarmId) -> Unit,
+    onAlarmCheckedChange: (AlarmId, Boolean) -> Unit,
     onNewAlarmClick: () -> Unit,
-    onDisableSelected: (List<AlarmItemId>) -> Unit,
-    onDeleteSelected: (List<AlarmItemId>) -> Unit,
+    onDisableSelected: (Set<AlarmId>) -> Unit,
+    onDeleteSelected: (Set<AlarmId>) -> Unit,
     modifier: Modifier = Modifier,
     listState: AlarmItemsListState = rememberAlarmItemsListState(),
 ) {
@@ -169,11 +165,11 @@ fun LoadedAlarmListScreenContent(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 selectedCount = selectedIds.size,
                 onDisable = {
-                    onDisableSelected(selectedIds.toList())
+                    onDisableSelected(selectedIds)
                     listState.clear()
                 },
                 onDelete = {
-                    onDeleteSelected(selectedIds.toList())
+                    onDeleteSelected(selectedIds)
                     listState.clear()
                 }
             )
@@ -326,21 +322,21 @@ internal fun contentMaxWidth(): Dp =
 private fun bottomFadeHeight(): Dp =
     if (currentScreenCategory().isExpandedWidthOrWider) 80.dp else 110.dp
 
-private fun previewAlarms(): List<AlarmItem> = listOf(
-    AlarmItem(AlarmItemId("gym"), true, LocalDateTime(2026, 9, 11, 5, 30), "Mon, Wed, Fri · Gym — leave by six"),
-    AlarmItem(AlarmItemId("weekday"), true, LocalDateTime(2026, 9, 11, 6, 40), "Mon–Fri · Weekday mornings, gently"),
-    AlarmItem(AlarmItemId("standup"), true, LocalDateTime(2026, 9, 11, 9, 55), "Mon–Fri · Standup in five"),
-    AlarmItem(AlarmItemId("meds"), true, LocalDateTime(2026, 9, 11, 12, 0), "Every day"),
-    AlarmItem(AlarmItemId("bread"), false, LocalDateTime(2026, 9, 11, 13, 5), "Thu 10 Sep · Take the bread out"),
-    AlarmItem(AlarmItemId("laundry"), false, LocalDateTime(2026, 9, 11, 15, 20), "Sun · Move the laundry over before it sits too long"),
-    AlarmItem(AlarmItemId("bins"), true, LocalDateTime(2026, 9, 11, 19, 10), "Wed · Bins out"),
-    AlarmItem(AlarmItemId("winddown"), false, LocalDateTime(2026, 9, 11, 21, 45), "Every day · Wind down, screens off"),
-    AlarmItem(AlarmItemId("kettle"), true, LocalDateTime(2026, 9, 11, 22, 30), "Every day · Kettle off"),
+private fun previewAlarms(): List<AlarmItemState> = listOf(
+    AlarmItemState(AlarmId("gym"), true, LocalTime(5, 30), "Mon, Wed, Fri · Gym — leave by six"),
+    AlarmItemState(AlarmId("weekday"), true, LocalTime(6, 40), "Mon–Fri · Weekday mornings, gently"),
+    AlarmItemState(AlarmId("standup"), true, LocalTime(9, 55), "Mon–Fri · Standup in five"),
+    AlarmItemState(AlarmId("meds"), true, LocalTime(12, 0), "Every day"),
+    AlarmItemState(AlarmId("bread"), false, LocalTime(13, 5), "Thu 10 Sep · Take the bread out"),
+    AlarmItemState(AlarmId("laundry"), false, LocalTime(15, 20), "Sun · Move the laundry over before it sits too long"),
+    AlarmItemState(AlarmId("bins"), true, LocalTime(19, 10), "Wed · Bins out"),
+    AlarmItemState(AlarmId("winddown"), false, LocalTime(21, 45), "Every day · Wind down, screens off"),
+    AlarmItemState(AlarmId("kettle"), true, LocalTime(22, 30), "Every day · Kettle off"),
 )
 
 @Composable
 private fun PreviewLoaded(
-    alarms: List<AlarmItem> = previewAlarms(),
+    alarms: List<AlarmItemState> = previewAlarms(),
     listState: AlarmItemsListState = rememberAlarmItemsListState(),
 ) {
     AlarmMeThemeProvider {
@@ -381,7 +377,7 @@ private fun LoadedAlarmListScreenContentMediumPreview() {
 private fun LoadedAlarmListScreenContentSelectionPreview() {
     PreviewLoaded(
         listState = rememberAlarmItemsListState(
-            selectedAlarmItems = listOf(AlarmItemId("gym"), AlarmItemId("bread"), AlarmItemId("bins"))
+            selectedAlarmItems = listOf(AlarmId("gym"), AlarmId("bread"), AlarmId("bins"))
         )
     )
 }

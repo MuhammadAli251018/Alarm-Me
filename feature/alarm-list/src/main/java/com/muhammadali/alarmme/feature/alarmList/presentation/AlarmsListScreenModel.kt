@@ -1,15 +1,16 @@
 package com.muhammadali.alarmme.feature.alarmList.presentation
 
 import cafe.adriel.voyager.core.model.screenModelScope
-import com.muhammadali.alarmme.feature.alarmList.domain.Alarm
 import com.muhammadali.alarmme.feature.alarmList.domain.AlarmsProvideUseCase
-import com.muhammadali.alarmme.feature.alarmList.presentation.component.AlarmItem
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListEvent
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListState
+import com.muhammadali.alarmme.feature.alarmList.presentation.model.toLoadedState
 import com.muhammadali.alarmme.mvi.BaseScreenModel
+import com.muhammadali.alarmme.utility.kotlinDateTime.now
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 
 class AlarmsListScreenModel(
     private val alarmsProvideUseCase: AlarmsProvideUseCase
@@ -28,9 +29,7 @@ class AlarmsListScreenModel(
             }
 
             is AlarmsListEvent.OnEnableOrDisableAlarms -> screenModelScope.launch {
-                alarmsProvideUseCase.enableOrDisableAlarm(
-                    event.ids.associateWith { event.enabled }
-                )
+                alarmsProvideUseCase.enableOrDisableAlarms(event.ids, event.enabled)
             }
 
             is AlarmsListEvent.OnDeleteAlarms -> screenModelScope.launch {
@@ -48,20 +47,7 @@ class AlarmsListScreenModel(
         observeJob = screenModelScope.launch {
             alarmsProvideUseCase.getAlarms()
                 .catch { _state.value = AlarmsListState.Error }
-                .collect { alarms -> _state.value = alarms.toLoadedState() }
+                .collect { alarms -> _state.value = alarms.toLoadedState(LocalDateTime.now()) }
         }
     }
 }
-
-
-private fun List<Alarm>.toLoadedState(): AlarmsListState.Loaded = AlarmsListState.Loaded(
-    alarms = map { alarm ->
-        AlarmItem(
-            id = alarm.id,
-            enabled = alarm.enabled,
-            time = alarm.time,
-            description = alarm.description
-        )
-    },
-    nextAlarmTime = filter { it.enabled }.minOfOrNull { it.time }
-)
