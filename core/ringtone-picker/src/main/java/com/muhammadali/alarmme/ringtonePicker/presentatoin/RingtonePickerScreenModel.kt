@@ -1,6 +1,7 @@
 package com.muhammadali.alarmme.ringtonePicker.presentatoin
 
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.muhammadali.alarmme.alarms.domain.Ringtone
 import com.muhammadali.alarmme.mvi.BaseScreenModel
 import com.muhammadali.alarmme.ringtonePicker.domain.RingtoneProvideUseCase
 import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtonePickerEvent
@@ -17,10 +18,9 @@ class RingtonePickerScreenModel(
 ) {
 
     private var observeJob: Job? = null
+    private var catalog: List<Ringtone> = emptyList()
 
-    init {
-        loadRingtones()
-    }
+    init { loadRingtones() }
 
     override fun handleEvent(event: RingtonePickerEvent) {
         when (event) {
@@ -33,7 +33,7 @@ class RingtonePickerScreenModel(
             // if the user saves.
             is RingtonePickerEvent.OnRingtoneSelect ->
                 updateStateIfInstanceOf<RingtonePickerState.Loaded> {
-                    copy(selectedRingtoneId = event.id)
+                    copy(selectedRingtone = catalog.firstOrNull { it.id == event.id })
                 }
 
             RingtonePickerEvent.OnRetry -> loadRingtones()
@@ -48,12 +48,14 @@ class RingtonePickerScreenModel(
             ringtoneProvideUseCase.getRingtones()
                 .catch { _state.value = RingtonePickerState.Error }
                 .collect { ringtones ->
+                    catalog = ringtones
+
                     // Carry the transient bits across a catalog refresh rather than resetting them.
                     val loaded = _state.value as? RingtonePickerState.Loaded
 
                     _state.value = RingtonePickerState.Loaded(
                         ringtones = ringtones.map { it.toItemState() },
-                        selectedRingtoneId = loaded?.selectedRingtoneId,
+                        selectedRingtone = loaded?.selectedRingtone,
                         playingRingtoneId = loaded?.playingRingtoneId
                     )
                 }

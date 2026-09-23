@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.muhammadali.alarmme.alarms.domain.Ringtone
 import com.muhammadali.alarmme.alarms.domain.RingtoneId
 import com.muhammadali.alarmme.navigation.LocalNavResultRepository
 import com.muhammadali.alarmme.navigation.NavResultKey
@@ -39,8 +40,11 @@ import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 
-/** What the picker hands back to whoever navigated to it. */
-data class PickedRingtoneResult(val ringtoneId: RingtoneId) : NavigationResult
+/**
+ * What the picker hands back to whoever navigated to it — the whole tone, so the caller has
+ * everything it needs without looking anything up.
+ */
+data class PickedRingtoneResult(val ringtone: Ringtone) : NavigationResult
 
 class RingtonePickerScreen : Screen {
 
@@ -64,11 +68,11 @@ class RingtonePickerScreen : Screen {
             onBackClick = { navigator?.pop() },
             onSaveClick = {
                 val loaded = state as? RingtonePickerState.Loaded ?: return@RingtonePickerScreenContent
-                val selectedRingtoneId = loaded.selectedRingtoneId ?: return@RingtonePickerScreenContent
+                val selectedRingtone = loaded.selectedRingtone ?: return@RingtonePickerScreenContent
 
                 navResultRepository.save(
                     RINGTONE_NAV_RESULT_KEY,
-                    PickedRingtoneResult(selectedRingtoneId)
+                    PickedRingtoneResult(selectedRingtone)
                 )
 
                 navigator?.pop()
@@ -108,9 +112,11 @@ fun RingtonePickerScreenContent(
         is RingtonePickerState.Loaded -> RingtoneScreenContent(
             modifier = modifier,
             ringtones = state.ringtones,
-            selectedRingtoneId = state.selectedRingtoneId,
+            // Only the id goes further down: the rows compare against it, and have no use for
+            // the rest of the tone.
+            selectedRingtoneId = state.selectedRingtone?.id,
             playingRingtoneId = state.playingRingtoneId,
-            canSave = state.selectedRingtoneId != null,
+            canSave = state.selectedRingtone != null,
             onBackClick = onBackClick,
             onSaveClick = onSaveClick,
             onRingtoneClick = onRingtoneClick,

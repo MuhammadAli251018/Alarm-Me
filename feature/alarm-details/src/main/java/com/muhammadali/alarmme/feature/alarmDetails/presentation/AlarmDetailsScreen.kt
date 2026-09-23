@@ -35,6 +35,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.muhammadali.alarmme.alarms.domain.AlarmId
+import com.muhammadali.alarmme.alarms.domain.Ringtone
 import com.muhammadali.alarmme.alarms.domain.RingtoneId
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.AlarmSettingsDetails
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.AlarmTimeDetails
@@ -69,6 +70,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import org.koin.core.parameter.parametersOf
+import kotlin.time.Duration.Companion.seconds
 
 
 class AlarmDetailsScreen(
@@ -94,7 +96,7 @@ class AlarmDetailsScreen(
         }
 
         AwaitNavResult(RingtonePickerScreen.RINGTONE_NAV_RESULT_KEY) { result ->
-            dispatch(AlarmDetailsEvent.OnRingtoneUpdated(result.ringtoneId))
+            dispatch(AlarmDetailsEvent.OnRingtoneUpdated(result.ringtone))
         }
 
         LaunchedEffect(screenModel) {
@@ -411,7 +413,7 @@ private fun AlarmDetailsVerticalContent(
 
         AlarmSettingsDetails(
             modifier = Modifier.fillMaxWidth(),
-            soundLabel = details.soundName,
+            soundLabel = details.ringtone.name,
             snoozeLabel = details.toSnoozeLabel(),
             gradualVolumeEnabled = details.gradualVolumeEnabled,
             vibrateEnabled = details.vibrateEnabled,
@@ -493,7 +495,7 @@ private fun AlarmDetailsHorizontalContent(
         ) {
             AlarmSettingsDetails(
                 modifier = Modifier.fillMaxWidth(),
-                soundLabel = details.soundName,
+                soundLabel = details.ringtone.name,
                 snoozeLabel = details.toSnoozeLabel(),
                 gradualVolumeEnabled = details.gradualVolumeEnabled,
                 vibrateEnabled = details.vibrateEnabled,
@@ -562,8 +564,12 @@ private fun previewDetails(): AlarmDetailsUiState = AlarmDetailsUiState(
         LocalDate(2026, 9, 24),
         LocalDate(2026, 9, 28)
     ),
-    ringtoneId = RingtoneId("sunrise-chime"),
-    soundName = "Sunrise chime",
+    ringtone = Ringtone(
+        id = RingtoneId("sunrise-chime"),
+        name = "Sunrise chime",
+        uri = "content://com.muhammadali.alarmme.ringtones/sunrise-chime",
+        duration = 42.seconds,
+    ),
     snoozeDurationMinutes = 9,
     snoozeCount = 3,
     gradualVolumeEnabled = true,

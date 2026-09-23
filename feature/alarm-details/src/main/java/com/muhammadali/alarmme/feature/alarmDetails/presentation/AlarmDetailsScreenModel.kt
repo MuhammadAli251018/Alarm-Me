@@ -5,7 +5,6 @@ import com.muhammadali.alarmme.alarms.domain.Alarm
 import com.muhammadali.alarmme.alarms.domain.AlarmId
 import com.muhammadali.alarmme.alarms.domain.nextOccurrence
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsUseCase
-import com.muhammadali.alarmme.feature.alarmDetails.domain.RingtoneProvideUseCase
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEffect
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEvent
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsState
@@ -22,7 +21,6 @@ import kotlinx.datetime.LocalDateTime
 class AlarmDetailsScreenModel(
     private val startMode: AlarmDetailsScreen.StartMode,
     private val alarmDetailsUseCase: AlarmDetailsUseCase,
-    private val ringtoneProvideUseCase: RingtoneProvideUseCase
 ) : BaseScreenModel<AlarmDetailsState, AlarmDetailsEvent, AlarmDetailsEffect>(
     initialState = AlarmDetailsState.Initial
 ) {
@@ -86,15 +84,8 @@ class AlarmDetailsScreenModel(
 
             AlarmDetailsEvent.OnRetry -> loadAlarmDetails()
 
-            is AlarmDetailsEvent.OnRingtoneUpdated -> screenModelScope.launch {
-                // TODO: RINGTONE PICKE SHOULD RETURN A FULL RINGTONE OBJECT.
-                // Resolved here only for its name; the id is what the draft carries.
-                val ringtone = ringtoneProvideUseCase.getRingtone(event.ringtoneId)
-                    ?: return@launch
-
-                updateDraft { draft ->
-                    draft.copy(ringtoneId = ringtone.id, soundName = ringtone.name)
-                }
+            is AlarmDetailsEvent.OnRingtoneUpdated -> updateDraft { draft ->
+                draft.copy(ringtone = event.ringtone)
             }
         }
     }
@@ -104,12 +95,7 @@ class AlarmDetailsScreenModel(
         val base = originalAlarm ?: return
 
         screenModelScope.launch {
-            // The full tone is only needed here, to write onto the alarm. Falls back to the
-            // original's if the chosen one has left the catalog since it was picked.
-            val ringtone = ringtoneProvideUseCase.getRingtone(loaded.details.ringtoneId)
-                ?: base.preferences.ringtone
-
-            val alarm = loaded.details.toAlarm(base = base, ringtone = ringtone)
+            val alarm = loaded.details.toAlarm(base)
 
             alarmDetailsUseCase.saveAlarm(alarm)
 
@@ -134,8 +120,7 @@ class AlarmDetailsScreenModel(
     /** "RINGS IN …" has to follow edits to the time or the schedule, both of which move it. */
     private fun AlarmDetailsUiState.withRecomputedOccurrence(): AlarmDetailsUiState {
         val base = originalAlarm ?: return this
-        // Any ringtone does here — the next firing depends only on the time and the schedule.
-        val candidate = toAlarm(base, base.preferences.ringtone)
+        val candidate = toAlarm(base)
         return copy(nextOccurrence = candidate.nextOccurrence(LocalDateTime.now()))
     }
 

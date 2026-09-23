@@ -1,6 +1,6 @@
 package com.muhammadali.alarmme.feature.alarmDetails.presentation.model
 
-import com.muhammadali.alarmme.alarms.domain.RingtoneId
+import com.muhammadali.alarmme.alarms.domain.Ringtone
 import com.muhammadali.alarmme.mvi.UiEvent
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -42,5 +42,5 @@ sealed interface AlarmDetailsEvent : UiEvent {
     data object OnRetry : AlarmDetailsEvent
 
     /** The ringtone picker came back with a choice. */
-    data class OnRingtoneUpdated(val ringtoneId: RingtoneId) : AlarmDetailsEvent
+    data class OnRingtoneUpdated(val ringtone: Ringtone) : AlarmDetailsEvent
 }

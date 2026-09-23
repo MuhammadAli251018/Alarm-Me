@@ -18,8 +18,7 @@ internal fun Alarm.toUiState(now: LocalDateTime): AlarmDetailsUiState = AlarmDet
     repeatDays = (schedule as? AlarmSchedule.Repeat)?.repeatDays ?: emptySet(),
     customDateEnabled = schedule is AlarmSchedule.CustomDates,
     customDates = (schedule as? AlarmSchedule.CustomDates)?.customDates ?: emptyList(),
-    ringtoneId = preferences.ringtone.id,
-    soundName = preferences.ringtone.name,
+    ringtone = preferences.ringtone,
     snoozeDurationMinutes = preferences.snoozePreferences
         ?.snoozeDuration
         ?.inWholeMinutes
@@ -33,7 +32,7 @@ internal fun Alarm.toUiState(now: LocalDateTime): AlarmDetailsUiState = AlarmDet
 /**
  * State → domain, for saving alarm details.
  */
-internal fun AlarmDetailsUiState.toAlarm(base: Alarm, ringtone: Ringtone): Alarm = base.copy(
+internal fun AlarmDetailsUiState.toAlarm(base: Alarm): Alarm = base.copy(
     label = label,
     time = time,
     schedule = if (customDateEnabled) {

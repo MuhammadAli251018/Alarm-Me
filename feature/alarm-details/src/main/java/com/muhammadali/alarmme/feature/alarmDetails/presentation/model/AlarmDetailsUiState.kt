@@ -1,7 +1,7 @@
 package com.muhammadali.alarmme.feature.alarmDetails.presentation.model
 
 import com.muhammadali.alarmme.alarms.domain.AlarmId
-import com.muhammadali.alarmme.alarms.domain.RingtoneId
+import com.muhammadali.alarmme.alarms.domain.Ringtone
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -15,8 +15,7 @@ data class AlarmDetailsUiState(
     val repeatDays: Set<DayOfWeek>,
     val customDateEnabled: Boolean,
     val customDates: List<LocalDate>,
-    val ringtoneId: RingtoneId,
-    val soundName: String,
+    val ringtone: Ringtone,
     val snoozeDurationMinutes: Int,
     val snoozeCount: Int,
     val gradualVolumeEnabled: Boolean,
