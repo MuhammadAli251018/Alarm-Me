@@ -1,15 +1,15 @@
 package com.muhammadali.alarmme.feature.alarmDetails.presentation.model
 
-import com.muhammadali.alarmme.ringtonePicker.presentatoin.Ringtone
+import com.muhammadali.alarmme.alarms.domain.RingtoneId
 import com.muhammadali.alarmme.mvi.UiEvent
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 sealed interface AlarmDetailsEvent : UiEvent {
 
     /** The time-picker's Save was tapped with this time. */
-    data class OnAlarmTimeChanged(val time: LocalDateTime) : AlarmDetailsEvent
+    data class OnAlarmTimeChanged(val time: LocalTime) : AlarmDetailsEvent
 
     /** A repeat-day chip was tapped — flip its membership in the draft's repeat days. */
     data class OnDayToggle(val day: DayOfWeek) : AlarmDetailsEvent
@@ -41,5 +41,6 @@ sealed interface AlarmDetailsEvent : UiEvent {
     /** "Try again" from the error state: start observing this alarm's details over. */
     data object OnRetry : AlarmDetailsEvent
 
-    data class OnRingtoneUpdated(val pickerRingtone: Ringtone) : AlarmDetailsEvent
+    /** The ringtone picker came back with a choice. */
+    data class OnRingtoneUpdated(val ringtoneId: RingtoneId) : AlarmDetailsEvent
 }

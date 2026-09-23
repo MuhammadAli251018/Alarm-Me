@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,18 +34,20 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.muhammadali.alarmme.ringtonePicker.presentatoin.RingtonePickerScreen
-import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetails
-import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsId
+import com.muhammadali.alarmme.alarms.domain.AlarmId
+import com.muhammadali.alarmme.alarms.domain.RingtoneId
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.AlarmSettingsDetails
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.AlarmTimeDetails
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.ScheduleDetails
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.ScreenDetailsTopBar
+import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEffect
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEvent
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsState
+import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsUiState
 import com.muhammadali.alarmme.navigation.AwaitNavResult
 import com.muhammadali.alarmme.navigation.NavDestination
 import com.muhammadali.alarmme.navigation.navigateTo
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.RingtonePickerScreen
 import com.muhammadali.alarmme.ui.component.AmPlainTextButton
 import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screen.TimePickerBottomSheet
@@ -60,6 +63,7 @@ import com.muhammadali.alarmme.ui.screenCategory.isMediumWidth
 import com.muhammadali.alarmme.ui.screenCategory.isPhone
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
+import com.muhammadali.alarmme.utility.kotlinDateTime.toGroupedLabel
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -74,7 +78,7 @@ class AlarmDetailsScreen(
 
     sealed interface StartMode {
         data object New : StartMode
-        data class Edit(val alarmId: AlarmDetailsId) : StartMode
+        data class Edit(val alarmId: AlarmId) : StartMode
     }
 
     @Composable
@@ -90,7 +94,16 @@ class AlarmDetailsScreen(
         }
 
         AwaitNavResult(RingtonePickerScreen.RINGTONE_NAV_RESULT_KEY) { result ->
-            dispatch(AlarmDetailsEvent.OnRingtoneUpdated(result.ringtone))
+            dispatch(AlarmDetailsEvent.OnRingtoneUpdated(result.ringtoneId))
+        }
+
+        LaunchedEffect(screenModel) {
+            screenModel.effect.collect { effect ->
+                when (effect) {
+                    // The alarm was deleted, so there is nothing left on this screen to show.
+                    AlarmDetailsEffect.NavigateBack -> navigator?.pop()
+                }
+            }
         }
 
         AlarmDetailsScreenContent(
@@ -138,7 +151,7 @@ fun AlarmDetailsScreenContent(
     state: AlarmDetailsState,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
-    onAlarmTimeChanged: (LocalDateTime) -> Unit,
+    onAlarmTimeChanged: (LocalTime) -> Unit,
     onDeleteClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
@@ -195,7 +208,7 @@ fun AlarmDetailsLoadedContent(
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onAlarmTimeChanged: (LocalDateTime) -> Unit,
+    onAlarmTimeChanged: (LocalTime) -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
     onCustomDatesChanged: (Set<LocalDate>) -> Unit,
@@ -206,7 +219,7 @@ fun AlarmDetailsLoadedContent(
     onLabelClick: () -> Unit,
 ) {
     val screenCategory = currentScreenCategory()
-    val alarmDetails = state.alarmDetails
+    val details = state.details
     var showCustomDatePicker by rememberSaveable { mutableStateOf(false) }
     var showTimePicker by rememberSaveable { mutableStateOf(false) }
     val isHorizontalScreen = screenCategory.isLandscapePhone || screenCategory.isExpandedWidthOrWider
@@ -214,7 +227,7 @@ fun AlarmDetailsLoadedContent(
     Column(modifier = modifier.fillMaxSize()) {
         ScreenDetailsTopBar(
             modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth(),
-            alarmTitle = alarmDetails.label,
+            alarmTitle = details.label,
             canSave = state.canSave,
             onBackClick = onBackClick,
             onSaveButtonClick = onSaveClick,
@@ -224,7 +237,7 @@ fun AlarmDetailsLoadedContent(
         if (isHorizontalScreen) {
             AlarmDetailsHorizontalContent(
                 modifier = Modifier.fillMaxSize(),
-                alarmDetails = alarmDetails,
+                details = details,
                 onAlarmTimeClick = { showTimePicker = true },
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
@@ -240,7 +253,7 @@ fun AlarmDetailsLoadedContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .screenConstraints(screenCategory),
-                alarmDetails = alarmDetails,
+                details = details,
                 onAlarmTimeClick = { showTimePicker = true },
                 onDeleteClick = onDeleteClick,
                 onDayToggle = onDayToggle,
@@ -256,7 +269,7 @@ fun AlarmDetailsLoadedContent(
     }
 
     if (showCustomDatePicker) {
-        var draftDates by remember { mutableStateOf(alarmDetails.customDates.toSet()) }
+        var draftDates by remember { mutableStateOf(details.customDates.toSet()) }
 
         AlarmDatePicker(
             isHorizontal = isHorizontalScreen,
@@ -273,9 +286,9 @@ fun AlarmDetailsLoadedContent(
     }
 
     if (showTimePicker) {
-        var draftHour by remember { mutableStateOf(alarmDetails.time.toHour12()) }
-        var draftMinute by remember { mutableStateOf(alarmDetails.time.minute) }
-        var draftIsAm by remember { mutableStateOf(alarmDetails.time.isAm()) }
+        var draftHour by remember { mutableStateOf(details.time.toHour12()) }
+        var draftMinute by remember { mutableStateOf(details.time.minute) }
+        var draftIsAm by remember { mutableStateOf(details.time.isAm()) }
 
         AlarmTimePicker(
             isHorizontal = isHorizontalScreen,
@@ -286,7 +299,7 @@ fun AlarmDetailsLoadedContent(
             onMinuteChange = { draftMinute = it },
             onAmPmChange = { draftIsAm = it },
             onSave = {
-                onAlarmTimeChanged(alarmDetails.time.withTime(draftHour, draftMinute, draftIsAm))
+                onAlarmTimeChanged(toLocalTime(draftHour, draftMinute, draftIsAm))
                 showTimePicker = false
             },
             onDismiss = { showTimePicker = false }
@@ -359,7 +372,7 @@ fun AlarmTimePicker(
 /** Compact-portrait and medium-width: one scrolling column, capped/centered past medium width. */
 @Composable
 private fun AlarmDetailsVerticalContent(
-    alarmDetails: AlarmDetails,
+    details: AlarmDetailsUiState,
     onAlarmTimeClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
@@ -381,15 +394,16 @@ private fun AlarmDetailsVerticalContent(
     ) {
         AlarmTimeDetails(
             modifier = Modifier.fillMaxWidth(),
-            time = alarmDetails.time,
+            time = details.time,
+            nextOccurrence = details.nextOccurrence,
             onClick = onAlarmTimeClick
         )
 
         ScheduleDetails(
             modifier = Modifier.fillMaxWidth(),
-            repeatDays = alarmDetails.repeatDays,
-            customDateEnabled = alarmDetails.customDateEnabled,
-            customDateLabel = alarmDetails.customDates.toCustomDateLabel(),
+            repeatDays = details.repeatDays,
+            customDateEnabled = details.customDateEnabled,
+            customDateLabel = details.customDates.toCustomDateLabel(),
             onDayToggle = onDayToggle,
             onCustomDateToggle = onCustomDateToggle,
             onCustomDateRowClick = onCustomDateRowClick
@@ -397,11 +411,11 @@ private fun AlarmDetailsVerticalContent(
 
         AlarmSettingsDetails(
             modifier = Modifier.fillMaxWidth(),
-            soundLabel = alarmDetails.soundName,
-            snoozeLabel = alarmDetails.toSnoozeLabel(),
-            gradualVolumeEnabled = alarmDetails.gradualVolumeEnabled,
-            vibrateEnabled = alarmDetails.vibrateEnabled,
-            alarmLabel = alarmDetails.label,
+            soundLabel = details.soundName,
+            snoozeLabel = details.toSnoozeLabel(),
+            gradualVolumeEnabled = details.gradualVolumeEnabled,
+            vibrateEnabled = details.vibrateEnabled,
+            alarmLabel = details.label,
             onSoundClick = onSoundClick,
             onSnoozeClick = onSnoozeClick,
             onGradualVolumeToggle = onGradualVolumeToggle,
@@ -420,7 +434,7 @@ private fun AlarmDetailsVerticalContent(
 /** Landscape-phone and expanded-width: two independently-scrolling panes side by side. */
 @Composable
 private fun AlarmDetailsHorizontalContent(
-    alarmDetails: AlarmDetails,
+    details: AlarmDetailsUiState,
     onAlarmTimeClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
@@ -454,15 +468,16 @@ private fun AlarmDetailsHorizontalContent(
         ) {
             AlarmTimeDetails(
                 modifier = Modifier.fillMaxWidth(),
-                time = alarmDetails.time,
+                time = details.time,
+                nextOccurrence = details.nextOccurrence,
                 onClick = onAlarmTimeClick
             )
 
             ScheduleDetails(
                 modifier = Modifier.fillMaxWidth(),
-                repeatDays = alarmDetails.repeatDays,
-                customDateEnabled = alarmDetails.customDateEnabled,
-                customDateLabel = alarmDetails.customDates.toCustomDateLabel(),
+                repeatDays = details.repeatDays,
+                customDateEnabled = details.customDateEnabled,
+                customDateLabel = details.customDates.toCustomDateLabel(),
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
                 onCustomDateRowClick = onCustomDateRowClick
@@ -478,11 +493,11 @@ private fun AlarmDetailsHorizontalContent(
         ) {
             AlarmSettingsDetails(
                 modifier = Modifier.fillMaxWidth(),
-                soundLabel = alarmDetails.soundName,
-                snoozeLabel = alarmDetails.toSnoozeLabel(),
-                gradualVolumeEnabled = alarmDetails.gradualVolumeEnabled,
-                vibrateEnabled = alarmDetails.vibrateEnabled,
-                alarmLabel = alarmDetails.label,
+                soundLabel = details.soundName,
+                snoozeLabel = details.toSnoozeLabel(),
+                gradualVolumeEnabled = details.gradualVolumeEnabled,
+                vibrateEnabled = details.vibrateEnabled,
+                alarmLabel = details.label,
                 onSoundClick = onSoundClick,
                 onSnoozeClick = onSnoozeClick,
                 onGradualVolumeToggle = onGradualVolumeToggle,
@@ -507,42 +522,33 @@ private fun Modifier.leftPaneWidth(screenCategory: ScreenCategory): Modifier {
     return this.width(width)
 }
 
-private fun AlarmDetails.toSnoozeLabel(): String =
+private fun AlarmDetailsUiState.toSnoozeLabel(): String =
     "$snoozeDurationMinutes min · $snoozeCount times"
 
-private fun List<LocalDate>.toCustomDateLabel(): String {
-    if (isEmpty()) return "No dates set"
-    return sorted()
-        .groupBy { it.month }
-        .entries
-        .joinToString(" · ") { (month, dates) ->
-            val monthName = month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-            "$monthName " + dates.joinToString(", ") { it.day.toString() }
-        }
-}
+private fun List<LocalDate>.toCustomDateLabel(): String =
+    if (isEmpty()) "No dates set" else toGroupedLabel()
 
-private fun LocalDateTime.toHour12(): Int {
+private fun LocalTime.toHour12(): Int {
     val h = hour % 12
     return if (h == 0) 12 else h
 }
 
-private fun LocalDateTime.isAm(): Boolean = hour < 12
+private fun LocalTime.isAm(): Boolean = hour < 12
 
-private fun LocalDateTime.withTime(hour12: Int, minute: Int, isAm: Boolean): LocalDateTime {
+private fun toLocalTime(hour12: Int, minute: Int, isAm: Boolean): LocalTime {
     val hour24 = when {
         isAm && hour12 == 12 -> 0
         !isAm && hour12 != 12 -> hour12 + 12
         else -> hour12
     }
-    return LocalDateTime(date, LocalTime(hour24, minute))
+    return LocalTime(hour24, minute)
 }
 
-private val PreviewDate = LocalDate(2026, 9, 17)
-
-private fun previewAlarmDetails(): AlarmDetails = AlarmDetails(
-    id = AlarmDetailsId("weekday"),
+private fun previewDetails(): AlarmDetailsUiState = AlarmDetailsUiState(
+    id = AlarmId("weekday"),
     label = "Weekday mornings",
-    time = LocalDateTime(PreviewDate, LocalTime(6, 40)),
+    time = LocalTime(6, 40),
+    nextOccurrence = LocalDateTime(2026, 9, 18, 6, 40),
     repeatDays = setOf(
         DayOfWeek.MONDAY,
         DayOfWeek.TUESDAY,
@@ -556,6 +562,7 @@ private fun previewAlarmDetails(): AlarmDetails = AlarmDetails(
         LocalDate(2026, 9, 24),
         LocalDate(2026, 9, 28)
     ),
+    ringtoneId = RingtoneId("sunrise-chime"),
     soundName = "Sunrise chime",
     snoozeDurationMinutes = 9,
     snoozeCount = 3,
@@ -596,18 +603,16 @@ private fun PreviewAlarmDetailsScreen(state: AlarmDetailsState) {
 @CommonScreenCategoriesPreview
 @Composable
 private fun AlarmDetailsScreenContentPreview() {
-    val details = previewAlarmDetails()
-    PreviewAlarmDetailsScreen(AlarmDetailsState.Loaded(alarmDetails = details, canSave = false))
+    PreviewAlarmDetailsScreen(AlarmDetailsState.Loaded(details = previewDetails(), canSave = false))
 }
 
 /** A dirty draft (custom date toggled on) so Save shows enabled. */
 @CommonScreenCategoriesPreview
 @Composable
 private fun AlarmDetailsScreenContentUnsavedChangesPreview() {
-    val details = previewAlarmDetails()
     PreviewAlarmDetailsScreen(
         AlarmDetailsState.Loaded(
-            alarmDetails = details.copy(customDateEnabled = true),
+            details = previewDetails().copy(customDateEnabled = true),
             canSave = true
         )
     )

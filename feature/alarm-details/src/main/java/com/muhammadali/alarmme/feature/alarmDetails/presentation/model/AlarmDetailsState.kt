@@ -1,6 +1,5 @@
 package com.muhammadali.alarmme.feature.alarmDetails.presentation.model
 
-import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetails
 import com.muhammadali.alarmme.mvi.UiState
 
 sealed interface AlarmDetailsState : UiState {
@@ -11,7 +10,7 @@ sealed interface AlarmDetailsState : UiState {
     data object Loading : AlarmDetailsState
 
     data class Loaded(
-        val alarmDetails: AlarmDetails,
+        val details: AlarmDetailsUiState,
         val canSave: Boolean,
     ) : AlarmDetailsState
 

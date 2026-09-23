@@ -19,7 +19,6 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import com.muhammadali.alarmme.utility.kotlinDateTime.now
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -27,10 +26,14 @@ import kotlinx.datetime.toInstant
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
+// TODO: move to get from string resources
+private const val NOT_SCHEDULED_LABEL = "NOT SCHEDULED"
+
 @Composable
 fun AlarmTimeDetails(
     modifier: Modifier,
-    time: LocalDateTime,
+    time: LocalTime,
+    nextOccurrence: LocalDateTime?,
     onClick: () -> Unit
 ) {
     val colors = LocalAlarmMeColors.current
@@ -43,15 +46,15 @@ fun AlarmTimeDetails(
         onClick = onClick
     ) {
         Column(
-            modifier
+            Modifier
                 .padding(12.dp)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            val topBarEyebrow = remember(time) { time.toTopBarEyebrow() }
+            val eyebrow = remember(nextOccurrence) { nextOccurrence.toRingsInLabel() }
 
             Text(
-                text = topBarEyebrow,
+                text = eyebrow,
                 style = typography.labelSmall,
                 color = colors.primary
             )
@@ -64,22 +67,19 @@ fun AlarmTimeDetails(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                val colors = LocalAlarmMeColors.current
                 val timeString = remember(time) { time.toFormattedString() }
                 val meridiem = remember(time) { if (time.hour < 12) "AM" else "PM" }
 
                 Text(
                     text = timeString,
-                    style = LocalAlarmMeTypography.current.alarmRow.copy(
-                        fontSize = 56.sp
-                    ),
+                    style = typography.alarmRow.copy(fontSize = 56.sp),
                     color = colors.onSurface
                 )
 
                 Text(
                     modifier = Modifier.padding(bottom = 6.dp),
                     text = meridiem,
-                    style = LocalAlarmMeTypography.current.meridiem,
+                    style = typography.meridiem,
                     color = colors.onSurfaceVariant
                 )
             }
@@ -87,32 +87,30 @@ fun AlarmTimeDetails(
     }
 }
 
-// TODO: Move the formate and date-time helper functions into :core:utility:kotlin-date-time
+/**
+ * How long until the alarm actually rings. Takes the already-computed next occurrence rather than a
+ * bare time of day, because the wait depends on the schedule — "Wed only" at 6:40 is up to a week
+ * out, not the same evening.
+ */
 @OptIn(ExperimentalTime::class)
-private fun LocalDateTime?.toTopBarEyebrow(
+private fun LocalDateTime?.toRingsInLabel(
     now: LocalDateTime = LocalDateTime.now(),
     timeZone: TimeZone = TimeZone.currentSystemDefault()
 ): String {
-    if (this == null) return "NO ALARMS ARMED"
+    if (this == null) return NOT_SCHEDULED_LABEL
 
-    // Subtract instants, not individual fields. Per-field subtraction goes negative whenever the
-    // alarm's minute is below the current minute (6:40 vs 7:50 -> "-1H -10M") and breaks entirely
-    // across midnight. Clamped at zero so an alarm that has just fired never counts backwards.
+    // Subtract instants, not individual fields: per-field subtraction goes negative whenever the
+    // alarm's minute is below the current minute, and breaks entirely across midnight. Clamped at
+    // zero so an alarm that has just fired never counts backwards.
     val remaining = (toInstant(timeZone) - now.toInstant(timeZone)).coerceAtLeast(Duration.ZERO)
-    val remainingHours = remaining.inWholeHours
-    val remainingMinutes = remaining.inWholeMinutes % 60
 
-    return "RINGS IN · ${remainingHours}H ${remainingMinutes}M"
+    return "RINGS IN · ${remaining.inWholeHours}H ${remaining.inWholeMinutes % 60}M"
 }
 
-private fun LocalDateTime.toFormattedString(): String {
+private fun LocalTime.toFormattedString(): String {
     val hoursInTwelve = if (hour % 12 == 0) 12 else hour % 12
-    val hours = hoursInTwelve.toString().padStart(2, '0')
-    val minutes = time.minute.toString().padStart(2, '0')
-    return "$hours:$minutes"
+    return "${hoursInTwelve.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
 }
-
-private val PreviewDate = LocalDate(2026, 9, 17)
 
 @Preview(name = "Light Mode", showBackground = true)
 @Preview(
@@ -124,7 +122,8 @@ private fun AlarmTimeDetailsPreview() {
     AlarmMeThemeProvider {
         AlarmTimeDetails(
             modifier = Modifier.padding(16.dp),
-            time = LocalDateTime(PreviewDate, LocalTime(7, 5)),
+            time = LocalTime(7, 5),
+            nextOccurrence = LocalDateTime.now(),
             onClick = {}
         )
     }
@@ -141,7 +140,8 @@ private fun AlarmTimeDetailsMidnightPreview() {
     AlarmMeThemeProvider {
         AlarmTimeDetails(
             modifier = Modifier.padding(16.dp),
-            time = LocalDateTime(PreviewDate, LocalTime(0, 40)),
+            time = LocalTime(0, 40),
+            nextOccurrence = LocalDateTime.now(),
             onClick = {}
         )
     }
@@ -158,7 +158,26 @@ private fun AlarmTimeDetailsNoonPreview() {
     AlarmMeThemeProvider {
         AlarmTimeDetails(
             modifier = Modifier.padding(16.dp),
-            time = LocalDateTime(PreviewDate, LocalTime(12, 0)),
+            time = LocalTime(12, 0),
+            nextOccurrence = LocalDateTime.now(),
+            onClick = {}
+        )
+    }
+}
+
+/** Nothing scheduled — no repeat day and no custom date, so there is no countdown to show. */
+@Preview(name = "Light Mode--Not Scheduled", showBackground = true)
+@Preview(
+    name = "Dark Mode--Not Scheduled",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AlarmTimeDetailsNotScheduledPreview() {
+    AlarmMeThemeProvider {
+        AlarmTimeDetails(
+            modifier = Modifier.padding(16.dp),
+            time = LocalTime(6, 40),
+            nextOccurrence = null,
             onClick = {}
         )
     }

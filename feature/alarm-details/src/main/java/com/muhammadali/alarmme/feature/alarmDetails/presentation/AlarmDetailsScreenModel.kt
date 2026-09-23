@@ -1,30 +1,40 @@
 package com.muhammadali.alarmme.feature.alarmDetails.presentation
 
 import cafe.adriel.voyager.core.model.screenModelScope
-import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetails
-import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsId
+import com.muhammadali.alarmme.alarms.domain.Alarm
+import com.muhammadali.alarmme.alarms.domain.AlarmId
+import com.muhammadali.alarmme.alarms.domain.nextOccurrence
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsUseCase
 import com.muhammadali.alarmme.feature.alarmDetails.domain.RingtoneProvideUseCase
+import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEffect
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEvent
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsState
+import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsUiState
+import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.toAlarm
+import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.toUiState
 import com.muhammadali.alarmme.mvi.BaseScreenModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.seconds
+import com.muhammadali.alarmme.utility.kotlinDateTime.now
+import kotlinx.datetime.LocalDateTime
 
 class AlarmDetailsScreenModel(
     private val startMode: AlarmDetailsScreen.StartMode,
     private val alarmDetailsUseCase: AlarmDetailsUseCase,
     private val ringtoneProvideUseCase: RingtoneProvideUseCase
-) : BaseScreenModel<AlarmDetailsState, AlarmDetailsEvent, Nothing>(
+) : BaseScreenModel<AlarmDetailsState, AlarmDetailsEvent, AlarmDetailsEffect>(
     initialState = AlarmDetailsState.Initial
 ) {
 
     private var alarmLoadingJob: Job? = null
-    private var original: AlarmDetails? = null
+
+    /** The original alarm that was loaded from the data source. */
+    private var originalAlarm: Alarm? = null
+
+    // TODO: NEEDS CAREFUL EXAMINATION IN FUTURE, PROBABLY THERE IS A BETTER WAY TO DO THIS
+    /** Whether the observed alarm has arrived, so a later null reads as a deletion, not a bad id. */
+    private var hasLoaded = false
 
     init {
         loadAlarmDetails()
@@ -62,51 +72,77 @@ class AlarmDetailsScreenModel(
                 draft.copy(time = event.time)
             }
 
-            // TODO: wire once the ringtone picker / snooze / label flows exist.
+            // TODO: wire once the snooze / label editors exist.
             AlarmDetailsEvent.OnSnoozeClick,
             AlarmDetailsEvent.OnLabelClick -> Unit
 
-            AlarmDetailsEvent.OnSaveClick -> {
-                val loaded = state.value as? AlarmDetailsState.Loaded ?: return
-                screenModelScope.launch {
-                    alarmDetailsUseCase.saveAlarmDetails(loaded.alarmDetails)
-                    original = loaded.alarmDetails
-
-                    updateStateIfInstanceOf<AlarmDetailsState.Loaded> {
-                        copy(canSave = false)
-                    }
-                }
-            }
+            AlarmDetailsEvent.OnSaveClick -> saveDraft()
 
             AlarmDetailsEvent.OnDeleteClick -> screenModelScope.launch {
-                val alarmId = (startMode as? AlarmDetailsScreen.StartMode.Edit)?.alarmId ?: return@launch
-                alarmDetailsUseCase.deleteAlarmDetails(alarmId)
+                val alarmId = (startMode as? AlarmDetailsScreen.StartMode.Edit)?.alarmId
+                    ?: return@launch
+                alarmDetailsUseCase.deleteAlarm(alarmId)
             }
 
             AlarmDetailsEvent.OnRetry -> loadAlarmDetails()
 
-            is AlarmDetailsEvent.OnRingtoneUpdated -> {
-                screenModelScope.launch {
-                    val ringtoneDetails =
-                        ringtoneProvideUseCase.getRingtonesDetails(event.pickerRingtone.ringtoneId)
-                            ?: return@launch
+            is AlarmDetailsEvent.OnRingtoneUpdated -> screenModelScope.launch {
+                // TODO: RINGTONE PICKE SHOULD RETURN A FULL RINGTONE OBJECT.
+                // Resolved here only for its name; the id is what the draft carries.
+                val ringtone = ringtoneProvideUseCase.getRingtone(event.ringtoneId)
+                    ?: return@launch
 
-                    updateDraft { draft -> draft.copy(soundName = ringtoneDetails.name) }
+                updateDraft { draft ->
+                    draft.copy(ringtoneId = ringtone.id, soundName = ringtone.name)
                 }
             }
         }
     }
 
-    private inline fun updateDraft(crossinline reducer: (AlarmDetails) -> AlarmDetails) {
-        updateStateIfInstanceOf<AlarmDetailsState.Loaded> {
-            val draft = reducer(alarmDetails)
-            copy(alarmDetails = draft, canSave = draft != original)
+    private fun saveDraft() {
+        val loaded = state.value as? AlarmDetailsState.Loaded ?: return
+        val base = originalAlarm ?: return
+
+        screenModelScope.launch {
+            // The full tone is only needed here, to write onto the alarm. Falls back to the
+            // original's if the chosen one has left the catalog since it was picked.
+            val ringtone = ringtoneProvideUseCase.getRingtone(loaded.details.ringtoneId)
+                ?: base.preferences.ringtone
+
+            val alarm = loaded.details.toAlarm(base = base, ringtone = ringtone)
+
+            alarmDetailsUseCase.saveAlarm(alarm)
+
+            // The saved alarm is the new baseline, so Save goes quiet until something changes again.
+            originalAlarm = alarm
+            updateStateIfInstanceOf<AlarmDetailsState.Loaded> { copy(canSave = false) }
         }
+    }
+
+    private inline fun updateDraft(crossinline reducer: (AlarmDetailsUiState) -> AlarmDetailsUiState) {
+        updateStateIfInstanceOf<AlarmDetailsState.Loaded> {
+            val draft = reducer(details).withRecomputedOccurrence()
+            copy(
+                details = draft,
+                // Compared field-by-field against the baseline, so undoing an edit by hand
+                // correctly quiets Save again.
+                canSave = draft != originalAlarm?.toUiState(LocalDateTime.now())
+            )
+        }
+    }
+
+    /** "RINGS IN …" has to follow edits to the time or the schedule, both of which move it. */
+    private fun AlarmDetailsUiState.withRecomputedOccurrence(): AlarmDetailsUiState {
+        val base = originalAlarm ?: return this
+        // Any ringtone does here — the next firing depends only on the time and the schedule.
+        val candidate = toAlarm(base, base.preferences.ringtone)
+        return copy(nextOccurrence = candidate.nextOccurrence(LocalDateTime.now()))
     }
 
     private fun loadAlarmDetails() {
         alarmLoadingJob?.cancel()
         _state.value = AlarmDetailsState.Loading
+        hasLoaded = false
 
         alarmLoadingJob = screenModelScope.launch {
             when (startMode) {
@@ -117,30 +153,44 @@ class AlarmDetailsScreenModel(
     }
 
     private suspend fun loadNewAlarm() {
-        alarmDetailsUseCase.draftNewAlarm()
-            .catch { _state.value = AlarmDetailsState.Error }
-            .onStart { delay(2.seconds) } // To give loading animation enough time.
-            .collect { details ->
-                original = details
-                _state.value = AlarmDetailsState.Loaded(alarmDetails = details, canSave = false)
+        // A draft is built, not observed: nothing is stored until Save, so there is no source to
+        // follow and no reason for this to be a flow.
+        val draft = runCatching { alarmDetailsUseCase.newAlarmDraft() }
+            .getOrElse {
+                _state.value = AlarmDetailsState.Error
+                return
             }
+
+        originalAlarm = draft
+        hasLoaded = true
+        _state.value = AlarmDetailsState.Loaded(details = draft.toUiState(LocalDateTime.now()), canSave = false)
     }
 
-    private suspend fun loadExistingAlarm(alarmId: AlarmDetailsId) {
-        alarmDetailsUseCase.getAlarmDetails(alarmId)
+    private suspend fun loadExistingAlarm(alarmId: AlarmId) {
+        alarmDetailsUseCase.getAlarm(alarmId)
             .catch { _state.value = AlarmDetailsState.Error }
-            .collect { result ->
+            .collect { alarm ->
+                when {
+                    alarm != null -> {
+                        originalAlarm = alarm
+                        hasLoaded = true
+                        // Re-project only while the draft is clean, so a store update never
+                        // overwrites edits the user has in flight.
+                        val isDirty = (state.value as? AlarmDetailsState.Loaded)?.canSave == true
+                        if (!isDirty) {
+                            _state.value = AlarmDetailsState.Loaded(
+                                details = alarm.toUiState(LocalDateTime.now()),
+                                canSave = false
+                            )
+                        }
+                    }
 
-                val details = result
-                    .onFailure { showErrorScreen() }
-                    .getOrNull() ?: return@collect
+                    // Gone after we had it: the user deleted it. Leave, don't cry failure.
+                    hasLoaded -> sendEffect(AlarmDetailsEffect.NavigateBack)
 
-                original = details
-                _state.value = AlarmDetailsState.Loaded(alarmDetails = details, canSave = false)
+                    // Never there to begin with — a genuinely bad id.
+                    else -> _state.value = AlarmDetailsState.Error
+                }
             }
-    }
-
-    private fun showErrorScreen() {
-        _state.value = AlarmDetailsState.Error
     }
 }

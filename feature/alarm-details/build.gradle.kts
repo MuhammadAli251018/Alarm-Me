@@ -35,6 +35,7 @@ dependencies {
     implementation(projects.core.utility.compose)
     implementation(projects.core.utility.kotlinDateTime)
     implementation(projects.core.ringtonePicker)
+    implementation(projects.core.alarms.domain)
 
 
     // Compose

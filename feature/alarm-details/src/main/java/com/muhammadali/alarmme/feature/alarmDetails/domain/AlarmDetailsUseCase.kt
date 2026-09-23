@@ -1,10 +1,15 @@
 package com.muhammadali.alarmme.feature.alarmDetails.domain
 
+import com.muhammadali.alarmme.alarms.domain.Alarm
+import com.muhammadali.alarmme.alarms.domain.AlarmId
 import kotlinx.coroutines.flow.Flow
 
 interface AlarmDetailsUseCase {
-    fun getAlarmDetails(id: AlarmDetailsId): Flow<Result<AlarmDetails>>
-    suspend fun draftNewAlarm(): Flow<AlarmDetails>
-    suspend fun saveAlarmDetails(details: AlarmDetails)
-    suspend fun deleteAlarmDetails(id: AlarmDetailsId)
+    fun getAlarm(id: AlarmId): Flow<Alarm?>
+
+    suspend fun newAlarmDraft(): Alarm
+
+    suspend fun saveAlarm(alarm: Alarm)
+
+    suspend fun deleteAlarm(id: AlarmId)
 }

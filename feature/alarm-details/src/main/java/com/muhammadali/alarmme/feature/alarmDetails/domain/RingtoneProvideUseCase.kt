@@ -1,7 +1,10 @@
 package com.muhammadali.alarmme.feature.alarmDetails.domain
 
-data class RingtoneDetails(val id: String, val name: String)
+import com.muhammadali.alarmme.alarms.domain.Ringtone
+import com.muhammadali.alarmme.alarms.domain.RingtoneId
 
+/** Resolves the id the ringtone picker hands back into the tone to store on the alarm. */
 interface RingtoneProvideUseCase {
-    suspend fun getRingtonesDetails(id: String): RingtoneDetails?
+    suspend fun getRingtone(id: RingtoneId): Ringtone?
+    suspend fun getDefaultRingtone(): Ringtone
 }

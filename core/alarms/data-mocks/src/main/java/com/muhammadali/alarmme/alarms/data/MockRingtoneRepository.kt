@@ -16,7 +16,7 @@ import kotlin.time.Duration.Companion.seconds
 private val INITIAL_LOAD_DELAY: Duration = 600.milliseconds
 
 
-class InMemoryRingtoneRepository(
+class MockRingtoneRepository(
     initialRingtones: List<Ringtone> = sampleRingtones(),
     private val initialLoadDelay: Duration = INITIAL_LOAD_DELAY,
 ) : RingtoneRepository {
@@ -31,6 +31,10 @@ class InMemoryRingtoneRepository(
     override fun observeRingtone(id: RingtoneId): Flow<Ringtone?> = flow {
         delay(initialLoadDelay)
         emitAll(ringtones.map { it[id] })
+    }
+
+    override fun getDefaultRingtone(): Ringtone {
+        return ringtones.value.values.first()
     }
 }
 
