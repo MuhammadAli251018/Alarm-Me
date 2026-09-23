@@ -1,7 +1,7 @@
-package com.muhammadali.alarmme.core.screens.ringtonePicker.data
+package com.muhammadali.alarmme.ringtonePicker.data
 
-import com.muhammadali.alarmme.core.screens.ringtonePicker.domain.RingtoneProvideUseCase
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.component.RingtoneItem
+import com.muhammadali.alarmme.ringtonePicker.domain.RingtoneProvideUseCase
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.RingtoneItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

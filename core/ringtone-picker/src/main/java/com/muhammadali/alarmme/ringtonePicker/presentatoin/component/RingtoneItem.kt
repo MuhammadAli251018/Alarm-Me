@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.component
+package com.muhammadali.alarmme.ringtonePicker.presentatoin.component
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState

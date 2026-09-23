@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = libs.versions.packageName.get() + ".core.screens.ringtonePicker"
+    namespace = libs.versions.packageName.get() + ".ringtonePicker"
 
     compileSdk {
         version = release(37)

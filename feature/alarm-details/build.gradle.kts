@@ -34,7 +34,7 @@ dependencies {
     implementation(projects.core.navigation)
     implementation(projects.core.utility.compose)
     implementation(projects.core.utility.kotlinDateTime)
-    implementation(projects.core.screens.ringtonePicker)
+    implementation(projects.core.ringtonePicker)
 
 
     // Compose

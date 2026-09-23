@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.component
+package com.muhammadali.alarmme.ringtonePicker.presentatoin.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.hasCustomSoundInTopBar
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.screenConstraints
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.hasCustomSoundInTopBar
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.screenConstraints
 import com.muhammadali.alarmme.ui.component.AmIconButton
 import com.muhammadali.alarmme.ui.component.AmOutlineButtonWithIcon
 import com.muhammadali.alarmme.ui.component.AmPlainTextButton

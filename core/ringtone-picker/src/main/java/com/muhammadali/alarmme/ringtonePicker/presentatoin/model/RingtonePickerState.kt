@@ -1,6 +1,6 @@
-package com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.model
+package com.muhammadali.alarmme.ringtonePicker.presentatoin.model
 
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.component.RingtoneItem
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.RingtoneItem
 import com.muhammadali.alarmme.mvi.UiState
 
 sealed interface RingtonePickerState : UiState {

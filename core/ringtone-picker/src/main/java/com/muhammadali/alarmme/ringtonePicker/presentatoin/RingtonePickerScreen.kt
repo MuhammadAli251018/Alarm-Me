@@ -1,4 +1,4 @@
-package com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin
+package com.muhammadali.alarmme.ringtonePicker.presentatoin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,12 +21,12 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.component.RingtoneItem
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.component.RingtoneItemsList
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.component.RingtonePickerTopBar
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.component.previewRingtones
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.model.RingtonePickerEvent
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.model.RingtonePickerState
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.RingtoneItem
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.RingtoneItemsList
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.RingtonePickerTopBar
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.previewRingtones
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtonePickerEvent
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtonePickerState
 import com.muhammadali.alarmme.navigation.LocalNavResultRepository
 import com.muhammadali.alarmme.navigation.NavResultKey
 import com.muhammadali.alarmme.navigation.NavigationResult

@@ -1,8 +1,8 @@
-package com.muhammadali.alarmme.core.screens.ringtonePicker.di
+package com.muhammadali.alarmme.ringtonePicker.di
 
-import com.muhammadali.alarmme.core.screens.ringtonePicker.data.InMemoryRingtoneProvideUseCase
-import com.muhammadali.alarmme.core.screens.ringtonePicker.domain.RingtoneProvideUseCase
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.RingtonePickerScreenModel
+import com.muhammadali.alarmme.ringtonePicker.data.InMemoryRingtoneProvideUseCase
+import com.muhammadali.alarmme.ringtonePicker.domain.RingtoneProvideUseCase
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.RingtonePickerScreenModel
 import org.koin.dsl.module
 
 val ringtonePickerModule = module {

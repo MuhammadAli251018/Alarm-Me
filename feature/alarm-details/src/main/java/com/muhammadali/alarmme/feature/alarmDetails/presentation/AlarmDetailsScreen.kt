@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.muhammadali.alarmme.core.screens.ringtonePicker.presentatoin.RingtonePickerScreen
+import com.muhammadali.alarmme.ringtonePicker.presentatoin.RingtonePickerScreen
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetails
 import com.muhammadali.alarmme.feature.alarmDetails.domain.AlarmDetailsId
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.component.AlarmSettingsDetails
