@@ -102,6 +102,7 @@ class AlarmDetailsScreenModel(
             // The saved alarm is the new baseline, so Save goes quiet until something changes again.
             originalAlarm = alarm
             updateStateIfInstanceOf<AlarmDetailsState.Loaded> { copy(canSave = false) }
+            sendEffect(AlarmDetailsEffect.NavigateBack)
         }
     }
 

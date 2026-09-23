@@ -93,7 +93,7 @@ fun ScreenDetailsTopBar(
                 text = "Save",
                 contentColor = colors.primary,
                 enabled = canSave,
-                onClick = onDeleteButtonClick
+                onClick = onSaveButtonClick
             )
         }
     }
