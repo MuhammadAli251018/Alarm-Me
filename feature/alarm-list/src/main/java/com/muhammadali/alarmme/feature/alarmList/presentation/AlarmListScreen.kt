@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -73,10 +72,10 @@ class AlarmListScreen(
 
         AlarmListScreenContent(
             modifier = Modifier
-                .fillMaxSize()
-                .background(LocalAlarmMeColors.current.background)
                 .imePadding()
-                .systemBarsPadding(),
+                .systemBarsPadding()
+                .fillMaxSize()
+                .background(LocalAlarmMeColors.current.background),
             state = state,
             onAlarmClick = { id -> navigator?.navigateTo(alarmDetailsDestination(id)) },
             onAlarmCheckedChange = { id, enabled ->

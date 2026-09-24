@@ -1,42 +1,81 @@
 package com.muhammadali.alarmme
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.AlarmDetailsScreen
 import com.muhammadali.alarmme.feature.alarmList.presentation.AlarmListScreen
 import com.muhammadali.alarmme.ringtonePicker.presentatoin.RingtonePickerScreen
 import com.muhammadali.alarmme.navigation.ProvideNavResultRepository
 import com.muhammadali.alarmme.navigation.screenDestination
+import com.muhammadali.alarmme.ui.theme.AlarmMeTheme
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // AlarmMeScaffold paints every inset itself, so the system's contrast scrim is not needed.
+        // Left on, it tints the 3-button navigation bar a cooler shade than the background behind
+        // it — a visible band down the side of the window in landscape.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
+
         setContent {
-            AlarmMeThemeProvider {
-                ProvideNavResultRepository {
-                    Navigator(
-                        AlarmListScreen(
-                            alarmDetailsDestination = { alarmId ->
-                                screenDestination {
-                                    AlarmDetailsScreen(
-                                        startMode = if (alarmId != null) {
-                                            AlarmDetailsScreen.StartMode.Edit(alarmId)
-                                        } else {
-                                            AlarmDetailsScreen.StartMode.New
-                                        },
-                                        ringtonePickerDestination = screenDestination { RingtonePickerScreen() }
-                                    )
-                                }
-                            }
-                        )
-                    )
-                }
+            AlarmMeApp()
+        }
+    }
+}
+
+
+@Composable
+fun AlarmMeApp() {
+    AlarmMeThemeProvider {
+        ProvideNavResultRepository {
+            AlarmMeScaffold {
+                Navigator(
+                    screen = AlarmListScreen { alarmId ->
+                        screenDestination {
+                            AlarmDetailsScreen(
+                                startMode = if (alarmId != null) {
+                                    AlarmDetailsScreen.StartMode.Edit(alarmId)
+                                } else {
+                                    AlarmDetailsScreen.StartMode.New
+                                },
+                                ringtonePickerDestination = screenDestination { RingtonePickerScreen() }
+                            )
+                        }
+                    }
+                )
             }
         }
+    }
+}
+
+// Should be inside :core:ui/component, and then should be used by each screen,
+// as the project's conventions dictate that each screen must handle its padding.
+// But as it's unlikely that a screen will occur in feature with different approach to handle the coloring
+// of the system paddings, so we can use this here, and wrap all the screens inside.
+
+@Composable
+fun AlarmMeScaffold(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(AlarmMeTheme.colors.background)
+    ) {
+        content()
     }
 }
