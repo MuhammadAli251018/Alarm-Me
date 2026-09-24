@@ -7,6 +7,7 @@ kotlin = "2.2.10"
 desugarJdkLibs = "2.1.5"
 # AndroidX
 coreKtx = "1.19.0"
+coreSplashscreen = "1.2.0"
 lifecycle = "2.11.0"
 activityCompose = "1.13.0"
 # Compose
@@ -34,6 +35,7 @@ kotest = "6.2.4"
 
 # AndroidX
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
 # Compose

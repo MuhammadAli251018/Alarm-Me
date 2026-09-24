@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Only the mark changes: the dark-surface variant carries the #E8977A ring and #F0EEE6 dot. -->
+    <style name="Theme.AlarmMe.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground_splash_dark</item>
+        <item name="postSplashScreenTheme">@style/Theme.AlarmMe</item>
+    </style>
+</resources>
