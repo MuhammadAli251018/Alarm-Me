@@ -32,11 +32,13 @@ import com.muhammadali.alarmme.ringtonePicker.presentatoin.component.previewRing
 import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtoneItemState
 import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtonePickerEvent
 import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtonePickerState
+import com.muhammadali.alarmme.ui.component.AmIcon
 import com.muhammadali.alarmme.ui.component.AmOutlineButtonBar
 import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.MediumWidthExpandedHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 
@@ -201,7 +203,7 @@ fun RingtoneScreenContent(
                         .screenConstraints(screenCategory)
                         .padding(top = 16.dp, bottom = 22.dp),
                     text = "Add custom sound",
-                    icon = { Text(text = "＋", color = colors.primary) },
+                    icon = { AmIcon(AlarmMeIcons.Add, null, tint = colors.primary) },
                     onClick = onCustomSoundClick
                 )
             }

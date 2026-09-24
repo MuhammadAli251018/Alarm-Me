@@ -14,11 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.ringtonePicker.presentatoin.hasCustomSoundInTopBar
 import com.muhammadali.alarmme.ringtonePicker.presentatoin.screenConstraints
+import com.muhammadali.alarmme.ui.component.AmIcon
 import com.muhammadali.alarmme.ui.component.AmIconButton
 import com.muhammadali.alarmme.ui.component.AmOutlineButtonWithIcon
 import com.muhammadali.alarmme.ui.component.AmPlainTextButton
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
@@ -43,11 +45,11 @@ fun RingtonePickerTopBar(
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         AmIconButton(onClick = onBackClick) {
-            Text(
-                text = "←",
-                color = colors.onSurfaceVariant,
-                style = typography.labelSmall
-            ) // TODO: Replace with icon
+            AmIcon(
+                painter = AlarmMeIcons.ArrowBack,
+                contentDescription = "Go back",
+                tint = colors.onSurfaceVariant
+            )
         }
 
         Text(
@@ -73,10 +75,10 @@ fun RingtonePickerTopBar(
                     AmOutlineButtonWithIcon(
                         text = "Custom Sound",
                         icon = {
-                            Text(
-                                text = "+",
-                                style = typography.labelSmall,
-                                color = colors.primary
+                            AmIcon(
+                                painter = AlarmMeIcons.Add,
+                                contentDescription = null,
+                                tint = colors.primary
                             )
                         },
                         onClick = onCustomSoundClick

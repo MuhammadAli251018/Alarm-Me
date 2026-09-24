@@ -22,9 +22,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.ui.component.AmFilledTextButton
+import com.muhammadali.alarmme.ui.component.AmIcon
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.isExpandedWidthOrWider
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
@@ -62,10 +64,10 @@ fun ErrorScreenContent(
                     .clickable(onClick = onDismiss),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "✕",
-                    style = typography.titleMedium,
-                    color = colors.outline
+                AmIcon(
+                    painter = AlarmMeIcons.Close,
+                    contentDescription = "Dismiss",
+                    tint = colors.outline
                 )
             }
 

@@ -2,7 +2,6 @@ package com.muhammadali.alarmme.ui.component
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -10,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
@@ -54,7 +54,7 @@ private fun AmIconButtonPreview() {
             modifier = Modifier.padding(10.dp),
             onClick = {}
         ) {
-            Text(text = "✕")
+            AmIcon(AlarmMeIcons.Close, contentDescription = null)
         }
     }
 }

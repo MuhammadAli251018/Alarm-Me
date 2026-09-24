@@ -14,11 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.ui.component.AmDaysRepeatPicker
 import com.muhammadali.alarmme.ui.component.AmDisclosureRow
+import com.muhammadali.alarmme.ui.component.AmIcon
+import com.muhammadali.alarmme.ui.component.AmIconDefaults
 import com.muhammadali.alarmme.ui.component.AmSectionCard
 import com.muhammadali.alarmme.ui.component.AmSwitchToggle
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.isExpandedWidthOrWider
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
@@ -90,10 +93,11 @@ fun ScheduleDetails(
                     modifier = Modifier.fillMaxWidth(),
                     text = customDateLabel
                 ) {
-                    Text(
-                        text = "›",
-                        style = typography.bodyLarge,
-                        color = colors.onSurfaceVariant
+                    AmIcon(
+                        painter = AlarmMeIcons.ChevronRight,
+                        contentDescription = null,
+                        size = AmIconDefaults.Small,
+                        tint = colors.onSurfaceVariant
                     )
                 }
             }

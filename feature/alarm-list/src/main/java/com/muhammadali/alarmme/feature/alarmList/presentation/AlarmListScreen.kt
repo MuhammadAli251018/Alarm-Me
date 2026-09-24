@@ -40,6 +40,8 @@ import com.muhammadali.alarmme.navigation.navigateTo
 import com.muhammadali.alarmme.ui.component.AmDestructiveTextButton
 import com.muhammadali.alarmme.ui.component.AmFabButton
 import com.muhammadali.alarmme.ui.component.AmFabExtendedButton
+import com.muhammadali.alarmme.ui.component.AmIcon
+import com.muhammadali.alarmme.ui.component.AmIconDefaults
 import com.muhammadali.alarmme.ui.component.AmOutlineTextButton
 import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
@@ -51,6 +53,7 @@ import com.muhammadali.alarmme.ui.screenCategory.isExpandedWidthOrWider
 import com.muhammadali.alarmme.ui.screenCategory.isLandscapePhone
 import com.muhammadali.alarmme.ui.screenCategory.isPhone
 import com.muhammadali.alarmme.ui.screenCategory.isPortraitPhone
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import kotlinx.datetime.LocalDateTime
@@ -191,13 +194,13 @@ fun NewAlarmFabButton(modifier: Modifier = Modifier, onNewAlarmClick: () -> Unit
             modifier = modifier.padding(end = 22.dp, bottom = 26.dp),
             onClick = onNewAlarmClick
         ) {
-            Text(text = "＋")
+            AmIcon(AlarmMeIcons.Add, contentDescription = "New alarm", size = AmIconDefaults.Large)
         }
 
         screenCategory.width == WidthCategory.Medium && !screenCategory.isLandscapePhone -> AmFabExtendedButton(
             text = "New alarm",
             modifier = modifier.padding(end = 32.dp, bottom = 30.dp),
-            icon = { Text(text = "＋") },
+            icon = { AmIcon(AlarmMeIcons.Add, null) },
             onClick = onNewAlarmClick
         )
     }

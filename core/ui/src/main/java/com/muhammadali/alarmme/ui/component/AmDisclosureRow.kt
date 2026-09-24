@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
@@ -102,10 +103,11 @@ private fun AmDisclosureRowPreview() {
                     style = LocalAlarmMeTypography.current.bodyMedium,
                     color = colors.primary
                 )
-                Text(
-                    text = "›",
-                    style = LocalAlarmMeTypography.current.bodyLarge,
-                    color = colors.onSurface
+                AmIcon(
+                    painter = AlarmMeIcons.ChevronRight,
+                    contentDescription = null,
+                    size = AmIconDefaults.Small,
+                    tint = colors.onSurface
                 )
             }
         }
@@ -135,10 +137,11 @@ private fun AmDisclosureRowWithChevronPreview() {
                     style = LocalAlarmMeTypography.current.bodyMedium,
                     color = colors.onSurfaceVariant
                 )
-                Text(
-                    text = "›",
-                    style = LocalAlarmMeTypography.current.bodyLarge,
-                    color = colors.onSurfaceVariant
+                AmIcon(
+                    painter = AlarmMeIcons.ChevronRight,
+                    contentDescription = null,
+                    size = AmIconDefaults.Small,
+                    tint = colors.onSurfaceVariant
                 )
             }
         }
@@ -173,10 +176,11 @@ fun AmNavigationDisclosureRow(
                 )
             }
 
-            Text(
-                text = "›",
-                style = typography.bodyLarge,
-                color = colors.onSurfaceVariant
+            AmIcon(
+                painter = AlarmMeIcons.ChevronRight,
+                contentDescription = null,
+                size = AmIconDefaults.Small,
+                tint = colors.onSurfaceVariant
             )
         }
     }

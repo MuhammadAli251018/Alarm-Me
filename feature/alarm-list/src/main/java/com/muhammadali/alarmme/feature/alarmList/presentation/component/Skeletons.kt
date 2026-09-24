@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isFinite
 import com.muhammadali.alarmme.feature.alarmList.presentation.alarmsListHorizontalPaddings
 import com.muhammadali.alarmme.ui.component.AmFabExtendedButtonDefaults
+import com.muhammadali.alarmme.ui.component.AmIconDefaults
 import com.muhammadali.alarmme.ui.component.AmSwitchToggleDefaults
 import com.muhammadali.alarmme.ui.component.AmTextButtonDefaults
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
@@ -51,9 +52,9 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeDimensions
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
+import kotlin.math.floor
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlin.math.floor
 
 /*
  * Placeholders for the alarms screen while its data loads.
@@ -158,16 +159,21 @@ private fun SkeletonTextButton(label: String, modifier: Modifier = Modifier) {
     )
 }
 
-/** The box an [com.muhammadali.alarmme.ui.component.AmFabExtendedButton] carrying [label] fills. */
+/**
+ * The box an [com.muhammadali.alarmme.ui.component.AmFabExtendedButton] carrying [label] fills.
+ *
+ * [iconWidth] is a fixed [Dp] rather than a measured glyph width, because the real button's leading
+ * slot holds an [com.muhammadali.alarmme.ui.component.AmIcon] whose size is a token, not text.
+ */
 @Composable
 private fun SkeletonFabExtendedButton(
     label: String,
-    glyph: String,
     modifier: Modifier = Modifier,
+    iconWidth: Dp = AmIconDefaults.Medium,
 ) {
     val typography = LocalAlarmMeTypography.current
     val width = textSize(label, typography.labelLarge).width +
-        textSize(glyph, typography.labelLarge).width +
+        iconWidth +
         AmFabExtendedButtonDefaults.IconGap +
         AmFabExtendedButtonDefaults.ContentHorizontalPadding * 2
 
@@ -226,7 +232,7 @@ private fun TopBarSkeletonCompactHeight(modifier: Modifier) {
         }
 
         SkeletonTextButton(TOP_BAR_SELECT_LABEL)
-        SkeletonFabExtendedButton(TOP_BAR_NEW_ALARM_LABEL, TOP_BAR_NEW_ALARM_GLYPH)
+        SkeletonFabExtendedButton(TOP_BAR_NEW_ALARM_LABEL)
     }
 }
 
@@ -283,7 +289,7 @@ private fun TopBarSkeletonExpandedAndBiggerWidth(modifier: Modifier) {
                 horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
             ) {
                 SkeletonTextButton(TOP_BAR_SELECT_LABEL)
-                SkeletonFabExtendedButton(TOP_BAR_NEW_ALARM_LABEL, TOP_BAR_NEW_ALARM_GLYPH)
+                SkeletonFabExtendedButton(TOP_BAR_NEW_ALARM_LABEL)
             }
         }
     }

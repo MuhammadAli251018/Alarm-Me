@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
@@ -115,7 +116,7 @@ private fun BaseTextWithIconButtonPreview() {
             modifier = Modifier.padding(10.dp),
             text = "Save",
             colors = AmButtonColors.outlined(colors.outline),
-            icon = { Text(text = "＋", color = colors.onSurface) },
+            icon = { AmIcon(AlarmMeIcons.Add, null, tint = colors.onSurface) },
             onClick = {}
         )
     }
@@ -135,7 +136,7 @@ private fun BaseTextWithIconButtonPreview1() {
             modifier = Modifier.padding(10.dp).fillMaxWidth(),
             text = "Save",
             colors = AmButtonColors.outlined(colors.outline),
-            icon = { Text(text = "＋", color = colors.onSurface) },
+            icon = { AmIcon(AlarmMeIcons.Add, null, tint = colors.onSurface) },
             onClick = {}
         )
     }
@@ -155,10 +156,7 @@ private fun BaseTextWithIconButtonPressedPreview() {
             modifier = Modifier.padding(10.dp),
             text = "Shadow",
             colors = AmButtonColors.outlined(colors.outline),
-            icon = { Text(
-                text = "✕",
-                color = colors.onSurface
-            ) },
+            icon = { AmIcon(AlarmMeIcons.Close, null, tint = colors.onSurface) },
             interactionSource = rememberPressedInteractionSource(),
             onClick = {}
         )

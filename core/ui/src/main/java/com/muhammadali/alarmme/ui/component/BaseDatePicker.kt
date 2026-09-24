@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,18 +26,19 @@ import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.OutDateStyle
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.yearMonth
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import com.muhammadali.alarmme.utility.compose.modifyIf
 import com.muhammadali.alarmme.utility.kotlinDateTime.now
+import java.time.YearMonth
+import java.time.format.TextStyle as JavaTextStyle
+import java.util.Locale
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
-import java.time.YearMonth
-import java.time.format.TextStyle as JavaTextStyle
-import java.util.Locale
 
 internal const val DisabledDatePickerAlpha = 0.4f
 private const val DefaultYearSpan = 100
@@ -89,12 +91,14 @@ internal fun DatePickerMonthHeader(
         )
 
         DatePickerNavButton(
-            glyph = "‹",
+            icon = AlarmMeIcons.ChevronLeft,
+            contentDescription = "Previous month",
             enabled = enabled && canGoPrevious,
             onClick = onPreviousClick
         )
         DatePickerNavButton(
-            glyph = "›",
+            icon = AlarmMeIcons.ChevronRight,
+            contentDescription = "Next month",
             enabled = enabled && canGoNext,
             onClick = onNextClick
         )
@@ -103,12 +107,12 @@ internal fun DatePickerMonthHeader(
 
 @Composable
 private fun DatePickerNavButton(
-    glyph: String,
+    icon: Painter,
+    contentDescription: String,
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
     val colors = LocalAlarmMeColors.current
-    val typography = LocalAlarmMeTypography.current
     val shapes = LocalAlarmMeShapes.current
 
     Box(
@@ -119,10 +123,10 @@ private fun DatePickerNavButton(
             .padding(horizontal = 14.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = glyph,
-            style = typography.titleMedium,
-            color = colors.onSurface
+        AmIcon(
+            painter = icon,
+            contentDescription = contentDescription,
+            tint = colors.onSurface
         )
     }
 }
@@ -244,10 +248,11 @@ internal fun SelectedDateChip(
             color = colors.onPrimaryContainer,
             maxLines = 1
         )
-        Text(
-            text = "✕",
-            style = typography.labelMedium,
-            color = colors.onPrimaryContainer
+        AmIcon(
+            painter = AlarmMeIcons.Close,
+            contentDescription = null,
+            size = AmIconDefaults.Small,
+            tint = colors.onPrimaryContainer
         )
     }
 }

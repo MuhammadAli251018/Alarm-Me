@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
@@ -52,7 +53,11 @@ fun AmCheckBox(
         interactionSource = interactionSource,
         content = { checked ->
             if (checked) {
-                Text(text = "✓")
+                AmIcon(
+                    painter = AlarmMeIcons.Check,
+                    contentDescription = null,
+                    size = AmIconDefaults.Small
+                )
             }
         }
     )

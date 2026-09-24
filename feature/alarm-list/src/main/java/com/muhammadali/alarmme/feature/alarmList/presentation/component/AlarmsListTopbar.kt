@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.feature.alarmList.presentation.alarmsListHorizontalPaddings
 import com.muhammadali.alarmme.ui.component.AmFabExtendedButton
+import com.muhammadali.alarmme.ui.component.AmIcon
 import com.muhammadali.alarmme.ui.component.AmIconButton
 import com.muhammadali.alarmme.ui.component.AmPlainTextButton
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
@@ -25,19 +26,20 @@ import com.muhammadali.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.HeightCategory
 import com.muhammadali.alarmme.ui.screenCategory.WidthCategory
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import com.muhammadali.alarmme.utility.kotlinDateTime.now
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 
 
 /** Shared with [TopBarSkeleton] so the placeholder bar occupies the same box as the real one. */
@@ -47,12 +49,13 @@ internal val TopBarItemsSpacing: Dp = 8.dp
 
 /**
  * The bar's labels. Shared with [TopBarSkeleton], which measures them to size its placeholder
- * blocks, so a placeholder is always exactly as wide as the text it stands in for.
+ * blocks, so a placeholder is always exactly as wide as the text it stands in for. The new-alarm
+ * icon is not here — it is an [com.muhammadali.alarmme.ui.component.AmIcon], so the skeleton
+ * reserves its size token instead of measuring a glyph.
  */
 internal const val TOP_BAR_TITLE = "Alarms"
 internal const val TOP_BAR_SELECT_LABEL = "Select"
 internal const val TOP_BAR_NEW_ALARM_LABEL = "New alarm"
-internal const val TOP_BAR_NEW_ALARM_GLYPH = "＋"
 
 @Composable
 fun AlarmsListTopBar(
@@ -124,7 +127,7 @@ fun AlarmsListTopBarSelectionMode(
             modifier = Modifier,
             onClick = onDismiss
         ) {
-            Text("✕")
+            AmIcon(AlarmMeIcons.Close, contentDescription = "Exit selection")
         }
 
         Text(
@@ -231,7 +234,7 @@ fun DefaultAlarmsListTopBarCompactHeight(
 
         AmFabExtendedButton(
             text = TOP_BAR_NEW_ALARM_LABEL,
-            icon = { Text(text = TOP_BAR_NEW_ALARM_GLYPH) },
+            icon = { AmIcon(AlarmMeIcons.Add, null) },
             onClick = onNewAlarmClick
         )
     }
@@ -281,7 +284,7 @@ fun DefaultAlarmsListTopExpandedAndBiggerWidth(
 
                 AmFabExtendedButton(
                     text = TOP_BAR_NEW_ALARM_LABEL,
-                    icon = { Text(text = TOP_BAR_NEW_ALARM_GLYPH) },
+                    icon = { AmIcon(AlarmMeIcons.Add, null) },
                     onClick = onNewAlarmClick
                 )
             }

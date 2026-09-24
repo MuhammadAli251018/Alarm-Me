@@ -29,7 +29,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.muhammadali.alarmme.ringtonePicker.presentatoin.model.RingtoneItemState
 import com.muhammadali.alarmme.ui.component.AmBadge
+import com.muhammadali.alarmme.ui.component.AmIcon
+import com.muhammadali.alarmme.ui.component.AmIconDefaults
 import com.muhammadali.alarmme.ui.component.AmRadioButton
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
@@ -140,10 +143,11 @@ fun RingtoneItem(
                 )
             }
 
-            Text(
-                text = getRingtonePausePlayIcon(playing),
-                style = typography.labelLarge,
-                color = colors.primary
+            AmIcon(
+                painter = if (playing) AlarmMeIcons.Pause else AlarmMeIcons.Play,
+                contentDescription = if (playing) "Stop preview" else "Preview sound",
+                size = AmIconDefaults.Small,
+                tint = colors.primary
             )
         }
     }
@@ -164,10 +168,6 @@ private fun getRingtoneMeta(duration: Duration?): String {
     val minutes = duration.inWholeMinutes.toString().padStart(2, '0')
     val seconds = (duration.inWholeSeconds % 60).toString().padStart(2, '0')
     return "$minutes:$seconds"
-}
-
-private fun getRingtonePausePlayIcon(isPlaying: Boolean): String {
-    return if (isPlaying) "❙❙" else "▶" // TODO: extract as icons instead of using text
 }
 
 @Preview(name = "Light Mode--Idle", showBackground = true)

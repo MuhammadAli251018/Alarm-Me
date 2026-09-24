@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.ui.component.AmIcon
 import com.muhammadali.alarmme.ui.component.AmIconButton
 import com.muhammadali.alarmme.ui.component.AmPlainTextButton
 import com.muhammadali.alarmme.ui.component.AmSquaryFilledTextButton
@@ -23,6 +24,7 @@ import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.currentScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.isExpandedWidthOrWider
 import com.muhammadali.alarmme.ui.screenCategory.isLandscapePhone
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
@@ -50,11 +52,11 @@ fun ScreenDetailsTopBar(
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         AmIconButton(onClick = onBackClick) {
-            Text(
-                text = "←",
-                color = colors.onSurfaceVariant,
-                style = typography.labelSmall
-            ) // TODO: Replace with icon
+            AmIcon(
+                painter = AlarmMeIcons.ArrowBack,
+                contentDescription = "Go back",
+                tint = colors.onSurfaceVariant
+            )
         }
 
         Box(

@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
@@ -106,7 +107,7 @@ private fun AmFabExtendedButtonIconPreview() {
         AmFabExtendedButton(
             modifier = Modifier.padding(10.dp),
             text = "New alarm",
-            icon = { Text(text = "＋") },
+            icon = { AmIcon(AlarmMeIcons.Add, null) },
             onClick = {}
         )
     }

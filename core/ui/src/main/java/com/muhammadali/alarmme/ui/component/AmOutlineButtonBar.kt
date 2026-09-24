@@ -3,12 +3,12 @@ package com.muhammadali.alarmme.ui.component
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.muhammadali.alarmme.ui.theme.AlarmMeIcons
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 
@@ -45,7 +45,7 @@ private fun AmOutlineButtonBarPreview() {
         AmOutlineButtonBar(
             modifier = Modifier.padding(10.dp),
             text = "Save",
-            icon = { Text(text = "＋", color = colors.onSurface) },
+            icon = { AmIcon(AlarmMeIcons.Add, null, tint = colors.onSurface) },
             onClick = {}
         )
     }
@@ -64,7 +64,7 @@ private fun AmOutlineButtonBarPressedPreview() {
         AmOutlineButtonBar(
             modifier = Modifier.padding(10.dp),
             text = "Save",
-            icon = { Text(text = "＋", color = colors.onSurface) },
+            icon = { AmIcon(AlarmMeIcons.Add, null, tint = colors.onSurface) },
             interactionSource = rememberPressedInteractionSource(),
             onClick = {}
         )
