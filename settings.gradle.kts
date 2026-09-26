@@ -27,14 +27,36 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "AlarmMe"
+
 include(":app")
-include(":core:ui")
+
+// Presentation
 include(":core:mvi")
 include(":core:navigation")
+
+// UI
+include(":core:ui:theme")
+include(":core:ui:components")
+include(":core:ui:screen:date-picker")
+include(":core:ui:screen:time-picker")
+include(":core:ui:screen:ringtone-picker")
+
+// Utility
 include(":core:utility:compose")
 include(":core:utility:kotlin-date-time")
-include(":core:ringtone-picker")
+
+// Core Alarms
 include(":core:alarms:domain")
+include(":core:alarms:scheduler")
+include(":core:alarms:data")
 include(":core:alarms:data-mocks")
+
+// Dev Tools
+include(":core:feature-flags")
+
+// Features
 include(":feature:alarm-list")
 include(":feature:alarm-details")
+include(":feature:alarm-ringing")
+include(":feature:app-settings")
+include(":feature:debug-panel")
