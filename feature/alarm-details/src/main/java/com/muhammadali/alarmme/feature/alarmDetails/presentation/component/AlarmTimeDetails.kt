@@ -19,6 +19,7 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeShapes
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 import com.muhammadali.alarmme.utility.kotlinDateTime.now
+import com.muhammadali.alarmme.utility.kotlinDateTime.toClockLabel
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -67,7 +68,7 @@ fun AlarmTimeDetails(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                val timeString = remember(time) { time.toFormattedString() }
+                val timeString = remember(time) { time.toClockLabel() }
                 val meridiem = remember(time) { if (time.hour < 12) "AM" else "PM" }
 
                 Text(
@@ -105,11 +106,6 @@ private fun LocalDateTime?.toRingsInLabel(
     val remaining = (toInstant(timeZone) - now.toInstant(timeZone)).coerceAtLeast(Duration.ZERO)
 
     return "RINGS IN · ${remaining.inWholeHours}H ${remaining.inWholeMinutes % 60}M"
-}
-
-private fun LocalTime.toFormattedString(): String {
-    val hoursInTwelve = if (hour % 12 == 0) 12 else hour % 12
-    return "${hoursInTwelve.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
 }
 
 @Preview(name = "Light Mode", showBackground = true)
