@@ -29,7 +29,7 @@ android {
 
 dependencies {
     // Modules Depenency
-    implementation(projects.core.ui)
+    implementation(projects.core.ui.components)
     implementation(projects.core.mvi)
     implementation(projects.core.navigation)
     implementation(projects.core.utility.compose)

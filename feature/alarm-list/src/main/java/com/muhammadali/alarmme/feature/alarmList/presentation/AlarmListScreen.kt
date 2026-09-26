@@ -42,7 +42,7 @@ import com.muhammadali.alarmme.ui.component.AmFabExtendedButton
 import com.muhammadali.alarmme.ui.component.AmIcon
 import com.muhammadali.alarmme.ui.component.AmIconDefaults
 import com.muhammadali.alarmme.ui.component.AmOutlineTextButton
-import com.muhammadali.alarmme.ui.screen.ErrorScreenContent
+import com.muhammadali.alarmme.ui.component.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
 import com.muhammadali.alarmme.ui.screenCategory.MediumWidthMediumHeightPreview
