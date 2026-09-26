@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="68dp"
+    android:height="68dp"
+    android:viewportWidth="68"
+    android:viewportHeight="68">
+  <!--
+    The brand mark, copied from app/src/main/res/drawable/ic_launcher_foreground.xml. The paths are
+    verbatim; only the canvas changed. The launcher authors them on a 108x108 adaptive-icon grid on
+    which the mark occupies the centre 48x48 (x, y in [30, 78]), so the group translate drops most of the
+    icon-safe-zone padding. What is left is deliberate: the mark keeps 10 units of margin a side, so
+    it fills 48/68 of its box - the same 71% the ringing screen's bell fills in the design. Cropped
+    tight (the design's own logo_mark.svg uses viewBox "30 30 48 48") it would read far too heavy.
+
+    Two colours, so this is NOT tintable - render it with Image, not AmIcon. The values here are the
+    light scheme's primary (arc) and onSurface (dot); drawable-night carries the dark pair.
+  -->
+  <group
+      android:translateX="-20"
+      android:translateY="-20">
+    <path
+        android:pathData="M61.18,34.27A21,21 0,1 1,34.12 47.23"
+        android:strokeWidth="6"
+        android:fillColor="#00000000"
+        android:strokeColor="#B4512F"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M45.12,34.97m-4.6,0a4.6,4.6 0,1 1,9.2 0a4.6,4.6 0,1 1,-9.2 0"
+        android:fillColor="#1F1E1D"/>
+  </group>
+</vector>

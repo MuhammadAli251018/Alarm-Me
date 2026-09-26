@@ -5,14 +5,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import com.muhammadali.alarmme.ui.R
 
-/**
- * The design system's icon set, drawn in the brand mark's own language: a 24×24 grid, 2dp round-cap
- * strokes over no fill, solid only where an outline would read as a different mark ([Play], [Pause],
- * [MoreVert]).
- *
- * Accessors are `@Composable` so consumers never touch this module's `R` class. Pair them with
- * [com.muhammadali.alarmme.ui.component.AmIcon], which carries the size and tint.
- */
+
 object AlarmMeIcons {
     val ArrowBack: Painter
         @Composable
@@ -49,4 +42,8 @@ object AlarmMeIcons {
     val MoreVert: Painter
         @Composable
         get() = painterResource(R.drawable.ic_more_vert)
+
+    val LogoMark: Painter
+        @Composable
+        get() = painterResource(R.drawable.ic_logo_mark)
 }
