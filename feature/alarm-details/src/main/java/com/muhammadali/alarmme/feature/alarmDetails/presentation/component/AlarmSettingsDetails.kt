@@ -27,41 +27,40 @@ fun AlarmSettingsDetails(
 ) {
     val colors = LocalAlarmMeColors.current
 
-    AmSectionedCard(
-        modifier = modifier.fillMaxWidth(),
-        sectionsCount = 5
-    ) { index ->
-        when (index) {
-            0 -> AmNavigationDisclosureRow(
-                text = "Sound",
-                value = soundLabel,
-                valueColor = colors.primary,
-                onClick = onSoundClick
-            )
+    AmSectionedCard(modifier = modifier.fillMaxWidth()) {
+        sections(count = 5) { index ->
+            when (index) {
+                0 -> AmNavigationDisclosureRow(
+                    text = "Sound",
+                    value = soundLabel,
+                    valueColor = colors.primary,
+                    onClick = onSoundClick
+                )
 
-            1 -> AmNavigationDisclosureRow(
-                text = "Snooze",
-                value = snoozeLabel,
-                onClick = onSnoozeClick
-            )
+                1 -> AmNavigationDisclosureRow(
+                    text = "Snooze",
+                    value = snoozeLabel,
+                    onClick = onSnoozeClick
+                )
 
-            2 -> AmToggleDisclosureRow(
-                text = "Gradual volume",
-                checked = gradualVolumeEnabled,
-                onCheckedChange = onGradualVolumeToggle
-            )
+                2 -> AmToggleDisclosureRow(
+                    text = "Gradual volume",
+                    checked = gradualVolumeEnabled,
+                    onCheckedChange = onGradualVolumeToggle
+                )
 
-            3 -> AmToggleDisclosureRow(
-                text = "Vibrate",
-                checked = vibrateEnabled,
-                onCheckedChange = onVibrateToggle
-            )
+                3 -> AmToggleDisclosureRow(
+                    text = "Vibrate",
+                    checked = vibrateEnabled,
+                    onCheckedChange = onVibrateToggle
+                )
 
-            else -> AmNavigationDisclosureRow(
-                text = "Label",
-                value = alarmLabel,
-                onClick = onLabelClick
-            )
+                else -> AmNavigationDisclosureRow(
+                    text = "Label",
+                    value = alarmLabel,
+                    onClick = onLabelClick
+                )
+            }
         }
     }
 }

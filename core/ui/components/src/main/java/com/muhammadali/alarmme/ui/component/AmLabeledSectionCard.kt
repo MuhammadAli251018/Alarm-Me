@@ -21,20 +21,15 @@ fun AmLabeledSectionCard(
     label: String,
     modifier: Modifier = Modifier,
     labelColor: Color = LocalAlarmMeColors.current.outline,
-    sectionsCount: Int,
     isDangerSection: Boolean = false,
-    section: @Composable (index: Int) -> Unit,
+    content: AmSectionedCardScope.() -> Unit,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         AmSectionLabel(text = label, color = labelColor)
-        AmSectionedCard(
-            sectionsCount = sectionsCount,
-            isDangerSection = isDangerSection,
-            section = section
-        )
+        AmSectionedCard(isDangerSection = isDangerSection, content = content)
     }
 }
 
@@ -51,34 +46,35 @@ private fun AmLabeledSectionCardPreview() {
 
         AmLabeledSectionCard(
             modifier = Modifier.padding(16.dp),
-            label = "Alarm settings",
-            sectionsCount = 4
-        ) { index ->
-            when (index) {
-                0 -> AmNavigationDisclosureRow(
-                    text = "Sound",
-                    value = "Sunrise chime",
-                    valueColor = LocalAlarmMeColors.current.primary,
-                    onClick = {}
-                )
+            label = "Alarm settings"
+        ) {
+            sections(count = 4) { index ->
+                when (index) {
+                    0 -> AmNavigationDisclosureRow(
+                        text = "Sound",
+                        value = "Sunrise chime",
+                        valueColor = LocalAlarmMeColors.current.primary,
+                        onClick = {}
+                    )
 
-                1 -> AmNavigationDisclosureRow(
-                    text = "Snooze",
-                    value = "9 min · 3 times",
-                    onClick = {}
-                )
+                    1 -> AmNavigationDisclosureRow(
+                        text = "Snooze",
+                        value = "9 min · 3 times",
+                        onClick = {}
+                    )
 
-                2 -> AmToggleDisclosureRow(
-                    text = "Gradual volume",
-                    checked = gradualVolumeEnabled,
-                    onCheckedChange = { gradualVolumeEnabled = it }
-                )
+                    2 -> AmToggleDisclosureRow(
+                        text = "Gradual volume",
+                        checked = gradualVolumeEnabled,
+                        onCheckedChange = { gradualVolumeEnabled = it }
+                    )
 
-                else -> AmToggleDisclosureRow(
-                    text = "Vibrate",
-                    checked = vibrateEnabled,
-                    onCheckedChange = { vibrateEnabled = it }
-                )
+                    else -> AmToggleDisclosureRow(
+                        text = "Vibrate",
+                        checked = vibrateEnabled,
+                        onCheckedChange = { vibrateEnabled = it }
+                    )
+                }
             }
         }
     }
@@ -98,22 +94,23 @@ private fun AmLabeledSectionCardDangerPreview() {
             modifier = Modifier.padding(16.dp),
             label = "Danger zone",
             labelColor = colors.error,
-            sectionsCount = 2,
             isDangerSection = true
-        ) { index ->
-            when (index) {
-                0 -> AmTwoLineDisclosureRow(
-                    title = "Flush alarm database",
-                    subtitle = "Deletes every alarm"
-                ) {
-                    AmDestructiveTextButton(text = "Flush", onClick = {})
-                }
+        ) {
+            sections(count = 2) { index ->
+                when (index) {
+                    0 -> AmTwoLineDisclosureRow(
+                        title = "Flush alarm database",
+                        subtitle = "Deletes every alarm"
+                    ) {
+                        AmDestructiveTextButton(text = "Flush", onClick = {})
+                    }
 
-                else -> AmTwoLineDisclosureRow(
-                    title = "Reset onboarding",
-                    subtitle = "Show first-run flow again"
-                ) {
-                    AmDestructiveTextButton(text = "Reset", onClick = {})
+                    else -> AmTwoLineDisclosureRow(
+                        title = "Reset onboarding",
+                        subtitle = "Show first-run flow again"
+                    ) {
+                        AmDestructiveTextButton(text = "Reset", onClick = {})
+                    }
                 }
             }
         }
