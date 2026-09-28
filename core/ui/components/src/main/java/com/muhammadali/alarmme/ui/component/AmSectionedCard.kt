@@ -24,15 +24,17 @@ import com.muhammadali.alarmme.utility.compose.modifyIf
 fun AmSectionedCard(
     modifier: Modifier = Modifier,
     sectionsCount: Int,
+    isDangerSection: Boolean = false,
     section: @Composable (index: Int) -> Unit
 ) {
     val colors = LocalAlarmMeColors.current
-    val boarderColor = colors.outline.copy(0.5f)
+    val borderColor = if (isDangerSection) colors.errorContainer else colors.outline.copy(0.5f)
+    val separatorLineColor = colors.outline.copy(0.5f)
 
     AmSectionCard(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, boarderColor, LocalAlarmMeShapes.current.large),
+            .border(1.dp, borderColor, LocalAlarmMeShapes.current.large),
         shape = LocalAlarmMeShapes.current.large
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -43,7 +45,7 @@ fun AmSectionedCard(
                         .modifyIf(index > 0) {
                             drawBehind {
                                 drawLine(
-                                    color = boarderColor,
+                                    color = separatorLineColor,
                                     start = Offset(0f, 0f),
                                     end = Offset(size.width, 0f),
                                     strokeWidth = 1f
