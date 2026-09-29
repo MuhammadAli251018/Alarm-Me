@@ -45,6 +45,11 @@ include(":core:ui:screen:ringtone-picker")
 include(":core:utility:compose")
 include(":core:utility:kotlin-date-time")
 
+// Preferences
+include(":core:preferences")
+include(":core:app-settings")
+
+
 // Core Alarms
 include(":core:alarms:domain")
 include(":core:alarms:scheduler")
@@ -58,5 +63,5 @@ include(":core:feature-flags")
 include(":feature:alarm-list")
 include(":feature:alarm-details")
 include(":feature:alarm-ringing")
-include(":feature:app-settings")
+include(":feature:settings")
 include(":feature:debug-panel")

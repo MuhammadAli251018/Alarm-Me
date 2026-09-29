@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = libs.versions.packageName.get() + ".feature.appSettings"
+    namespace = libs.versions.packageName.get() + ".feature.settings"
 
     compileSdk {
         version = release(37)
