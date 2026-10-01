@@ -23,6 +23,9 @@ android {
 }
 
 dependencies {
+    // Internal Modules
+    implementation(projects.core.alarms.domain)
+
     // Datetime
     implementation(libs.kotlinx.datetime)
 
