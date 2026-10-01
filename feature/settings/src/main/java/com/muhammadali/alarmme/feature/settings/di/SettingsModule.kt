@@ -12,13 +12,16 @@ import com.muhammadali.alarmme.feature.settings.domain.SettingsUpdateUseCase
 import com.muhammadali.alarmme.feature.settings.presentation.SettingsScreenModel
 import com.muhammadali.alarmme.preferences.PreferencesManager
 import com.muhammadali.alarmme.preferences.PreferencesRepository
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val settingsModule = module {
-    factory<PreferencesRepository> { get<PreferencesManager>().getPreferenceOf(AppSettings.AppSettingsPrefRepoKey) }
+    factory<PreferencesRepository>(named("appSettings")) {
+        get<PreferencesManager>().getPreferenceOf(AppSettings.AppSettingsPrefRepoKey)
+    }
 
     factory<SettingsReadUseCase> { SettingsReadUseCaseImpl() }
-    factory<SettingsUpdateUseCase> { SettingsUpdateUseCaseImpl(get()) }
+    factory<SettingsUpdateUseCase> { SettingsUpdateUseCaseImpl(get(named("appSettings"))) }
     factory<ResolveRingtoneTitleUseCase> { ResolveRingtoneTitleUseCaseImpl() }
     factory<AppVersionInfoUseCase> { AppVersionInfoUseCaseImpl() }
 

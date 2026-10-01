@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -35,6 +36,11 @@ dependencies {
     implementation(projects.core.utility.compose)
     implementation(projects.core.utility.kotlinDateTime)
     implementation(projects.core.alarms.domain)
+    implementation(projects.core.featureFlags)
+    implementation(projects.core.preferences)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
