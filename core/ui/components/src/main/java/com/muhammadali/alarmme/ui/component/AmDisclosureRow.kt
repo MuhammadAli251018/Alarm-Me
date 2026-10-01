@@ -174,13 +174,16 @@ fun AmNavigationDisclosureRow(
     modifier: Modifier = Modifier,
     value: String? = null,
     valueColor: Color = LocalAlarmMeColors.current.onSurfaceVariant,
+    enabled: Boolean = true,
 ) {
     val colors = LocalAlarmMeColors.current
     val typography = LocalAlarmMeTypography.current
+    val trailingColor = if (enabled) valueColor else colors.outline
 
     AmDisclosureRow(
         text = text,
         modifier = modifier,
+        enabled = enabled,
         onClick = onClick
     ) {
         Row(
@@ -191,7 +194,7 @@ fun AmNavigationDisclosureRow(
                 Text(
                     text = value,
                     style = typography.bodyMedium,
-                    color = valueColor
+                    color = trailingColor
                 )
             }
 
@@ -199,7 +202,7 @@ fun AmNavigationDisclosureRow(
                 painter = AlarmMeIcons.ChevronRight,
                 contentDescription = null,
                 size = AmIconDefaults.Small,
-                tint = colors.onSurfaceVariant
+                tint = if (enabled) colors.onSurfaceVariant else colors.outline
             )
         }
     }
@@ -215,7 +218,7 @@ fun AmToggleDisclosureRow(
 ) {
     AmDisclosureRow(
         text = text,
-        enabled = checked,
+        enabled = enabled,
         modifier = modifier
     ) {
         AmSwitchToggle(
@@ -258,6 +261,23 @@ private fun AmNavigationDisclosureRowNoValuePreview() {
     }
 }
 
+@Preview(name = "Light Mode--Disabled", showBackground = true)
+@Preview(
+    name = "Dark Mode--Disabled",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AmNavigationDisclosureRowDisabledPreview() {
+    AlarmMeThemeProvider {
+        AmNavigationDisclosureRow(
+            text = "Sound",
+            value = "Sunrise chime",
+            enabled = false,
+            onClick = {}
+        )
+    }
+}
+
 @Preview(name = "Light Mode--Checked", showBackground = true)
 @Preview(
     name = "Dark Mode--Checked",
@@ -290,6 +310,23 @@ private fun AmToggleDisclosureRowUncheckedPreview() {
             text = "Vibrate",
             checked = isChecked,
             onCheckedChange = { isChecked = it }
+        )
+    }
+}
+
+@Preview(name = "Light Mode--Disabled", showBackground = true)
+@Preview(
+    name = "Dark Mode--Disabled",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AmToggleDisclosureRowDisabledPreview() {
+    AlarmMeThemeProvider {
+        AmToggleDisclosureRow(
+            text = "Gradual volume",
+            checked = true,
+            enabled = false,
+            onCheckedChange = {}
         )
     }
 }
@@ -343,7 +380,7 @@ fun AmTwoLineDisclosureRow(
             Text(
                 text = subtitle,
                 style = typography.bodySmall.copy(fontFamily = subtitleFontFamily),
-                color = subtitleColor,
+                color = if (enabled) subtitleColor else colors.outline,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -368,7 +405,7 @@ fun AmFlagDisclosureRow(
         title = text,
         subtitle = description,
         modifier = modifier,
-        enabled = checked,
+        enabled = enabled,
         subtitleColor = LocalAlarmMeColors.current.outline,
         subtitleFontFamily = PlexMono,
     ) {
@@ -431,6 +468,24 @@ private fun AmFlagDisclosureRowUncheckedPreview() {
             description = "flag.picker_v2",
             checked = isChecked,
             onCheckedChange = { isChecked = it }
+        )
+    }
+}
+
+@Preview(name = "Light Mode--Disabled", showBackground = true)
+@Preview(
+    name = "Dark Mode--Disabled",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AmFlagDisclosureRowDisabledPreview() {
+    AlarmMeThemeProvider {
+        AmFlagDisclosureRow(
+            text = "Hold-to-dismiss",
+            description = "flag.hold_dismiss",
+            checked = true,
+            enabled = false,
+            onCheckedChange = {}
         )
     }
 }
