@@ -44,8 +44,10 @@ dependencies {
     implementation(projects.core.ui.screen.ringtonePicker)
     implementation(projects.core.alarms.domain)
     implementation(projects.core.alarms.dataMocks)
+    implementation(projects.core.preferences)
     implementation(projects.feature.alarmList)
     implementation(projects.feature.alarmDetails)
+    implementation(projects.feature.settings)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)

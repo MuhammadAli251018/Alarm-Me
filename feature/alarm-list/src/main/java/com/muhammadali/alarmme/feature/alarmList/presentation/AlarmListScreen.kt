@@ -59,7 +59,8 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 
 class AlarmListScreen(
-    private val alarmDetailsDestination: (AlarmId?) -> NavDestination
+    private val alarmDetailsDestination: (AlarmId?) -> NavDestination,
+    private val settingsDestination: NavDestination
 ) : Screen {
 
     @Composable
@@ -82,6 +83,7 @@ class AlarmListScreen(
                 dispatch(AlarmsListEvent.OnEnableOrDisableAlarm(id, enabled))
             },
             onNewAlarmClick = { navigator?.navigateTo(alarmDetailsDestination(null)) },
+            onOpenSettingsClick = { navigator?.navigateTo(settingsDestination) },
             onDisableSelected = { ids ->
                 dispatch(AlarmsListEvent.OnEnableOrDisableAlarms(ids = ids, enabled = false))
             },
@@ -98,6 +100,7 @@ fun AlarmListScreenContent(
     onAlarmClick: (AlarmId) -> Unit,
     onAlarmCheckedChange: (AlarmId, Boolean) -> Unit,
     onNewAlarmClick: () -> Unit,
+    onOpenSettingsClick: () -> Unit,
     onDisableSelected: (Set<AlarmId>) -> Unit,
     onDeleteSelected: (Set<AlarmId>) -> Unit,
     onRetry: () -> Unit,
@@ -115,6 +118,7 @@ fun AlarmListScreenContent(
             onNewAlarmClick = onNewAlarmClick,
             onDisableSelected = onDisableSelected,
             onDeleteSelected = onDeleteSelected,
+            onOpenSettingsClick = onOpenSettingsClick,
             modifier = modifier
         )
     }
@@ -127,6 +131,7 @@ fun LoadedAlarmListScreenContent(
     onAlarmClick: (AlarmId) -> Unit,
     onAlarmCheckedChange: (AlarmId, Boolean) -> Unit,
     onNewAlarmClick: () -> Unit,
+    onOpenSettingsClick: () -> Unit,
     onDisableSelected: (Set<AlarmId>) -> Unit,
     onDeleteSelected: (Set<AlarmId>) -> Unit,
     modifier: Modifier = Modifier,
@@ -147,7 +152,7 @@ fun LoadedAlarmListScreenContent(
                 nextAlarmTime = nextAlarmTime,
                 onDismissSelection = { listState.clear() },
                 onSelectAll = { listState.addAll(alarms.map { it.id }) },
-                onSelectionClick = {}, // TODO: IMPLEMENT
+                onSettingsClick = onOpenSettingsClick,
                 onNewAlarmClick = onNewAlarmClick
             )
 
@@ -348,6 +353,7 @@ private fun PreviewLoaded(
             onAlarmClick = {},
             onAlarmCheckedChange = { _, _ -> },
             onNewAlarmClick = {},
+            onOpenSettingsClick = {},
             onDisableSelected = {},
             onDeleteSelected = {},
             modifier = Modifier.fillMaxSize().background(LocalAlarmMeColors.current.background),

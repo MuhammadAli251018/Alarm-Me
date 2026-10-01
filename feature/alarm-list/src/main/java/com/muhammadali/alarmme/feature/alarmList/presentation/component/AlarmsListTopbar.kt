@@ -47,14 +47,8 @@ internal val TopBarContentHorizontalPadding: Dp = 8.dp
 internal val TopBarContentVerticalPadding: Dp = 12.dp
 internal val TopBarItemsSpacing: Dp = 8.dp
 
-/**
- * The bar's labels. Shared with [TopBarSkeleton], which measures them to size its placeholder
- * blocks, so a placeholder is always exactly as wide as the text it stands in for. The new-alarm
- * icon is not here — it is an [com.muhammadali.alarmme.ui.component.AmIcon], so the skeleton
- * reserves its size token instead of measuring a glyph.
- */
 internal const val TOP_BAR_TITLE = "Alarms"
-internal const val TOP_BAR_SELECT_LABEL = "Select"
+internal const val TOP_BAR_SELECT_LABEL = "Settings"
 internal const val TOP_BAR_NEW_ALARM_LABEL = "New alarm"
 
 @Composable
@@ -64,7 +58,7 @@ fun AlarmsListTopBar(
     nextAlarmTime: LocalDateTime?,
     onDismissSelection: () -> Unit,
     onSelectAll: () -> Unit,
-    onSelectionClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     onNewAlarmClick: () -> Unit,
 ) {
     if (selectedAlarmsCount > 0) {
@@ -85,14 +79,14 @@ fun AlarmsListTopBar(
                 modifier = modifier.padding(horizontal = alarmsListHorizontalPaddings()),
                 nextAlarmTime = nextAlarmTime,
                 onNewAlarmClick = onNewAlarmClick,
-                onSelectionClick = onSelectionClick
+                onSelectionClick = onSettingsClick
             )
 
         screenCategory.width <= WidthCategory.Medium ->
             DefaultAlarmsListTopBarCompactAndMediumWidth(
                 modifier = modifier.padding(horizontal = alarmsListHorizontalPaddings()),
                 nextAlarmTime = nextAlarmTime,
-                onSelectionClick = onSelectionClick
+                onSelectionClick = onSettingsClick
             )
 
         else ->
@@ -100,7 +94,7 @@ fun AlarmsListTopBar(
                 modifier = modifier.padding(horizontal = alarmsListHorizontalPaddings()),
                 nextAlarmTime = nextAlarmTime,
                 onNewAlarmClick = onNewAlarmClick,
-                onSelectionClick = onSelectionClick
+                onSelectionClick = onSettingsClick
             )
     }
 }
@@ -358,7 +352,7 @@ private fun AlarmsListTopBarDefaultPreview() {
             nextAlarmTime = previewNextAlarmTime(),
             onDismissSelection = {},
             onSelectAll = {},
-            onSelectionClick = {},
+            onSettingsClick = {},
             onNewAlarmClick = {}
         )
     }
@@ -374,7 +368,7 @@ private fun AlarmsListTopBarNoNextAlarmPreview() {
             nextAlarmTime = null,
             onDismissSelection = {},
             onSelectAll = {},
-            onSelectionClick = {},
+            onSettingsClick = {},
             onNewAlarmClick = {}
         )
     }
@@ -390,7 +384,7 @@ private fun AlarmsListTopBarSelectionPreview() {
             nextAlarmTime = previewNextAlarmTime(),
             onDismissSelection = {},
             onSelectAll = {},
-            onSelectionClick = {},
+            onSettingsClick = {},
             onNewAlarmClick = {}
         )
     }
