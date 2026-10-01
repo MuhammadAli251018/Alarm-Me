@@ -19,5 +19,4 @@ sealed interface SettingsEvent : UiEvent {
     data object OnThemeClick : SettingsEvent
     data object OnSourceCodeClick : SettingsEvent
     data object OnLicencesClick : SettingsEvent
-    data object OnDebugPanelClick : SettingsEvent
 }

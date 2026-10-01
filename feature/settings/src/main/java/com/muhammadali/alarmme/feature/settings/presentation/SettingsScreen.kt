@@ -22,6 +22,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.muhammadali.alarmme.feature.settings.presentation.component.SettingsTopBar
+import com.muhammadali.alarmme.navigation.NavDestination
+import com.muhammadali.alarmme.navigation.navigateTo
 import com.muhammadali.alarmme.feature.settings.presentation.model.SettingsEvent
 import com.muhammadali.alarmme.feature.settings.presentation.model.SettingsState
 import com.muhammadali.alarmme.ui.component.AmDisclosureRow
@@ -36,7 +38,7 @@ import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
 
-class SettingsScreen : Screen {
+class SettingsScreen(private val debugPanelDestination: NavDestination) : Screen {
 
     @Composable
     override fun Content() {
@@ -63,7 +65,7 @@ class SettingsScreen : Screen {
             onThemeClick = { dispatch(SettingsEvent.OnThemeClick) },
             onSourceCodeClick = { dispatch(SettingsEvent.OnSourceCodeClick) },
             onLicencesClick = { dispatch(SettingsEvent.OnLicencesClick) },
-            onDebugPanelClick = { dispatch(SettingsEvent.OnDebugPanelClick) }
+            onDebugPanelClick = { navigator?.navigateTo(debugPanelDestination) }
         )
     }
 }

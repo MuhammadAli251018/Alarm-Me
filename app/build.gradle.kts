@@ -48,6 +48,7 @@ dependencies {
     implementation(projects.feature.alarmList)
     implementation(projects.feature.alarmDetails)
     implementation(projects.feature.settings)
+    implementation(projects.feature.debugPanel)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)

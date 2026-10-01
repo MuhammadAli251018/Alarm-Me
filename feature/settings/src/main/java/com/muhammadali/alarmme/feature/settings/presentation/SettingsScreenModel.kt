@@ -64,8 +64,7 @@ class SettingsScreenModel(
             SettingsEvent.OnVolumeButtonsClick,
             SettingsEvent.OnThemeClick,
             SettingsEvent.OnSourceCodeClick,
-            SettingsEvent.OnLicencesClick,
-            SettingsEvent.OnDebugPanelClick -> Unit
+            SettingsEvent.OnLicencesClick -> Unit
         }
     }
 

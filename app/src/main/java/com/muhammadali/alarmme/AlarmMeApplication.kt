@@ -4,6 +4,7 @@ import android.app.Application
 import com.muhammadali.alarmme.di.appDataModule
 import com.muhammadali.alarmme.feature.alarmDetails.di.alarmDetailsModule
 import com.muhammadali.alarmme.feature.alarmList.di.alarmListModule
+import com.muhammadali.alarmme.feature.debugPanel.di.debugPanelModule
 import com.muhammadali.alarmme.feature.settings.di.settingsModule
 import com.muhammadali.alarmme.ui.screen.ringtonePicker.di.ringtonePickerModule
 import org.koin.android.ext.koin.androidContext
@@ -20,7 +21,8 @@ class AlarmMeApplication : Application() {
                 alarmListModule,
                 ringtonePickerModule,
                 alarmDetailsModule,
-                settingsModule
+                settingsModule,
+                debugPanelModule
             )
         }
     }

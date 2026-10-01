@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.AlarmDetailsScreen
 import com.muhammadali.alarmme.feature.alarmList.presentation.AlarmListScreen
+import com.muhammadali.alarmme.feature.debugPanel.presentation.DebugPanelScreen
 import com.muhammadali.alarmme.feature.settings.presentation.SettingsScreen
 import com.muhammadali.alarmme.ui.screen.ringtonePicker.presentation.RingtonePickerScreen
 import com.muhammadali.alarmme.navigation.ProvideNavResultRepository
@@ -62,7 +63,11 @@ fun AlarmMeApp() {
                                 )
                             }
                         },
-                        settingsDestination = screenDestination { SettingsScreen() }
+                        settingsDestination = screenDestination {
+                            SettingsScreen(
+                                debugPanelDestination = screenDestination { DebugPanelScreen() }
+                            )
+                        }
                     )
                 )
             }
