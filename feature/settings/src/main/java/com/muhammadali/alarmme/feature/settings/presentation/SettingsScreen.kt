@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -15,17 +17,119 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
 import com.muhammadali.alarmme.feature.settings.presentation.component.SettingsTopBar
+import com.muhammadali.alarmme.feature.settings.presentation.model.SettingsEvent
+import com.muhammadali.alarmme.feature.settings.presentation.model.SettingsState
 import com.muhammadali.alarmme.ui.component.AmDisclosureRow
 import com.muhammadali.alarmme.ui.component.AmLabeledSectionCard
 import com.muhammadali.alarmme.ui.component.AmNavigationDisclosureRow
 import com.muhammadali.alarmme.ui.component.AmSectionLabel
 import com.muhammadali.alarmme.ui.component.AmSectionedCard
 import com.muhammadali.alarmme.ui.component.AmToggleDisclosureRow
+import com.muhammadali.alarmme.ui.component.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
+
+class SettingsScreen : Screen {
+
+    @Composable
+    override fun Content() {
+        val screenModel: SettingsScreenModel = koinScreenModel()
+        val state by screenModel.state.collectAsState()
+        val dispatch = screenModel::handleEvent
+        val navigator = LocalNavigator.current
+
+        SettingsScreenContent(
+            modifier = Modifier
+                .imePadding()
+                .systemBarsPadding()
+                .fillMaxSize(),
+            state = state,
+            onBackClick = { navigator?.pop() },
+            onRetry = { dispatch(SettingsEvent.OnRetry) },
+            onSoundClick = { dispatch(SettingsEvent.OnSoundClick) },
+            onSnoozeClick = { dispatch(SettingsEvent.OnSnoozeClick) },
+            onGradualVolumeToggle = { dispatch(SettingsEvent.OnGradualVolumeToggle(it)) },
+            onVibrateToggle = { dispatch(SettingsEvent.OnVibrateToggle(it)) },
+            onSilenceAfterClick = { dispatch(SettingsEvent.OnSilenceAfterClick) },
+            onVolumeButtonsClick = { dispatch(SettingsEvent.OnVolumeButtonsClick) },
+            on24HourTimeToggle = { dispatch(SettingsEvent.OnTwentyFourHourTimeToggle(it)) },
+            onThemeClick = { dispatch(SettingsEvent.OnThemeClick) },
+            onSourceCodeClick = { dispatch(SettingsEvent.OnSourceCodeClick) },
+            onLicencesClick = { dispatch(SettingsEvent.OnLicencesClick) },
+            onDebugPanelClick = { dispatch(SettingsEvent.OnDebugPanelClick) }
+        )
+    }
+}
+
+@Composable
+fun SettingsScreenContent(
+    state: SettingsState,
+    onBackClick: () -> Unit,
+    onRetry: () -> Unit,
+    onSoundClick: () -> Unit,
+    onSnoozeClick: () -> Unit,
+    onGradualVolumeToggle: (Boolean) -> Unit,
+    onVibrateToggle: (Boolean) -> Unit,
+    onSilenceAfterClick: () -> Unit,
+    onVolumeButtonsClick: () -> Unit,
+    on24HourTimeToggle: (Boolean) -> Unit,
+    onThemeClick: () -> Unit,
+    onSourceCodeClick: () -> Unit,
+    onLicencesClick: () -> Unit,
+    onDebugPanelClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (state) {
+        SettingsState.Loading -> Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(LocalAlarmMeColors.current.background)
+        ) {
+            SettingsTopBar(onBackClick = onBackClick)
+        }
+
+        SettingsState.Error -> ErrorScreenContent(
+            modifier = modifier.fillMaxSize(),
+            errorHeading = "Couldn't load settings",
+            errorDescription = "Something went wrong reading your settings.",
+            onRetry = onRetry,
+            onDismiss = onBackClick
+        )
+
+        is SettingsState.Loaded -> SettingsScreenContent(
+            modifier = modifier.fillMaxSize(),
+            soundLabel = state.soundLabel,
+            onSoundClick = onSoundClick,
+            snoozeLabel = state.snoozeLabel,
+            onSnoozeClick = onSnoozeClick,
+            gradualVolumeEnabled = state.gradualVolumeEnabled,
+            onGradualVolumeToggle = onGradualVolumeToggle,
+            vibrateEnabled = state.vibrateEnabled,
+            onVibrateToggle = onVibrateToggle,
+            silenceAfterLabel = state.silenceAfterLabel,
+            onSilenceAfterClick = onSilenceAfterClick,
+            volumeButtonsLabel = state.volumeButtonsLabel,
+            onVolumeButtonsClick = onVolumeButtonsClick,
+            is24HourTimeEnabled = state.is24HourTimeEnabled,
+            on24HourTimeToggle = on24HourTimeToggle,
+            themeLabel = state.themeLabel,
+            onThemeClick = onThemeClick,
+            versionLabel = state.versionLabel,
+            onSourceCodeClick = onSourceCodeClick,
+            onLicencesClick = onLicencesClick,
+            showDeveloperSection = state.showDeveloperSection,
+            onDebugPanelClick = onDebugPanelClick,
+            onBackClick = onBackClick
+        )
+    }
+}
 
 @Composable
 fun SettingsScreenContent(
@@ -44,8 +148,6 @@ fun SettingsScreenContent(
     onVolumeButtonsClick: () -> Unit,
     is24HourTimeEnabled: Boolean,
     on24HourTimeToggle: (Boolean) -> Unit,
-    weekStartsOnLabel: String,
-    onWeekStartsOnClick: () -> Unit,
     themeLabel: String,
     onThemeClick: () -> Unit,
     versionLabel: String,
@@ -86,13 +188,14 @@ fun SettingsScreenContent(
                         1 -> AmNavigationDisclosureRow(
                             text = "Snooze",
                             value = snoozeLabel,
-                            onClick = onSnoozeClick
+                            onClick = onSnoozeClick,
+                            enabled = false // TODO: Enable this
                         )
 
                         2 -> AmToggleDisclosureRow(
                             text = "Gradual volume",
                             checked = gradualVolumeEnabled,
-                            onCheckedChange = onGradualVolumeToggle
+                            onCheckedChange = onGradualVolumeToggle,
                         )
 
                         else -> AmToggleDisclosureRow(
@@ -110,37 +213,35 @@ fun SettingsScreenContent(
                         0 -> AmNavigationDisclosureRow(
                             text = "Silence after",
                             value = silenceAfterLabel,
-                            onClick = onSilenceAfterClick
+                            onClick = onSilenceAfterClick,
+                            enabled = false // TODO: Enable this
                         )
 
                         else -> AmNavigationDisclosureRow(
                             text = "Volume buttons",
                             value = volumeButtonsLabel,
-                            onClick = onVolumeButtonsClick
+                            onClick = onVolumeButtonsClick,
+                            enabled = false // TODO: Enable this
                         )
                     }
                 }
             }
 
             AmLabeledSectionCard(label = "General") {
-                sections(count = 3) { index ->
+                sections(count = 2) { index ->
                     when (index) {
                         0 -> AmToggleDisclosureRow(
                             text = "24-hour time",
                             checked = is24HourTimeEnabled,
-                            onCheckedChange = on24HourTimeToggle
-                        )
-
-                        1 -> AmNavigationDisclosureRow(
-                            text = "Week starts on",
-                            value = weekStartsOnLabel,
-                            onClick = onWeekStartsOnClick
+                            onCheckedChange = on24HourTimeToggle,
+                            enabled = false // TODO: Enable this
                         )
 
                         else -> AmNavigationDisclosureRow(
                             text = "Theme",
                             value = themeLabel,
-                            onClick = onThemeClick
+                            onClick = onThemeClick,
+                            enabled = false // TODO: Enable this
                         )
                     }
                 }
@@ -237,8 +338,6 @@ private fun SettingsScreenContentPreview() {
             onVolumeButtonsClick = {},
             is24HourTimeEnabled = is24HourTimeEnabled,
             on24HourTimeToggle = { is24HourTimeEnabled = it },
-            weekStartsOnLabel = "Monday",
-            onWeekStartsOnClick = {},
             themeLabel = "System",
             onThemeClick = {},
             versionLabel = "1.0.0",
@@ -274,8 +373,6 @@ private fun SettingsScreenContentDebugBuildPreview() {
             onVolumeButtonsClick = {},
             is24HourTimeEnabled = is24HourTimeEnabled,
             on24HourTimeToggle = { is24HourTimeEnabled = it },
-            weekStartsOnLabel = "Monday",
-            onWeekStartsOnClick = {},
             themeLabel = "System",
             onThemeClick = {},
             versionLabel = "1.0.0-debug (142)",
