@@ -3,6 +3,7 @@ package com.muhammadali.alarmme.feature.alarmRinging.presentation
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +24,17 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import com.muhammadali.alarmme.alarms.domain.AlarmId
 import com.muhammadali.alarmme.feature.alarmRinging.presentation.component.RingingActionStack
 import com.muhammadali.alarmme.feature.alarmRinging.presentation.component.RingingHero
 import com.muhammadali.alarmme.feature.alarmRinging.presentation.component.meridiem
 import com.muhammadali.alarmme.feature.alarmRinging.presentation.component.ringingHalo
+import com.muhammadali.alarmme.feature.alarmRinging.presentation.model.AlarmRingingEvent
+import com.muhammadali.alarmme.feature.alarmRinging.presentation.model.AlarmRingingState
 import com.muhammadali.alarmme.feature.alarmRinging.presentation.model.AlarmRingingUiState
+import com.muhammadali.alarmme.ui.component.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.ScreenCategory
 import com.muhammadali.alarmme.ui.screenCategory.WidthCategory
@@ -41,6 +50,7 @@ import kotlinx.datetime.LocalTime
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import org.koin.core.parameter.parametersOf
 
 private const val SNOOZED_EYEBROW = "SNOOZED"
 private const val RINGING_HINT = "Snooze = one tap · dismiss = press and hold"
@@ -54,6 +64,62 @@ private val PortraitActionsBottomSpacing: Dp = 34.dp
 private val LandscapeVerticalPadding: Dp = 26.dp
 private val LandscapeActionsWidth: Dp = 300.dp
 private val ExpandedActionsMaxWidth: Dp = 480.dp
+
+private const val ERROR_HEADING = "Couldn't load the alarm"
+private const val ERROR_DESCRIPTION = "Something went wrong reading the alarm that's ringing."
+
+class AlarmRingingScreen(val alarmId: AlarmId) : Screen {
+
+    @Composable
+    override fun Content() {
+        val screenModel: AlarmRingingScreenModel =
+            koinScreenModel(parameters = { parametersOf(alarmId) })
+        val state by screenModel.state.collectAsState()
+        val dispatch = screenModel::handleEvent
+
+
+        AlarmRingingScreenContent(
+            // Painted full-bleed first, so the colour runs under the system bars the content insets past.
+            modifier = Modifier
+                .fillMaxSize()
+                .background(LocalAlarmMeColors.current.surfaceContainerLowest)
+                .systemBarsPadding(),
+            state = state,
+            onSnoozeClick = { dispatch(AlarmRingingEvent.OnSnoozeClick) },
+            onDismiss = { dispatch(AlarmRingingEvent.OnDismiss) },
+            onRetry = { dispatch(AlarmRingingEvent.OnRetry) }
+        )
+    }
+}
+
+@Composable
+fun AlarmRingingScreenContent(
+    state: AlarmRingingState,
+    onSnoozeClick: () -> Unit,
+    onDismiss: () -> Unit,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (state) {
+        // The background is already painted by the caller; there is nothing else to show yet.
+        AlarmRingingState.Loading -> Box(modifier = modifier.fillMaxSize())
+
+        AlarmRingingState.Error -> ErrorScreenContent(
+            modifier = modifier.fillMaxSize(),
+            errorHeading = ERROR_HEADING,
+            errorDescription = ERROR_DESCRIPTION,
+            onRetry = onRetry,
+            onDismiss = onDismiss
+        )
+
+        is AlarmRingingState.Loaded -> AlarmRingingScreenContent(
+            state = state.alarm,
+            onSnoozeClick = onSnoozeClick,
+            onDismiss = onDismiss,
+            modifier = modifier.fillMaxSize()
+        )
+    }
+}
 
 @Composable
 fun AlarmRingingScreenContent(

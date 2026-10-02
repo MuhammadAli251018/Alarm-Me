@@ -43,6 +43,15 @@ import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+
+private val TEST_ALARM_DELAYS = listOf(
+    "10s" to 10.seconds,
+    "1m" to 1.minutes,
+    "5m" to 5.minutes,
+)
 
 class DebugPanelScreen : Screen {
 
@@ -86,7 +95,7 @@ fun DebugPanelScreenContent(
     onMockRingtonesToggle: (Boolean) -> Unit,
     onResetAllFlagsClick: () -> Unit,
     onLaunchRingingScreenClick: () -> Unit,
-    onFireTestAlarmClick: (delayLabel: String) -> Unit,
+    onFireTestAlarmClick: (Duration) -> Unit,
     onSeedSampleAlarmsClick: () -> Unit,
     onScheduledAlarmsClick: () -> Unit,
     onFlushDatabaseClick: () -> Unit,
@@ -147,7 +156,7 @@ fun DebugPanelScreenContent(
     onMockRingtonesToggle: (Boolean) -> Unit,
     onResetAllFlagsClick: () -> Unit,
     onLaunchRingingScreenClick: () -> Unit,
-    onFireTestAlarmClick: (delayLabel: String) -> Unit,
+    onFireTestAlarmClick: (Duration) -> Unit,
     onSeedSampleAlarmsClick: () -> Unit,
     scheduledAlarmsCount: Int,
     onScheduledAlarmsClick: () -> Unit,
@@ -218,10 +227,10 @@ fun DebugPanelScreenContent(
                             text = "Fire test alarm in",
                             onClick = null
                         ) {
-                            listOf("10s", "1m", "5m").forEach { delayLabel ->
+                            TEST_ALARM_DELAYS.forEach { (delayLabel, duration) ->
                                 AmQuickActionButton(
                                     text = delayLabel,
-                                    onClick = { onFireTestAlarmClick(delayLabel) }
+                                    onClick = { onFireTestAlarmClick(duration) }
                                 )
                             }
                         }

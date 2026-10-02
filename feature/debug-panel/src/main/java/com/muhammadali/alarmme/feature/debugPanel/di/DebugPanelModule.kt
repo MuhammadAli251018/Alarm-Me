@@ -16,6 +16,8 @@ import com.muhammadali.alarmme.feature.debugPanel.domain.FeatureFlagsUpdateUseCa
 import com.muhammadali.alarmme.feature.debugPanel.domain.ResetAppSettingsUseCase
 import com.muhammadali.alarmme.feature.debugPanel.domain.ResetAppToFirstLaunchUseCase
 import com.muhammadali.alarmme.feature.debugPanel.domain.ResolveExactAlarmPermissionUseCase
+import com.muhammadali.alarmme.feature.debugPanel.domain.ScheduleAlarmUseCase
+import com.muhammadali.alarmme.feature.debugPanel.domain.ScheduleAlarmUseCaseImpl
 import com.muhammadali.alarmme.feature.debugPanel.domain.ScheduledAlarmsCountUseCase
 import com.muhammadali.alarmme.feature.debugPanel.presentation.DebugPanelScreenModel
 import com.muhammadali.alarmme.featureFlags.FeatureFlags
@@ -44,6 +46,7 @@ val debugPanelModule = module {
         )
     }
     factory<ResetAppToFirstLaunchUseCase> { ResetAppToFirstLaunchUseCaseImpl(get(), get(), get()) }
+    factory<ScheduleAlarmUseCase> { ScheduleAlarmUseCaseImpl(get(), get(), get()) }
 
-    factory { DebugPanelScreenModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    factory { DebugPanelScreenModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 }

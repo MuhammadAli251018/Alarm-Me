@@ -8,7 +8,9 @@ import com.muhammadali.alarmme.feature.debugPanel.domain.FeatureFlagsUpdateUseCa
 import com.muhammadali.alarmme.feature.debugPanel.domain.ResetAppSettingsUseCase
 import com.muhammadali.alarmme.feature.debugPanel.domain.ResetAppToFirstLaunchUseCase
 import com.muhammadali.alarmme.feature.debugPanel.domain.ResolveExactAlarmPermissionUseCase
+import com.muhammadali.alarmme.feature.debugPanel.domain.ScheduleAlarmUseCase
 import com.muhammadali.alarmme.feature.debugPanel.domain.ScheduledAlarmsCountUseCase
+import com.muhammadali.alarmme.feature.debugPanel.domain.fireInstantAlarm
 import com.muhammadali.alarmme.feature.debugPanel.presentation.model.DebugPanelEvent
 import com.muhammadali.alarmme.feature.debugPanel.presentation.model.DebugPanelState
 import com.muhammadali.alarmme.feature.debugPanel.presentation.model.toLoadedState
@@ -30,6 +32,7 @@ class DebugPanelScreenModel(
     private val alarmsWriteUseCase: AlarmsWriteUseCase,
     private val resetAppSettingsUseCase: ResetAppSettingsUseCase,
     private val resetAppToFirstLaunchUseCase: ResetAppToFirstLaunchUseCase,
+    private val scheduleAlarmUseCase: ScheduleAlarmUseCase,
 ) : BaseScreenModel<DebugPanelState, DebugPanelEvent, Nothing>(
     initialState = DebugPanelState.Initial
 ) {
@@ -74,9 +77,14 @@ class DebugPanelScreenModel(
 
             DebugPanelEvent.OnRetry -> loadDebugPanel()
 
-            // No real destination/integration exists yet for any of these.
-            is DebugPanelEvent.OnFireTestAlarmClick,
-            DebugPanelEvent.OnLaunchRingingScreenClick,
+            is DebugPanelEvent.OnFireTestAlarmClick -> screenModelScope.launch {
+                scheduleAlarmUseCase.fireDebugAlarmIn(event.duration)
+            }
+
+            DebugPanelEvent.OnLaunchRingingScreenClick -> screenModelScope.launch {
+                scheduleAlarmUseCase.fireInstantAlarm()
+            }
+
             DebugPanelEvent.OnScheduledAlarmsClick -> Unit
         }
     }

@@ -4,6 +4,7 @@ import android.app.Application
 import com.muhammadali.alarmme.di.appDataModule
 import com.muhammadali.alarmme.feature.alarmDetails.di.alarmDetailsModule
 import com.muhammadali.alarmme.feature.alarmList.di.alarmListModule
+import com.muhammadali.alarmme.feature.alarmRinging.di.alarmRingingModule
 import com.muhammadali.alarmme.feature.debugPanel.di.debugPanelModule
 import com.muhammadali.alarmme.feature.settings.di.settingsModule
 import com.muhammadali.alarmme.ui.screen.ringtonePicker.di.ringtonePickerModule
@@ -22,7 +23,8 @@ class AlarmMeApplication : Application() {
                 ringtonePickerModule,
                 alarmDetailsModule,
                 settingsModule,
-                debugPanelModule
+                debugPanelModule,
+                alarmRingingModule
             )
         }
     }

@@ -1,6 +1,7 @@
 package com.muhammadali.alarmme.feature.debugPanel.presentation.model
 
 import com.muhammadali.alarmme.mvi.UiEvent
+import kotlin.time.Duration
 
 sealed interface DebugPanelEvent : UiEvent {
     data class OnGlobalMocksToggle(val enabled: Boolean) : DebugPanelEvent
@@ -21,6 +22,6 @@ sealed interface DebugPanelEvent : UiEvent {
     // No real destination/integration exists yet for any of these — dispatched so the
     // wiring is in place, but currently no-ops in the ScreenModel.
     data object OnLaunchRingingScreenClick : DebugPanelEvent
-    data class OnFireTestAlarmClick(val delayLabel: String) : DebugPanelEvent
+    data class OnFireTestAlarmClick(val duration: Duration) : DebugPanelEvent
     data object OnScheduledAlarmsClick : DebugPanelEvent
 }
