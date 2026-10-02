@@ -25,6 +25,9 @@ interface PreferencesRepository {
     ): PreferencesValue<T>
 
     suspend fun <T> setPrefValue(key: PreferencesKey, value: T, serializer: KSerializer<T>)
+
+    /** Removes every stored value, so each preference falls back to its declared default. */
+    suspend fun clear()
 }
 
 inline fun <reified T> PreferencesRepository.getPrefValue(
@@ -66,5 +69,9 @@ internal class PreferencesRepositoryImpl(
     override suspend fun <T> setPrefValue(key: PreferencesKey, value: T, serializer: KSerializer<T>) {
         val str = Json.encodeToString(serializer, value)
         setString(key.value, str)
+    }
+
+    override suspend fun clear() {
+        dataStore.edit { preferences -> preferences.clear() }
     }
 }

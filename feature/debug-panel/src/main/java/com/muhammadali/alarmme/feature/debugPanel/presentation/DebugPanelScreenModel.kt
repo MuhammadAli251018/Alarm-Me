@@ -1,9 +1,12 @@
 package com.muhammadali.alarmme.feature.debugPanel.presentation
 
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.muhammadali.alarmme.feature.debugPanel.domain.AlarmsWriteUseCase
 import com.muhammadali.alarmme.feature.debugPanel.domain.AppBuildInfoUseCase
 import com.muhammadali.alarmme.feature.debugPanel.domain.FeatureFlagsReadUseCase
 import com.muhammadali.alarmme.feature.debugPanel.domain.FeatureFlagsUpdateUseCase
+import com.muhammadali.alarmme.feature.debugPanel.domain.ResetAppSettingsUseCase
+import com.muhammadali.alarmme.feature.debugPanel.domain.ResetAppToFirstLaunchUseCase
 import com.muhammadali.alarmme.feature.debugPanel.domain.ResolveExactAlarmPermissionUseCase
 import com.muhammadali.alarmme.feature.debugPanel.domain.ScheduledAlarmsCountUseCase
 import com.muhammadali.alarmme.feature.debugPanel.presentation.model.DebugPanelEvent
@@ -15,12 +18,18 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
+/** Matches the screen's "Seed 20 sample alarms" row. */
+private const val SEEDED_ALARMS_COUNT = 20
+
 class DebugPanelScreenModel(
     private val featureFlagsReadUseCase: FeatureFlagsReadUseCase,
     private val featureFlagsUpdateUseCase: FeatureFlagsUpdateUseCase,
     private val scheduledAlarmsCountUseCase: ScheduledAlarmsCountUseCase,
     private val resolveExactAlarmPermissionUseCase: ResolveExactAlarmPermissionUseCase,
     private val appBuildInfoUseCase: AppBuildInfoUseCase,
+    private val alarmsWriteUseCase: AlarmsWriteUseCase,
+    private val resetAppSettingsUseCase: ResetAppSettingsUseCase,
+    private val resetAppToFirstLaunchUseCase: ResetAppToFirstLaunchUseCase,
 ) : BaseScreenModel<DebugPanelState, DebugPanelEvent, Nothing>(
     initialState = DebugPanelState.Initial
 ) {
@@ -47,16 +56,28 @@ class DebugPanelScreenModel(
                 featureFlagsUpdateUseCase.resetAllFlags()
             }
 
+            DebugPanelEvent.OnSeedSampleAlarmsClick -> screenModelScope.launch {
+                alarmsWriteUseCase.writeMockAlarms(SEEDED_ALARMS_COUNT)
+            }
+
+            DebugPanelEvent.OnFlushDatabaseClick -> screenModelScope.launch {
+                alarmsWriteUseCase.flushAlarms()
+            }
+
+            DebugPanelEvent.OnClearPreferencesClick -> screenModelScope.launch {
+                resetAppSettingsUseCase.reset()
+            }
+
+            DebugPanelEvent.OnResetOnboardingClick -> screenModelScope.launch {
+                resetAppToFirstLaunchUseCase.reset()
+            }
+
             DebugPanelEvent.OnRetry -> loadDebugPanel()
 
             // No real destination/integration exists yet for any of these.
             is DebugPanelEvent.OnFireTestAlarmClick,
             DebugPanelEvent.OnLaunchRingingScreenClick,
-            DebugPanelEvent.OnSeedSampleAlarmsClick,
-            DebugPanelEvent.OnScheduledAlarmsClick,
-            DebugPanelEvent.OnFlushDatabaseClick,
-            DebugPanelEvent.OnClearPreferencesClick,
-            DebugPanelEvent.OnResetOnboardingClick -> Unit
+            DebugPanelEvent.OnScheduledAlarmsClick -> Unit
         }
     }
 

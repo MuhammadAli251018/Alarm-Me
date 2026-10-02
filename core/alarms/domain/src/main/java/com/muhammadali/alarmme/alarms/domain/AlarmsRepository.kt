@@ -14,6 +14,8 @@ interface AlarmsRepository {
     suspend fun setEnabled(ids: Set<AlarmId>, enabled: Boolean)
 
     suspend fun delete(ids: Set<AlarmId>)
+
+    suspend fun deleteAll()
 }
 
 suspend fun AlarmsRepository.getAlarm(id: AlarmId): Alarm? = observeAlarm(id).firstOrNull()

@@ -55,6 +55,10 @@ class MockAlarmsRepository(
     override suspend fun delete(ids: Set<AlarmId>) {
         alarms.update { current -> current - ids }
     }
+
+    override suspend fun deleteAll() {
+        alarms.update { emptyMap() }
+    }
 }
 
 internal fun sampleAlarms(): List<Alarm> {

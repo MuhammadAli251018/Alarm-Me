@@ -18,10 +18,6 @@ class FeatureFlagsUpdateUseCaseImpl(
     override suspend fun setMockRingtones(enabled: Boolean) =
         preferencesRepository.setPrefValue(FeatureFlags.MockRingtones.preferences.key, enabled)
 
-    override suspend fun resetAllFlags() {
-        // TODO:
-        setGlobalMocks(false)
-        setMockAlarms(false)
-        setMockRingtones(false)
-    }
+    /** Clears the store so every flag falls back to the default declared in `FeatureFlags`. */
+    override suspend fun resetAllFlags() = preferencesRepository.clear()
 }
