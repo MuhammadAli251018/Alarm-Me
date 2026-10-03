@@ -45,7 +45,9 @@ import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDeta
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEvent
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsState
 import com.muhammadali.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsUiState
+import com.muhammadali.alarmme.navigation.AlarmDetailsParams
 import com.muhammadali.alarmme.navigation.AwaitNavResult
+import com.muhammadali.alarmme.navigation.LocalNavGraph
 import com.muhammadali.alarmme.navigation.NavDestination
 import com.muhammadali.alarmme.navigation.navigateTo
 import com.muhammadali.alarmme.ui.screen.ringtonePicker.presentation.RingtonePickerScreen
@@ -72,9 +74,8 @@ import kotlinx.datetime.LocalTime
 import org.koin.core.parameter.parametersOf
 import kotlin.time.Duration.Companion.seconds
 
-
 class AlarmDetailsScreen(
-    val startMode: StartMode,
+    val params: AlarmDetailsParams,
     val ringtonePickerDestination: NavDestination
 ) : Screen {
 
@@ -85,12 +86,16 @@ class AlarmDetailsScreen(
 
     @Composable
     override fun Content() {
+        val startMode = remember(params) {
+            params.alarmId?.let { StartMode.Edit(it) } ?: StartMode.New
+        }
         val screenModel: AlarmDetailsScreenModel =
             koinScreenModel(parameters = { parametersOf(startMode) })
         val state by screenModel.state.collectAsState()
         val dispatch = screenModel::handleEvent
         val navigator = LocalNavigator.current
         val context = LocalContext.current
+        val navGraph = LocalNavGraph.current
         val missingNavigatorToast = remember {
             Toast.makeText(context, "Navigator not found, can not navigate", Toast.LENGTH_SHORT)
         }
@@ -122,7 +127,7 @@ class AlarmDetailsScreen(
             onDayToggle = { day -> dispatch(AlarmDetailsEvent.OnDayToggle(day)) },
             onCustomDateToggle = { enabled -> dispatch(AlarmDetailsEvent.OnCustomDateToggle(enabled)) },
             onCustomDatesChanged = { dates -> dispatch(AlarmDetailsEvent.OnCustomDatesChanged(dates)) },
-            onSoundClick = { navigator?.navigateTo(ringtonePickerDestination)  ?: missingNavigatorToast.show() },
+            onSoundClick = { navigator?.navigateTo(ringtonePickerDestination, navGraph)  ?: missingNavigatorToast.show() },
             onSnoozeClick = { dispatch(AlarmDetailsEvent.OnSnoozeClick) },
             onGradualVolumeToggle = { enabled -> dispatch(AlarmDetailsEvent.OnGradualVolumeToggle(enabled)) },
             onVibrateToggle = { enabled -> dispatch(AlarmDetailsEvent.OnVibrateToggle(enabled)) },

@@ -1,5 +1,6 @@
 package com.muhammadali.alarmme.feature.settings.presentation
 
+import android.os.Parcelable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import com.muhammadali.alarmme.navigation.NavDestination
 import com.muhammadali.alarmme.navigation.navigateTo
 import com.muhammadali.alarmme.feature.settings.presentation.model.SettingsEvent
 import com.muhammadali.alarmme.feature.settings.presentation.model.SettingsState
+import com.muhammadali.alarmme.navigation.LocalNavGraph
 import com.muhammadali.alarmme.ui.component.AmDisclosureRow
 import com.muhammadali.alarmme.ui.component.AmLabeledSectionCard
 import com.muhammadali.alarmme.ui.component.AmNavigationDisclosureRow
@@ -37,8 +39,10 @@ import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
+import kotlinx.parcelize.Parcelize
 
-class SettingsScreen(private val debugPanelDestination: NavDestination) : Screen {
+@Parcelize
+class SettingsScreen(private val debugPanelDestination: NavDestination) : Screen, Parcelable {
 
     @Composable
     override fun Content() {
@@ -46,6 +50,7 @@ class SettingsScreen(private val debugPanelDestination: NavDestination) : Screen
         val state by screenModel.state.collectAsState()
         val dispatch = screenModel::handleEvent
         val navigator = LocalNavigator.current
+        val navGraph = LocalNavGraph.current
 
         SettingsScreenContent(
             modifier = Modifier
@@ -65,7 +70,7 @@ class SettingsScreen(private val debugPanelDestination: NavDestination) : Screen
             onThemeClick = { dispatch(SettingsEvent.OnThemeClick) },
             onSourceCodeClick = { dispatch(SettingsEvent.OnSourceCodeClick) },
             onLicencesClick = { dispatch(SettingsEvent.OnLicencesClick) },
-            onDebugPanelClick = { navigator?.navigateTo(debugPanelDestination) }
+            onDebugPanelClick = { navigator?.navigateTo(debugPanelDestination, navGraph) }
         )
     }
 }

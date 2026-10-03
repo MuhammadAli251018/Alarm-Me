@@ -1,5 +1,6 @@
 package com.muhammadali.alarmme.feature.alarmList.presentation
 
+import android.os.Parcelable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,9 @@ import com.muhammadali.alarmme.feature.alarmList.presentation.component.remember
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmItemState
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListEvent
 import com.muhammadali.alarmme.feature.alarmList.presentation.model.AlarmsListState
+import com.muhammadali.alarmme.navigation.LocalNavGraph
 import com.muhammadali.alarmme.navigation.NavDestination
+import com.muhammadali.alarmme.navigation.alarmDetailsDestination
 import com.muhammadali.alarmme.navigation.navigateTo
 import com.muhammadali.alarmme.ui.component.AmDestructiveTextButton
 import com.muhammadali.alarmme.ui.component.AmFabButton
@@ -57,11 +60,12 @@ import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 class AlarmListScreen(
-    private val alarmDetailsDestination: (AlarmId?) -> NavDestination,
     private val settingsDestination: NavDestination
-) : Screen {
+) : Screen, Parcelable {
 
     @Composable
     override fun Content() {
@@ -69,6 +73,7 @@ class AlarmListScreen(
         val state by screenModel.state.collectAsState()
         val dispatch = screenModel::handleEvent
         val navigator = LocalNavigator.current
+        val navGraph = LocalNavGraph.current
 
 
         AlarmListScreenContent(
@@ -78,12 +83,12 @@ class AlarmListScreen(
                 .fillMaxSize()
                 .background(LocalAlarmMeColors.current.background),
             state = state,
-            onAlarmClick = { id -> navigator?.navigateTo(alarmDetailsDestination(id)) },
+            onAlarmClick = { id -> navigator?.navigateTo(alarmDetailsDestination(id), navGraph) },
             onAlarmCheckedChange = { id, enabled ->
                 dispatch(AlarmsListEvent.OnEnableOrDisableAlarm(id, enabled))
             },
-            onNewAlarmClick = { navigator?.navigateTo(alarmDetailsDestination(null)) },
-            onOpenSettingsClick = { navigator?.navigateTo(settingsDestination) },
+            onNewAlarmClick = { navigator?.navigateTo(alarmDetailsDestination(), navGraph) },
+            onOpenSettingsClick = { navigator?.navigateTo(settingsDestination, navGraph) },
             onDisableSelected = { ids ->
                 dispatch(AlarmsListEvent.OnEnableOrDisableAlarms(ids = ids, enabled = false))
             },

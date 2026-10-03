@@ -1,5 +1,6 @@
 package com.muhammadali.alarmme.feature.debugPanel.presentation
 
+import android.os.Parcelable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.ui.theme.LocalAlarmMeTypography
+import kotlinx.parcelize.Parcelize
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -53,7 +55,8 @@ private val TEST_ALARM_DELAYS = listOf(
     "5m" to 5.minutes,
 )
 
-class DebugPanelScreen : Screen {
+@Parcelize
+class DebugPanelScreen : Screen, Parcelable {
 
     @Composable
     override fun Content() {

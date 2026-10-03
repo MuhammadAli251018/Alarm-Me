@@ -1,5 +1,6 @@
 package com.muhammadali.alarmme.feature.alarmRinging.presentation
 
+import android.os.Parcelable
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +35,7 @@ import com.muhammadali.alarmme.feature.alarmRinging.presentation.component.ringi
 import com.muhammadali.alarmme.feature.alarmRinging.presentation.model.AlarmRingingEvent
 import com.muhammadali.alarmme.feature.alarmRinging.presentation.model.AlarmRingingState
 import com.muhammadali.alarmme.feature.alarmRinging.presentation.model.AlarmRingingUiState
+import com.muhammadali.alarmme.navigation.AlarmRingingParams
 import com.muhammadali.alarmme.ui.component.ErrorScreenContent
 import com.muhammadali.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import com.muhammadali.alarmme.ui.screenCategory.ScreenCategory
@@ -47,6 +49,7 @@ import com.muhammadali.alarmme.ui.theme.LocalAlarmMeColors
 import com.muhammadali.alarmme.utility.kotlinDateTime.toClockLabel
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.parcelize.Parcelize
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -68,10 +71,12 @@ private val ExpandedActionsMaxWidth: Dp = 480.dp
 private const val ERROR_HEADING = "Couldn't load the alarm"
 private const val ERROR_DESCRIPTION = "Something went wrong reading the alarm that's ringing."
 
-class AlarmRingingScreen(val alarmId: AlarmId) : Screen {
+@Parcelize
+class AlarmRingingScreen(val params: AlarmRingingParams) : Screen, Parcelable {
 
     @Composable
     override fun Content() {
+        val alarmId = params.alarmId
         val screenModel: AlarmRingingScreenModel =
             koinScreenModel(parameters = { parametersOf(alarmId) })
         val state by screenModel.state.collectAsState()

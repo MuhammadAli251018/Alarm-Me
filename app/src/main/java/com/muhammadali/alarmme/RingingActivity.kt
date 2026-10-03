@@ -12,7 +12,8 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.muhammadali.alarmme.alarms.domain.AlarmId
 import com.muhammadali.alarmme.alarms.scheduler.alarmIdOrNull
 import com.muhammadali.alarmme.alarms.scheduler.putAlarmId
-import com.muhammadali.alarmme.feature.alarmRinging.presentation.AlarmRingingScreen
+import com.muhammadali.alarmme.navigation.ProvideNavGraph
+import com.muhammadali.alarmme.navigation.alarmRingingDestination
 import com.muhammadali.alarmme.ui.theme.AlarmMeThemeProvider
 
 /** Hosts the ringing screen for one alarm, and is reachable over the lockscreen. */
@@ -38,8 +39,10 @@ class RingingActivity : ComponentActivity() {
 
         setContent {
             AlarmMeThemeProvider {
-                AlarmMeScaffold {
-                    Navigator(screen = AlarmRingingScreen(alarmId))
+                ProvideNavGraph(AppNavigationGraph) {
+                    AlarmMeScaffold {
+                        Navigator(screen = AppNavigationGraph.getScreen(alarmRingingDestination(alarmId)))
+                    }
                 }
             }
         }

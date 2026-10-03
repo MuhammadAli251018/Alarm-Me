@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -27,9 +28,15 @@ android {
 }
 
 dependencies {
+    // Alarms domain — AlarmId appears in this module's public destination parameters.
+    api(projects.core.alarms.domain)
+
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
+
+    // Pacelize
+    implementation(libs.kotlin.parcelize.runtime)
 
     // Voyager
     implementation(libs.bundles.voyager)
