@@ -1,25 +1,20 @@
 package com.muhammadali.alarmme.navigation
 
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.Navigator
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-interface NavDestination {
-    fun navigateTo(navigator: Navigator)
-}
 
-fun interface ScreenFactory {
-    fun create(): Screen
-}
+@JvmInline
+@Parcelize
+value class ScreenId(val value: String) : Parcelable
 
-internal class ScreenDestination(private val screenFactory: ScreenFactory) : NavDestination {
-    override fun navigateTo(navigator: Navigator) {
-        navigator.push(screenFactory.create())
-    }
-}
+@Parcelize
+data class NavDestination(
+    val screenId: ScreenId,
+    val parameters: NavigationParameter? = null
+) : Parcelable
 
-fun screenDestination(screen: Screen): NavDestination = ScreenDestination { screen }
-
-fun screenDestination(screen: () -> Screen): NavDestination = ScreenDestination(screen)
-
-fun Navigator.navigateTo(destination: NavDestination) =
-    destination.navigateTo(this)
+/** Typed access to a destination's parameters, for the composition root's NavigationGraph. */
+inline fun <reified T : NavigationParameter> NavDestination.requireParams(): T =
+    parameters as? T
+        ?: error("Destination ${screenId.value} has parameters=$parameters, expected ${T::class.simpleName}")
