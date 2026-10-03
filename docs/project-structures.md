@@ -96,7 +96,7 @@ directly rather than this doc for the complete set.
 | Thing | Convention | Example |
 |---|---|---|
 | Gradle module | `core:<name>` / `feature:<kebab-case>` | `core:ringtone-picker` |
-| Package | `com.muhammadali.alarmme.<segment>`, camelCase | `ringtonePicker` |
+| Package | `dev.alidroid.alarmme.<segment>`, camelCase | `ringtonePicker` |
 | Screen | `XScreen.kt` (Voyager `Screen`) | `RingtonePickerScreen` |
 | Screen model | `XScreenModel.kt` | `RingtonePickerScreenModel` |
 | State / Event | `XState.kt` / `XEvent.kt`, events prefixed `On*` | `RingtonePickerState` |

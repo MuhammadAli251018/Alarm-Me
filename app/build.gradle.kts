@@ -10,7 +10,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.muhammadali.alarmme"
+        applicationId = "dev.alidroid.alarmme"
         minSdk = 24
         targetSdk = 37
         versionCode = 1
