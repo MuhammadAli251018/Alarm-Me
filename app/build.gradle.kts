@@ -3,6 +3,20 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+object AppConfig {
+    const val MAJOR_VERSION = 0
+    const val MINOR_VERSION = 1
+    const val PATCH_VERSION = 0
+    const val VERSION_TAG = ""
+    const val VERSION_CODE = 1
+
+    fun getVersionName() =
+        if (VERSION_TAG.isNotEmpty())
+            "$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION-$VERSION_TAG"
+        else
+            "$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+}
+
 android {
     namespace = libs.versions.packageName.get()
     compileSdk {
@@ -10,28 +24,45 @@ android {
     }
 
     defaultConfig {
-        applicationId = "dev.alidroid.alarmme"
+        applicationId = libs.versions.packageName.get()
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = AppConfig.VERSION_CODE
+        versionName = AppConfig.getVersionName()
     }
 
     buildTypes {
         release {
             optimization {
-                enable = false
+                enable = true
             }
         }
     }
+
+    flavorDimensions += listOf("ENVIRONMENT")
+
+    productFlavors {
+        create("dev") {
+            dimension = "ENVIRONMENT"
+            applicationIdSuffix = ".dev"
+        }
+
+        create("prod") {
+            dimension = "ENVIRONMENT"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
         isCoreLibraryDesugaringEnabled = true
     }
+
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+
     testOptions {
         unitTests.all { it.useJUnitPlatform() }
     }
@@ -39,6 +70,8 @@ android {
 
 dependencies {
     // Modules Depenency
+    implementation(projects.core.featureFlags)
+    implementation(projects.core.appSettings)
     implementation(projects.core.ui.components)
     implementation(projects.core.navigation)
     implementation(projects.core.ui.screen.ringtonePicker)

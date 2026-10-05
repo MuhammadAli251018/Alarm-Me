@@ -17,6 +17,8 @@ enum class DebugPanelFeatureFlag { Enable, Disable }
 
 sealed interface FeatureFlags : KoinComponent {
 
+    val isEnabled: Boolean
+
     companion object {
         val FeatureFlagsPrefRepoKey = PrefRepositoryKey("feature_flags")
 
@@ -35,23 +37,31 @@ sealed interface FeatureFlags : KoinComponent {
     // Using an enum for type-safety
     object DebugPanel : FeatureFlags {
         val value: DebugPanelFeatureFlag by injectDebugPanel()
+        override val isEnabled: Boolean
+            get() = value == DebugPanelFeatureFlag.Enable
     }
 
     object GlobalMocks : FeatureFlags, FeatureFlagValue<Boolean> {
         private const val KEY = "global_mocks_feature_flag"
 
         override val preferences: PreferencesValue<Boolean> by injectPrefValue(KEY, false)
+        override val isEnabled: Boolean
+            get() = preferences.value
     }
 
     object MockAlarms : FeatureFlags, FeatureFlagValue<Boolean> {
         private const val KEY = "mock_alarms_feature_flag"
 
         override val preferences: PreferencesValue<Boolean> by injectPrefValue(KEY, false)
+        override val isEnabled: Boolean
+            get() = preferences.value
     }
 
     object MockRingtones : FeatureFlags, FeatureFlagValue<Boolean> {
         private const val KEY = "mock_ringtones_feature_flag"
 
         override val preferences: PreferencesValue<Boolean> by injectPrefValue(KEY, false)
+        override val isEnabled: Boolean
+            get() = preferences.value
     }
 }
