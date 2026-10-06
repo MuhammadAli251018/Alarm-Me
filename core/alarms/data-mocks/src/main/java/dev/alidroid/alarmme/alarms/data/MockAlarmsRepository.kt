@@ -6,7 +6,6 @@ import dev.alidroid.alarmme.alarms.domain.AlarmPreferences
 import dev.alidroid.alarmme.alarms.domain.AlarmSchedule
 import dev.alidroid.alarmme.alarms.domain.AlarmsRepository
 import dev.alidroid.alarmme.alarms.domain.SnoozePreferences
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
@@ -16,27 +15,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
-private val INITIAL_LOAD_DELAY: Duration = 600.milliseconds
-
-
-class MockAlarmsRepository(
-    initialAlarms: List<Alarm> = sampleAlarms(),
-    private val initialLoadDelay: Duration = INITIAL_LOAD_DELAY,
-) : AlarmsRepository {
+class MockAlarmsRepository(initialAlarms: List<Alarm> = sampleAlarms()) : AlarmsRepository {
 
     private val alarms = MutableStateFlow(initialAlarms.associateBy { it.id })
 
     override fun observeAllAlarms(): Flow<List<Alarm>> = flow {
-        delay(initialLoadDelay)
         emitAll(alarms.map { it.values.toList() })
     }
 
     override fun observeAlarm(id: AlarmId): Flow<Alarm?> = flow {
-        delay(initialLoadDelay)
         emitAll(alarms.map { it[id] })
     }
 
