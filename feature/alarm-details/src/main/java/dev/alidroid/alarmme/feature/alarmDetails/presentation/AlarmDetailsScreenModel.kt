@@ -2,8 +2,7 @@ package dev.alidroid.alarmme.feature.alarmDetails.presentation
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import dev.alidroid.alarmme.alarms.domain.Alarm
-import dev.alidroid.alarmme.alarms.domain.AlarmId
-import dev.alidroid.alarmme.alarms.domain.nextOccurrence
+import dev.alidroid.alarmme.alarms.domain.isScheduled
 import dev.alidroid.alarmme.feature.alarmDetails.domain.AlarmDetailsUseCase
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEffect
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.model.AlarmDetailsEvent
@@ -12,10 +11,13 @@ import dev.alidroid.alarmme.feature.alarmDetails.presentation.model.AlarmDetails
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.model.toAlarm
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.model.toUiState
 import dev.alidroid.alarmme.mvi.BaseScreenModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
 import dev.alidroid.alarmme.utility.kotlinDateTime.now
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 
 class AlarmDetailsScreenModel(
@@ -24,23 +26,17 @@ class AlarmDetailsScreenModel(
 ) : BaseScreenModel<AlarmDetailsState, AlarmDetailsEvent, AlarmDetailsEffect>(
     initialState = AlarmDetailsState.Initial
 ) {
-
-    private var alarmLoadingJob: Job? = null
-
-    /** The original alarm that was loaded from the data source. */
-    private var originalAlarm: Alarm? = null
-
-    // TODO: NEEDS CAREFUL EXAMINATION IN FUTURE, PROBABLY THERE IS A BETTER WAY TO DO THIS
-    /** Whether the observed alarm has arrived, so a later null reads as a deletion, not a bad id. */
-    private var hasLoaded = false
+    var observeAlarmJob: Job? = null
+    var updateSaveButtonJob: Job? = null
+    private var isAlarmEnabled = false
 
     init {
-        loadAlarmDetails()
+        initiateScreenData()
     }
 
     override fun handleEvent(event: AlarmDetailsEvent) {
         when (event) {
-            is AlarmDetailsEvent.OnDayToggle -> updateDraft { draft ->
+            is AlarmDetailsEvent.OnDayToggle -> updateLoadedState { draft ->
                 draft.copy(
                     repeatDays = if (draft.repeatDays.contains(event.day)) {
                         draft.repeatDays - event.day
@@ -50,23 +46,23 @@ class AlarmDetailsScreenModel(
                 )
             }
 
-            is AlarmDetailsEvent.OnCustomDateToggle -> updateDraft { draft ->
+            is AlarmDetailsEvent.OnCustomDateToggle -> updateLoadedState { draft ->
                 draft.copy(customDateEnabled = event.enabled)
             }
 
-            is AlarmDetailsEvent.OnGradualVolumeToggle -> updateDraft { draft ->
+            is AlarmDetailsEvent.OnGradualVolumeToggle -> updateLoadedState { draft ->
                 draft.copy(gradualVolumeEnabled = event.enabled)
             }
 
-            is AlarmDetailsEvent.OnVibrateToggle -> updateDraft { draft ->
+            is AlarmDetailsEvent.OnVibrateToggle -> updateLoadedState { draft ->
                 draft.copy(vibrateEnabled = event.enabled)
             }
 
-            is AlarmDetailsEvent.OnCustomDatesChanged -> updateDraft { draft ->
+            is AlarmDetailsEvent.OnCustomDatesChanged -> updateLoadedState { draft ->
                 draft.copy(customDates = event.dates.sorted())
             }
 
-            is AlarmDetailsEvent.OnAlarmTimeChanged -> updateDraft { draft ->
+            is AlarmDetailsEvent.OnAlarmTimeChanged -> updateLoadedState { draft ->
                 draft.copy(time = event.time)
             }
 
@@ -74,109 +70,80 @@ class AlarmDetailsScreenModel(
             AlarmDetailsEvent.OnSnoozeClick,
             AlarmDetailsEvent.OnLabelClick -> Unit
 
-            AlarmDetailsEvent.OnSaveClick -> saveDraft()
+            AlarmDetailsEvent.OnSaveClick -> {
+                saveDraft()
+                sendEffect(AlarmDetailsEffect.NavigateBack)
+            }
 
             AlarmDetailsEvent.OnDeleteClick -> screenModelScope.launch {
                 val alarmId = (startMode as? AlarmDetailsScreen.StartMode.Edit)?.alarmId
                     ?: return@launch
                 alarmDetailsUseCase.deleteAlarm(alarmId)
+                sendEffect(AlarmDetailsEffect.NavigateBack)
             }
 
-            AlarmDetailsEvent.OnRetry -> loadAlarmDetails()
+            AlarmDetailsEvent.OnRetry -> initiateScreenData()
 
-            is AlarmDetailsEvent.OnRingtoneUpdated -> updateDraft { draft ->
+            is AlarmDetailsEvent.OnRingtoneUpdated -> updateLoadedState { draft ->
                 draft.copy(ringtone = event.ringtone)
             }
         }
     }
 
+
+    private inline fun updateLoadedState(crossinline reducer: (AlarmDetailsUiState) -> AlarmDetailsUiState) {
+        updateStateIfInstanceOf<AlarmDetailsState.Loaded> {
+            copy(details = reducer(details), canSave = true)
+        }
+    }
+
     private fun saveDraft() {
         val loaded = state.value as? AlarmDetailsState.Loaded ?: return
-        val base = originalAlarm ?: return
-
         screenModelScope.launch {
-            val alarm = loaded.details.toAlarm(base)
-
-            alarmDetailsUseCase.saveAlarm(alarm)
-
-            // The saved alarm is the new baseline, so Save goes quiet until something changes again.
-            originalAlarm = alarm
-            updateStateIfInstanceOf<AlarmDetailsState.Loaded> { copy(canSave = false) }
-            sendEffect(AlarmDetailsEffect.NavigateBack)
+            alarmDetailsUseCase.saveAlarm(loaded.details.toAlarm(isAlarmEnabled))
         }
     }
 
-    private inline fun updateDraft(crossinline reducer: (AlarmDetailsUiState) -> AlarmDetailsUiState) {
-        updateStateIfInstanceOf<AlarmDetailsState.Loaded> {
-            val draft = reducer(details).withRecomputedOccurrence()
-            copy(
-                details = draft,
-                // Compared field-by-field against the baseline, so undoing an edit by hand
-                // correctly quiets Save again.
-                canSave = draft != originalAlarm?.toUiState(LocalDateTime.now())
-            )
-        }
-    }
+    private suspend fun updateSaveButton(isAlarmEnabled: Boolean) {
+        state.filterIsInstance<AlarmDetailsState.Loaded>()
+            .collectLatest { newState ->
+                val alarm = newState.details.toAlarm(isAlarmEnabled)
 
-    /** "RINGS IN …" has to follow edits to the time or the schedule, both of which move it. */
-    private fun AlarmDetailsUiState.withRecomputedOccurrence(): AlarmDetailsUiState {
-        val base = originalAlarm ?: return this
-        val candidate = toAlarm(base)
-        return copy(nextOccurrence = candidate.nextOccurrence(LocalDateTime.now()))
-    }
-
-    private fun loadAlarmDetails() {
-        alarmLoadingJob?.cancel()
-        _state.value = AlarmDetailsState.Loading
-        hasLoaded = false
-
-        alarmLoadingJob = screenModelScope.launch {
-            when (startMode) {
-                AlarmDetailsScreen.StartMode.New -> loadNewAlarm()
-                is AlarmDetailsScreen.StartMode.Edit -> loadExistingAlarm(startMode.alarmId)
-            }
-        }
-    }
-
-    private suspend fun loadNewAlarm() {
-        // A draft is built, not observed: nothing is stored until Save, so there is no source to
-        // follow and no reason for this to be a flow.
-        val draft = runCatching { alarmDetailsUseCase.newAlarmDraft() }
-            .getOrElse {
-                _state.value = AlarmDetailsState.Error
-                return
-            }
-
-        originalAlarm = draft
-        hasLoaded = true
-        _state.value = AlarmDetailsState.Loaded(details = draft.toUiState(LocalDateTime.now()), canSave = false)
-    }
-
-    private suspend fun loadExistingAlarm(alarmId: AlarmId) {
-        alarmDetailsUseCase.getAlarm(alarmId)
-            .catch { _state.value = AlarmDetailsState.Error }
-            .collect { alarm ->
-                when {
-                    alarm != null -> {
-                        originalAlarm = alarm
-                        hasLoaded = true
-                        // Re-project only while the draft is clean, so a store update never
-                        // overwrites edits the user has in flight.
-                        val isDirty = (state.value as? AlarmDetailsState.Loaded)?.canSave == true
-                        if (!isDirty) {
-                            _state.value = AlarmDetailsState.Loaded(
-                                details = alarm.toUiState(LocalDateTime.now()),
-                                canSave = false
-                            )
+                alarmDetailsUseCase.canSaveAlarm(alarm)
+                    .distinctUntilChanged()
+                    .collect { isChanged ->
+                        val canSave = alarm.schedule.isScheduled && isChanged /*&& newState.details.label.isNotBlank()*/
+                        updateStateIfInstanceOf<AlarmDetailsState.Loaded> {
+                            copy(canSave = canSave)
                         }
                     }
-
-                    // Gone after we had it: the user deleted it. Leave, don't cry failure.
-                    hasLoaded -> sendEffect(AlarmDetailsEffect.NavigateBack)
-
-                    // Never there to begin with — a genuinely bad id.
-                    else -> _state.value = AlarmDetailsState.Error
-                }
             }
+    }
+
+    fun initiateScreenData() {
+        observeAlarmJob?.cancel()
+        updateSaveButtonJob?.cancel()
+
+        observeAlarmJob = screenModelScope.launch {
+            val alarm = getAlarm()
+            if (alarm == null) {
+                updateState { AlarmDetailsState.Error }
+                return@launch
+            }
+
+            val now = LocalDateTime.now()
+            val uiState = alarm.toUiState(now)
+            updateState { AlarmDetailsState.Loaded(uiState, canSave = false) }
+            isAlarmEnabled = alarm.enabled
+
+            updateSaveButtonJob = launch { updateSaveButton(isAlarmEnabled) }
+        }
+    }
+
+    suspend fun getAlarm(): Alarm?  {
+        return when (startMode) {
+            is AlarmDetailsScreen.StartMode.Edit -> alarmDetailsUseCase.getAlarm(startMode.alarmId).first()
+            AlarmDetailsScreen.StartMode.New -> alarmDetailsUseCase.newAlarmDraft()
+        }
     }
 }

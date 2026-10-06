@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 interface AlarmDetailsUseCase {
     fun getAlarm(id: AlarmId): Flow<Alarm?>
 
+    fun canSaveAlarm(alarm: Alarm): Flow<Boolean>
+
     suspend fun newAlarmDraft(): Alarm
 
     suspend fun saveAlarm(alarm: Alarm)

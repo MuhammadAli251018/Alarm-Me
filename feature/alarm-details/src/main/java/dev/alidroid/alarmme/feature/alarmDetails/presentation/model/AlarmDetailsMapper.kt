@@ -1,8 +1,8 @@
 package dev.alidroid.alarmme.feature.alarmDetails.presentation.model
 
 import dev.alidroid.alarmme.alarms.domain.Alarm
+import dev.alidroid.alarmme.alarms.domain.AlarmPreferences
 import dev.alidroid.alarmme.alarms.domain.AlarmSchedule
-import dev.alidroid.alarmme.alarms.domain.Ringtone
 import dev.alidroid.alarmme.alarms.domain.SnoozePreferences
 import dev.alidroid.alarmme.alarms.domain.nextOccurrence
 import kotlinx.datetime.LocalDateTime
@@ -32,7 +32,9 @@ internal fun Alarm.toUiState(now: LocalDateTime): AlarmDetailsUiState = AlarmDet
 /**
  * State → domain, for saving alarm details.
  */
-internal fun AlarmDetailsUiState.toAlarm(base: Alarm): Alarm = base.copy(
+internal fun AlarmDetailsUiState.toAlarm(isEnabled: Boolean) = Alarm(
+    id = this.id,
+    enabled = isEnabled,
     label = label,
     time = time,
     schedule = if (customDateEnabled) {
@@ -40,7 +42,7 @@ internal fun AlarmDetailsUiState.toAlarm(base: Alarm): Alarm = base.copy(
     } else {
         AlarmSchedule.Repeat(repeatDays)
     },
-    preferences = base.preferences.copy(
+    preferences = AlarmPreferences(
         ringtone = ringtone,
         snoozePreferences = toSnoozePreferences(),
         gradualVolumeEnabled = gradualVolumeEnabled,
