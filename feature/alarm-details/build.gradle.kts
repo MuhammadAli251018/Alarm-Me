@@ -30,6 +30,7 @@ android {
 
 dependencies {
     // Modules Depenency
+    implementation(projects.core.appSettings)
     implementation(projects.core.ui.components)
     implementation(projects.core.ui.screen.datePicker)
     implementation(projects.core.ui.screen.timePicker)

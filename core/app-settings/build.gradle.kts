@@ -25,7 +25,7 @@ android {
 
 dependencies {
     // Internal project dependencies
-    implementation(projects.core.preferences)
+    api(projects.core.preferences)
     implementation(projects.core.alarms.domain)
 
     // Serialization
