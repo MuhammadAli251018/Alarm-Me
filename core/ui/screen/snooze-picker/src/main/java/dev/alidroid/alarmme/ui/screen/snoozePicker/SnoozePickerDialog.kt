@@ -33,8 +33,6 @@ import kotlin.time.Duration.Companion.minutes
 @Composable
 fun SnoozePickerDialog(
     title: String,
-    snoozeLengthOptions: List<Duration>,
-    snoozeLimitOptions: List<Int?>,
     selectedLengthIndex: Int?,
     selectedLimitIndex: Int?,
     onLengthIndexSelected: (Int) -> Unit,
@@ -43,6 +41,8 @@ fun SnoozePickerDialog(
     onSave: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    snoozeLimitOptions: List<Int?> = SnoozePickerOptions.Defaults.snoozeLimitOptions,
+    snoozeLengthOptions: List<Duration> = SnoozePickerOptions.Defaults.snoozeLengthOptions,
     subtitle: String? = null,
 ) {
     val colors = LocalAlarmMeColors.current
@@ -107,8 +107,23 @@ fun SnoozePickerDialog(
     )
 }
 
-private val PreviewSnoozeLengthOptions: List<Duration> = listOf(5, 9, 10, 15, 20).map { it.minutes }
-private val PreviewSnoozeLimitOptions: List<Int?> = listOf(1, 2, 3, 5, null)
+class SnoozePickerOptions(
+    val snoozeLengthOptions: List<Duration>,
+    val snoozeLimitOptions: List<Int?>
+) {
+    companion object {
+        val Defaults = SnoozePickerOptions(SnoozeLengthOptions, SnoozeLimitOptions)
+    }
+}
+
+/** The fixed set of snooze lengths per the design spec, shared by every screen that opens this dialog. */
+internal val SnoozeLengthOptions: List<Duration> = listOf(5, 9, 10, 15, 20).map { it.minutes }
+
+/** The fixed set of snooze limits per the design spec; `null` is the "∞ / no limit" box. */
+internal val SnoozeLimitOptions: List<Int?> = listOf(1, 2, 3, 5, null)
+
+private val PreviewSnoozeLengthOptions = SnoozeLengthOptions
+private val PreviewSnoozeLimitOptions = SnoozeLimitOptions
 
 @CommonScreenCategoriesPreview
 @Composable

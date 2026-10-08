@@ -38,6 +38,7 @@ dependencies {
     implementation(projects.core.alarms.domain)
     implementation(projects.core.appSettings)
     implementation(projects.core.preferences)
+    implementation(projects.core.ui.screen.snoozePicker)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))

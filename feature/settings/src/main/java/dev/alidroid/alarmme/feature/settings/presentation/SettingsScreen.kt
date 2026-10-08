@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -35,11 +36,14 @@ import dev.alidroid.alarmme.ui.component.AmSectionLabel
 import dev.alidroid.alarmme.ui.component.AmSectionedCard
 import dev.alidroid.alarmme.ui.component.AmToggleDisclosureRow
 import dev.alidroid.alarmme.ui.component.ErrorScreenContent
+import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerDialog
+import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerOptions
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeTypography
 import kotlinx.parcelize.Parcelize
+import kotlin.time.Duration
 
 @Parcelize
 class SettingsScreen(private val debugPanelDestination: NavDestination) : Screen, Parcelable {
@@ -61,7 +65,7 @@ class SettingsScreen(private val debugPanelDestination: NavDestination) : Screen
             onBackClick = { navigator?.pop() },
             onRetry = { dispatch(SettingsEvent.OnRetry) },
             onSoundClick = { dispatch(SettingsEvent.OnSoundClick) },
-            onSnoozeClick = { dispatch(SettingsEvent.OnSnoozeClick) },
+            onSnoozeChanged = { lengthIndex, limitIndex -> dispatch(SettingsEvent.OnSnoozeChanged(lengthIndex, limitIndex)) },
             onGradualVolumeToggle = { dispatch(SettingsEvent.OnGradualVolumeToggle(it)) },
             onVibrateToggle = { dispatch(SettingsEvent.OnVibrateToggle(it)) },
             onSilenceAfterClick = { dispatch(SettingsEvent.OnSilenceAfterClick) },
@@ -81,7 +85,7 @@ fun SettingsScreenContent(
     onBackClick: () -> Unit,
     onRetry: () -> Unit,
     onSoundClick: () -> Unit,
-    onSnoozeClick: () -> Unit,
+    onSnoozeChanged: (Int?, Int?) -> Unit,
     onGradualVolumeToggle: (Boolean) -> Unit,
     onVibrateToggle: (Boolean) -> Unit,
     onSilenceAfterClick: () -> Unit,
@@ -114,8 +118,12 @@ fun SettingsScreenContent(
             modifier = modifier.fillMaxSize(),
             soundLabel = state.soundLabel,
             onSoundClick = onSoundClick,
+            snoozeLengthIndex = state.snoozeLengthIndex,
+            snoozeLimitIndex = state.snoozeLimitIndex,
+            lengthOptions = state.lengthOptions,
+            limitOptions = state.limitOptions,
             snoozeLabel = state.snoozeLabel,
-            onSnoozeClick = onSnoozeClick,
+            onSnoozeChanged = onSnoozeChanged,
             gradualVolumeEnabled = state.gradualVolumeEnabled,
             onGradualVolumeToggle = onGradualVolumeToggle,
             vibrateEnabled = state.vibrateEnabled,
@@ -143,8 +151,12 @@ fun SettingsScreenContent(
     modifier: Modifier = Modifier,
     soundLabel: String,
     onSoundClick: () -> Unit,
+    snoozeLengthIndex: Int?,
+    snoozeLimitIndex: Int?,
     snoozeLabel: String,
-    onSnoozeClick: () -> Unit,
+    onSnoozeChanged: (Int?, Int?) -> Unit,
+    lengthOptions: List<Duration> = SnoozePickerOptions.Defaults.snoozeLengthOptions,
+    limitOptions: List<Int?> = SnoozePickerOptions.Defaults.snoozeLimitOptions,
     gradualVolumeEnabled: Boolean,
     onGradualVolumeToggle: (Boolean) -> Unit,
     vibrateEnabled: Boolean,
@@ -165,6 +177,7 @@ fun SettingsScreenContent(
     onBackClick: () -> Unit,
 ) {
     val colors = LocalAlarmMeColors.current
+    var showSnoozePicker by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -195,8 +208,7 @@ fun SettingsScreenContent(
                         1 -> AmNavigationDisclosureRow(
                             text = "Snooze",
                             value = snoozeLabel,
-                            onClick = onSnoozeClick,
-                            enabled = false // TODO: Enable this
+                            onClick = { showSnoozePicker = true }
                         )
 
                         2 -> AmToggleDisclosureRow(
@@ -299,6 +311,35 @@ fun SettingsScreenContent(
             }
         }
     }
+
+    if (showSnoozePicker) {
+        var draftLengthIndex by remember { mutableStateOf(snoozeLengthIndex) }
+        var draftLimitIndex by remember { mutableStateOf(snoozeLimitIndex) }
+        val defaultLimitIndex = remember(limitOptions) { limitOptions.indexOf(3) }
+
+        SnoozePickerDialog(
+            title = "Default snooze",
+            subtitle = "New alarms start with this. Existing alarms don't change.",
+            snoozeLengthOptions = lengthOptions,
+            snoozeLimitOptions = limitOptions,
+            selectedLengthIndex = draftLengthIndex,
+            selectedLimitIndex = draftLimitIndex,
+            onLengthIndexSelected = { index ->
+                draftLengthIndex = index
+                if (draftLimitIndex == null) draftLimitIndex = defaultLimitIndex
+            },
+            onLimitIndexSelected = { draftLimitIndex = it },
+            onTurnOff = {
+                onSnoozeChanged(null, null)
+                showSnoozePicker = false
+            },
+            onSave = {
+                onSnoozeChanged(draftLengthIndex, draftLimitIndex ?: defaultLimitIndex)
+                showSnoozePicker = false
+            },
+            onDismiss = { showSnoozePicker = false }
+        )
+    }
 }
 
 /** Section header with a supporting description line, used only for the one section that needs it. */
@@ -333,8 +374,10 @@ private fun SettingsScreenContentPreview() {
         SettingsScreenContent(
             soundLabel = "Sunrise chime",
             onSoundClick = {},
+            snoozeLengthIndex = 1,
+            snoozeLimitIndex = 2,
             snoozeLabel = "9 min · 3 times",
-            onSnoozeClick = {},
+            onSnoozeChanged = { _, _ -> },
             gradualVolumeEnabled = gradualVolumeEnabled,
             onGradualVolumeToggle = { gradualVolumeEnabled = it },
             vibrateEnabled = vibrateEnabled,
@@ -368,8 +411,10 @@ private fun SettingsScreenContentDebugBuildPreview() {
         SettingsScreenContent(
             soundLabel = "Sunrise chime",
             onSoundClick = {},
+            snoozeLengthIndex = 1,
+            snoozeLimitIndex = 2,
             snoozeLabel = "9 min · 3 times",
-            onSnoozeClick = {},
+            onSnoozeChanged = { _, _ -> },
             gradualVolumeEnabled = gradualVolumeEnabled,
             onGradualVolumeToggle = { gradualVolumeEnabled = it },
             vibrateEnabled = vibrateEnabled,
