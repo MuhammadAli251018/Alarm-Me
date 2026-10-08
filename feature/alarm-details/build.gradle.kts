@@ -40,6 +40,7 @@ dependencies {
     implementation(projects.core.utility.kotlinDateTime)
     implementation(projects.core.ui.screen.ringtonePicker)
     implementation(projects.core.ui.screen.snoozePicker)
+    implementation(projects.core.ui.screen.labelPicker)
     implementation(projects.core.alarms.domain)
 
 

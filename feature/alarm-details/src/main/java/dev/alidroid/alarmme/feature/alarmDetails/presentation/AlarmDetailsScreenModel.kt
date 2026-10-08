@@ -76,8 +76,9 @@ class AlarmDetailsScreenModel(
                 )
             }
 
-            // TODO: wire once the label editor exists.
-            AlarmDetailsEvent.OnLabelClick -> Unit
+            is AlarmDetailsEvent.OnLabelChanged -> updateLoadedState { draft ->
+                draft.copy(label = event.label)
+            }
 
             AlarmDetailsEvent.OnSaveClick -> {
                 saveDraft()
