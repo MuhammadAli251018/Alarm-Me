@@ -20,8 +20,8 @@ sealed interface AlarmDetailsEvent : UiEvent {
     /** The date-picker's Save was tapped with this selection. */
     data class OnCustomDatesChanged(val dates: Set<LocalDate>) : AlarmDetailsEvent
 
-    /** The Snooze row was tapped. */
-    data object OnSnoozeClick : AlarmDetailsEvent
+    /** The snooze dialog's Save (or Turn off) was tapped with this selection. */
+    data class OnSnoozeChanged(val lengthIndex: Int?, val limitIndex: Int?) : AlarmDetailsEvent
 
     /** The "Gradual volume" switch was flipped. */
     data class OnGradualVolumeToggle(val enabled: Boolean) : AlarmDetailsEvent

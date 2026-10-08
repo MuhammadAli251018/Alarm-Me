@@ -11,6 +11,7 @@ import dev.alidroid.alarmme.feature.alarmDetails.presentation.model.AlarmDetails
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.model.toAlarm
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.model.toUiState
 import dev.alidroid.alarmme.mvi.BaseScreenModel
+import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerOptions
 import dev.alidroid.alarmme.utility.kotlinDateTime.now
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -29,6 +30,8 @@ class AlarmDetailsScreenModel(
     var observeAlarmJob: Job? = null
     var updateSaveButtonJob: Job? = null
     private var isAlarmEnabled = false
+    private val snoozeLengthOptions = SnoozePickerOptions.Defaults.snoozeLengthOptions
+    private val snoozeLimitOptions = SnoozePickerOptions.Defaults.snoozeLimitOptions
 
     init {
         initiateScreenData()
@@ -66,8 +69,14 @@ class AlarmDetailsScreenModel(
                 draft.copy(time = event.time)
             }
 
-            // TODO: wire once the snooze / label editors exist.
-            AlarmDetailsEvent.OnSnoozeClick,
+            is AlarmDetailsEvent.OnSnoozeChanged -> updateLoadedState { draft ->
+                draft.copy(
+                    snoozeLengthIndex = event.lengthIndex,
+                    snoozeLimitIndex = event.limitIndex
+                )
+            }
+
+            // TODO: wire once the label editor exists.
             AlarmDetailsEvent.OnLabelClick -> Unit
 
             AlarmDetailsEvent.OnSaveClick -> {
@@ -100,14 +109,16 @@ class AlarmDetailsScreenModel(
     private fun saveDraft() {
         val loaded = state.value as? AlarmDetailsState.Loaded ?: return
         screenModelScope.launch {
-            alarmDetailsUseCase.saveAlarm(loaded.details.toAlarm(isAlarmEnabled))
+            alarmDetailsUseCase.saveAlarm(
+                loaded.details.toAlarm(isAlarmEnabled, loaded.lengthOptions, loaded.limitOptions)
+            )
         }
     }
 
     private suspend fun updateSaveButton(isAlarmEnabled: Boolean) {
         state.filterIsInstance<AlarmDetailsState.Loaded>()
             .collectLatest { newState ->
-                val alarm = newState.details.toAlarm(isAlarmEnabled)
+                val alarm = newState.details.toAlarm(isAlarmEnabled, newState.lengthOptions, newState.limitOptions)
 
                 alarmDetailsUseCase.canSaveAlarm(alarm)
                     .distinctUntilChanged()
@@ -132,8 +143,15 @@ class AlarmDetailsScreenModel(
             }
 
             val now = LocalDateTime.now()
-            val uiState = alarm.toUiState(now)
-            updateState { AlarmDetailsState.Loaded(uiState, canSave = false) }
+            val uiState = alarm.toUiState(now, snoozeLengthOptions, snoozeLimitOptions)
+            updateState {
+                AlarmDetailsState.Loaded(
+                    uiState,
+                    canSave = false,
+                    lengthOptions = snoozeLengthOptions,
+                    limitOptions = snoozeLimitOptions
+                )
+            }
             isAlarmEnabled = alarm.enabled
 
             updateSaveButtonJob = launch { updateSaveButton(isAlarmEnabled) }

@@ -50,11 +50,12 @@ import dev.alidroid.alarmme.navigation.AwaitNavResult
 import dev.alidroid.alarmme.navigation.LocalNavGraph
 import dev.alidroid.alarmme.navigation.NavDestination
 import dev.alidroid.alarmme.navigation.navigateTo
-import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.RingtonePickerScreen
 import dev.alidroid.alarmme.ui.component.AmPlainTextButton
 import dev.alidroid.alarmme.ui.component.ErrorScreenContent
 import dev.alidroid.alarmme.ui.screen.datePicker.VerticalDatePickerBottomSheet
 import dev.alidroid.alarmme.ui.screen.datePicker.VerticalDatePickerDialog
+import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.RingtonePickerScreen
+import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerDialog
 import dev.alidroid.alarmme.ui.screen.timePicker.TimePickerBottomSheet
 import dev.alidroid.alarmme.ui.screen.timePicker.TimePickerDialog
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
@@ -72,6 +73,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import org.koin.core.parameter.parametersOf
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class AlarmDetailsScreen(
@@ -128,7 +130,7 @@ class AlarmDetailsScreen(
             onCustomDateToggle = { enabled -> dispatch(AlarmDetailsEvent.OnCustomDateToggle(enabled)) },
             onCustomDatesChanged = { dates -> dispatch(AlarmDetailsEvent.OnCustomDatesChanged(dates)) },
             onSoundClick = { navigator?.navigateTo(ringtonePickerDestination, navGraph)  ?: missingNavigatorToast.show() },
-            onSnoozeClick = { dispatch(AlarmDetailsEvent.OnSnoozeClick) },
+            onSnoozeChanged = { lengthIndex, limitIndex -> dispatch(AlarmDetailsEvent.OnSnoozeChanged(lengthIndex, limitIndex)) },
             onGradualVolumeToggle = { enabled -> dispatch(AlarmDetailsEvent.OnGradualVolumeToggle(enabled)) },
             onVibrateToggle = { enabled -> dispatch(AlarmDetailsEvent.OnVibrateToggle(enabled)) },
             onLabelClick = { dispatch(AlarmDetailsEvent.OnLabelClick) },
@@ -164,7 +166,7 @@ fun AlarmDetailsScreenContent(
     onCustomDateToggle: (Boolean) -> Unit,
     onCustomDatesChanged: (Set<LocalDate>) -> Unit,
     onSoundClick: () -> Unit,
-    onSnoozeClick: () -> Unit,
+    onSnoozeChanged: (Int?, Int?) -> Unit,
     onGradualVolumeToggle: (Boolean) -> Unit,
     onVibrateToggle: (Boolean) -> Unit,
     onLabelClick: () -> Unit,
@@ -193,7 +195,7 @@ fun AlarmDetailsScreenContent(
             onCustomDateToggle = onCustomDateToggle,
             onCustomDatesChanged = onCustomDatesChanged,
             onSoundClick = onSoundClick,
-            onSnoozeClick = onSnoozeClick,
+            onSnoozeChanged = onSnoozeChanged,
             onGradualVolumeToggle = onGradualVolumeToggle,
             onVibrateToggle = onVibrateToggle,
             onLabelClick = onLabelClick
@@ -220,20 +222,24 @@ fun AlarmDetailsLoadedContent(
     onCustomDateToggle: (Boolean) -> Unit,
     onCustomDatesChanged: (Set<LocalDate>) -> Unit,
     onSoundClick: () -> Unit,
-    onSnoozeClick: () -> Unit,
+    onSnoozeChanged: (Int?, Int?) -> Unit,
     onGradualVolumeToggle: (Boolean) -> Unit,
     onVibrateToggle: (Boolean) -> Unit,
     onLabelClick: () -> Unit,
 ) {
     val screenCategory = currentScreenCategory()
     val details = state.details
+    val snoozeLabel = details.toSnoozeLabel(state.lengthOptions, state.limitOptions)
     var showCustomDatePicker by rememberSaveable { mutableStateOf(false) }
     var showTimePicker by rememberSaveable { mutableStateOf(false) }
+    var showSnoozePicker by rememberSaveable { mutableStateOf(false) }
     val isHorizontalScreen = screenCategory.isLandscapePhone || screenCategory.isExpandedWidthOrWider
 
     Column(modifier = modifier.fillMaxSize()) {
         ScreenDetailsTopBar(
-            modifier = Modifier.padding(horizontal = 12.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .fillMaxWidth(),
             alarmTitle = details.label,
             canSave = state.canSave,
             onBackClick = onBackClick,
@@ -245,12 +251,13 @@ fun AlarmDetailsLoadedContent(
             AlarmDetailsHorizontalContent(
                 modifier = Modifier.fillMaxSize(),
                 details = details,
+                snoozeLabel = snoozeLabel,
                 onAlarmTimeClick = { showTimePicker = true },
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
                 onCustomDateRowClick = { showCustomDatePicker = true },
                 onSoundClick = onSoundClick,
-                onSnoozeClick = onSnoozeClick,
+                onSnoozeClick = { showSnoozePicker = true },
                 onGradualVolumeToggle = onGradualVolumeToggle,
                 onVibrateToggle = onVibrateToggle,
                 onLabelClick = onLabelClick
@@ -261,13 +268,14 @@ fun AlarmDetailsLoadedContent(
                     .fillMaxSize()
                     .screenConstraints(screenCategory),
                 details = details,
+                snoozeLabel = snoozeLabel,
                 onAlarmTimeClick = { showTimePicker = true },
                 onDeleteClick = onDeleteClick,
                 onDayToggle = onDayToggle,
                 onCustomDateToggle = onCustomDateToggle,
                 onCustomDateRowClick = { showCustomDatePicker = true },
                 onSoundClick = onSoundClick,
-                onSnoozeClick = onSnoozeClick,
+                onSnoozeClick = { showSnoozePicker = true },
                 onGradualVolumeToggle = onGradualVolumeToggle,
                 onVibrateToggle = onVibrateToggle,
                 onLabelClick = onLabelClick
@@ -310,6 +318,30 @@ fun AlarmDetailsLoadedContent(
                 showTimePicker = false
             },
             onDismiss = { showTimePicker = false }
+        )
+    }
+
+    if (showSnoozePicker) {
+        var draftLengthIndex by remember { mutableStateOf(details.snoozeLengthIndex) }
+        var draftLimitIndex by remember { mutableStateOf(details.snoozeLimitIndex) }
+
+        SnoozePickerDialog(
+            title = "Snooze",
+            snoozeLengthOptions = state.lengthOptions,
+            snoozeLimitOptions = state.limitOptions,
+            selectedLengthIndex = draftLengthIndex,
+            selectedLimitIndex = draftLimitIndex,
+            onLengthIndexSelected = { draftLengthIndex = it },
+            onLimitIndexSelected = { draftLimitIndex = it },
+            onTurnOff = {
+                onSnoozeChanged(null, null)
+                showSnoozePicker = false
+            },
+            onSave = {
+                onSnoozeChanged(draftLengthIndex, draftLimitIndex)
+                showSnoozePicker = false
+            },
+            onDismiss = { showSnoozePicker = false }
         )
     }
 }
@@ -380,6 +412,7 @@ fun AlarmTimePicker(
 @Composable
 private fun AlarmDetailsVerticalContent(
     details: AlarmDetailsUiState,
+    snoozeLabel: String,
     onAlarmTimeClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
@@ -419,7 +452,7 @@ private fun AlarmDetailsVerticalContent(
         AlarmSettingsDetails(
             modifier = Modifier.fillMaxWidth(),
             soundLabel = details.ringtone.name,
-            snoozeLabel = details.toSnoozeLabel(),
+            snoozeLabel = snoozeLabel,
             gradualVolumeEnabled = details.gradualVolumeEnabled,
             vibrateEnabled = details.vibrateEnabled,
             alarmLabel = details.label,
@@ -442,6 +475,7 @@ private fun AlarmDetailsVerticalContent(
 @Composable
 private fun AlarmDetailsHorizontalContent(
     details: AlarmDetailsUiState,
+    snoozeLabel: String,
     onAlarmTimeClick: () -> Unit,
     onDayToggle: (DayOfWeek) -> Unit,
     onCustomDateToggle: (Boolean) -> Unit,
@@ -501,7 +535,7 @@ private fun AlarmDetailsHorizontalContent(
             AlarmSettingsDetails(
                 modifier = Modifier.fillMaxWidth(),
                 soundLabel = details.ringtone.name,
-                snoozeLabel = details.toSnoozeLabel(),
+                snoozeLabel = snoozeLabel,
                 gradualVolumeEnabled = details.gradualVolumeEnabled,
                 vibrateEnabled = details.vibrateEnabled,
                 alarmLabel = details.label,
@@ -529,8 +563,12 @@ private fun Modifier.leftPaneWidth(screenCategory: ScreenCategory): Modifier {
     return this.width(width)
 }
 
-private fun AlarmDetailsUiState.toSnoozeLabel(): String =
-    "$snoozeDurationMinutes min · $snoozeCount times"
+private fun AlarmDetailsUiState.toSnoozeLabel(lengthOptions: List<Duration>, limitOptions: List<Int?>): String {
+    val lengthIndex = snoozeLengthIndex ?: return "Off"
+    val minutes = lengthOptions[lengthIndex].inWholeMinutes
+    val limitValue = snoozeLimitIndex?.let { limitOptions[it] }
+    return if (limitValue == null) "$minutes min · no limit" else "$minutes min · $limitValue times"
+}
 
 private fun List<LocalDate>.toCustomDateLabel(): String =
     if (isEmpty()) "No dates set" else toGroupedLabel()
@@ -575,8 +613,8 @@ private fun previewDetails(): AlarmDetailsUiState = AlarmDetailsUiState(
         uri = "content://dev.alidroid.alarmme.ringtones/sunrise-chime",
         duration = 42.seconds,
     ),
-    snoozeDurationMinutes = 9,
-    snoozeCount = 3,
+    snoozeLengthIndex = 1,
+    snoozeLimitIndex = 2,
     gradualVolumeEnabled = true,
     vibrateEnabled = false,
 )
@@ -597,7 +635,7 @@ private fun PreviewAlarmDetailsScreen(state: AlarmDetailsState) {
             onCustomDateToggle = {},
             onCustomDatesChanged = {},
             onSoundClick = {},
-            onSnoozeClick = {},
+            onSnoozeChanged = { _, _ -> },
             onGradualVolumeToggle = {},
             onVibrateToggle = {},
             onLabelClick = {},

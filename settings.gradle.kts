@@ -40,6 +40,7 @@ include(":core:ui:components")
 include(":core:ui:screen:date-picker")
 include(":core:ui:screen:time-picker")
 include(":core:ui:screen:ringtone-picker")
+include(":core:ui:screen:snooze-picker")
 
 // Utility
 include(":core:utility:compose")

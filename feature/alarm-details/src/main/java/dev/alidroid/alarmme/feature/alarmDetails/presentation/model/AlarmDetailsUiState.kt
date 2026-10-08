@@ -16,8 +16,8 @@ data class AlarmDetailsUiState(
     val customDateEnabled: Boolean,
     val customDates: List<LocalDate>,
     val ringtone: Ringtone,
-    val snoozeDurationMinutes: Int,
-    val snoozeCount: Int,
+    val snoozeLengthIndex: Int?,
+    val snoozeLimitIndex: Int?,
     val gradualVolumeEnabled: Boolean,
     val vibrateEnabled: Boolean,
 )

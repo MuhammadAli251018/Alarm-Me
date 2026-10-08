@@ -10,8 +10,10 @@ import dev.alidroid.alarmme.feature.settings.domain.SettingsReadUseCase
 import dev.alidroid.alarmme.feature.settings.domain.SettingsUpdateUseCase
 import dev.alidroid.alarmme.feature.settings.presentation.model.SettingsEvent
 import dev.alidroid.alarmme.feature.settings.presentation.model.SettingsState
+import dev.alidroid.alarmme.feature.settings.presentation.model.snoozePreferencesOf
 import dev.alidroid.alarmme.feature.settings.presentation.model.toLoadedState
 import dev.alidroid.alarmme.mvi.BaseScreenModel
+import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerOptions
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
@@ -31,6 +33,8 @@ class SettingsScreenModel(
 ) {
 
     private var observeJob: Job? = null
+    private val snoozeLengthOptions = SnoozePickerOptions.Defaults.snoozeLengthOptions
+    private val snoozeLimitOptions = SnoozePickerOptions.Defaults.snoozeLimitOptions
 
     init { loadSettings() }
 
@@ -54,12 +58,17 @@ class SettingsScreenModel(
                 )
             }
 
+            is SettingsEvent.OnSnoozeChanged -> screenModelScope.launch {
+                settingsUpdateUseCase.setSnooze(
+                    snoozePreferencesOf(event.lengthIndex, event.limitIndex, snoozeLengthOptions, snoozeLimitOptions)
+                )
+            }
+
             SettingsEvent.OnRetry -> loadSettings()
 
             // No destination exists yet for any of these — dispatch is wired, the
             // navigation/action itself is a follow-up once those screens exist.
             SettingsEvent.OnSoundClick,
-            SettingsEvent.OnSnoozeClick,
             SettingsEvent.OnSilenceAfterClick,
             SettingsEvent.OnVolumeButtonsClick,
             SettingsEvent.OnThemeClick,
@@ -80,7 +89,9 @@ class SettingsScreenModel(
                 .map { snapshot ->
                     snapshot.toLoadedState(
                         ringtoneTitle = resolveRingtoneTitleUseCase.resolveTitle(snapshot.ringtone),
-                        appVersionInfo = appVersionInfo
+                        appVersionInfo = appVersionInfo,
+                        lengthOptions = snoozeLengthOptions,
+                        limitOptions = snoozeLimitOptions
                     )
                 }
                 .catch { _state.value = SettingsState.Error }
