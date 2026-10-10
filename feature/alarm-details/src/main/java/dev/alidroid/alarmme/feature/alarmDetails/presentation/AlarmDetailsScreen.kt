@@ -54,6 +54,7 @@ import dev.alidroid.alarmme.ui.component.AmPlainTextButton
 import dev.alidroid.alarmme.ui.component.ErrorScreenContent
 import dev.alidroid.alarmme.ui.screen.datePicker.VerticalDatePickerBottomSheet
 import dev.alidroid.alarmme.ui.screen.datePicker.VerticalDatePickerDialog
+import dev.alidroid.alarmme.ui.screen.labelPicker.LabelPickerDialog
 import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.RingtonePickerScreen
 import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerDialog
 import dev.alidroid.alarmme.ui.screen.timePicker.TimePickerBottomSheet
@@ -133,7 +134,7 @@ class AlarmDetailsScreen(
             onSnoozeChanged = { lengthIndex, limitIndex -> dispatch(AlarmDetailsEvent.OnSnoozeChanged(lengthIndex, limitIndex)) },
             onGradualVolumeToggle = { enabled -> dispatch(AlarmDetailsEvent.OnGradualVolumeToggle(enabled)) },
             onVibrateToggle = { enabled -> dispatch(AlarmDetailsEvent.OnVibrateToggle(enabled)) },
-            onLabelClick = { dispatch(AlarmDetailsEvent.OnLabelClick) },
+            onLabelChanged = { label -> dispatch(AlarmDetailsEvent.OnLabelChanged(label)) },
             onRetry = { dispatch(AlarmDetailsEvent.OnRetry) },
             onDismiss = { navigator?.pop() ?: missingNavigatorToast.show()}
         )
@@ -169,7 +170,7 @@ fun AlarmDetailsScreenContent(
     onSnoozeChanged: (Int?, Int?) -> Unit,
     onGradualVolumeToggle: (Boolean) -> Unit,
     onVibrateToggle: (Boolean) -> Unit,
-    onLabelClick: () -> Unit,
+    onLabelChanged: (String) -> Unit,
     onRetry: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -198,7 +199,7 @@ fun AlarmDetailsScreenContent(
             onSnoozeChanged = onSnoozeChanged,
             onGradualVolumeToggle = onGradualVolumeToggle,
             onVibrateToggle = onVibrateToggle,
-            onLabelClick = onLabelClick
+            onLabelChanged = onLabelChanged
         )
     }
 }
@@ -225,7 +226,7 @@ fun AlarmDetailsLoadedContent(
     onSnoozeChanged: (Int?, Int?) -> Unit,
     onGradualVolumeToggle: (Boolean) -> Unit,
     onVibrateToggle: (Boolean) -> Unit,
-    onLabelClick: () -> Unit,
+    onLabelChanged: (String) -> Unit,
 ) {
     val screenCategory = currentScreenCategory()
     val details = state.details
@@ -233,6 +234,7 @@ fun AlarmDetailsLoadedContent(
     var showCustomDatePicker by rememberSaveable { mutableStateOf(false) }
     var showTimePicker by rememberSaveable { mutableStateOf(false) }
     var showSnoozePicker by rememberSaveable { mutableStateOf(false) }
+    var showLabelPicker by rememberSaveable { mutableStateOf(false) }
     val isHorizontalScreen = screenCategory.isLandscapePhone || screenCategory.isExpandedWidthOrWider
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -260,7 +262,7 @@ fun AlarmDetailsLoadedContent(
                 onSnoozeClick = { showSnoozePicker = true },
                 onGradualVolumeToggle = onGradualVolumeToggle,
                 onVibrateToggle = onVibrateToggle,
-                onLabelClick = onLabelClick
+                onLabelClick = { showLabelPicker = true }
             )
         } else {
             AlarmDetailsVerticalContent(
@@ -278,7 +280,7 @@ fun AlarmDetailsLoadedContent(
                 onSnoozeClick = { showSnoozePicker = true },
                 onGradualVolumeToggle = onGradualVolumeToggle,
                 onVibrateToggle = onVibrateToggle,
-                onLabelClick = onLabelClick
+                onLabelClick = { showLabelPicker = true }
             )
         }
     }
@@ -344,7 +346,28 @@ fun AlarmDetailsLoadedContent(
             onDismiss = { showSnoozePicker = false }
         )
     }
+
+    if (showLabelPicker) {
+        var draftLabel by remember { mutableStateOf(details.label) }
+
+        LabelPickerDialog(
+            label = "Label",
+            value = draftLabel,
+            onValueChange = { draftLabel = it },
+            suggestionsLabel = "Ideas",
+            suggestions = LabelIdeas,
+            onSave = {
+                onLabelChanged(draftLabel.trim())
+                showLabelPicker = false
+            },
+            onDismiss = { showLabelPicker = false }
+        )
+    }
 }
+
+// TODO: Provide API for fetching the items.
+//  plan is to move it into a screen class and get the selection as result
+private val LabelIdeas = listOf("Wake up", "Work", "Gym", "Medication", "Nap")
 
 @Composable
 fun AlarmDatePicker(
@@ -455,7 +478,7 @@ private fun AlarmDetailsVerticalContent(
             snoozeLabel = snoozeLabel,
             gradualVolumeEnabled = details.gradualVolumeEnabled,
             vibrateEnabled = details.vibrateEnabled,
-            alarmLabel = details.label,
+            alarmLabel = details.label.ifBlank { "No label" },
             onSoundClick = onSoundClick,
             onSnoozeClick = onSnoozeClick,
             onGradualVolumeToggle = onGradualVolumeToggle,
@@ -538,7 +561,7 @@ private fun AlarmDetailsHorizontalContent(
                 snoozeLabel = snoozeLabel,
                 gradualVolumeEnabled = details.gradualVolumeEnabled,
                 vibrateEnabled = details.vibrateEnabled,
-                alarmLabel = details.label,
+                alarmLabel = details.label.ifBlank { "No label" },
                 onSoundClick = onSoundClick,
                 onSnoozeClick = onSnoozeClick,
                 onGradualVolumeToggle = onGradualVolumeToggle,
@@ -638,7 +661,7 @@ private fun PreviewAlarmDetailsScreen(state: AlarmDetailsState) {
             onSnoozeChanged = { _, _ -> },
             onGradualVolumeToggle = {},
             onVibrateToggle = {},
-            onLabelClick = {},
+            onLabelChanged = {},
             onRetry = {},
             onDismiss = {}
         )

@@ -29,8 +29,8 @@ sealed interface AlarmDetailsEvent : UiEvent {
     /** The "Vibrate" switch was flipped. */
     data class OnVibrateToggle(val enabled: Boolean) : AlarmDetailsEvent
 
-    /** The Label row was tapped. */
-    data object OnLabelClick : AlarmDetailsEvent
+    /** The label dialog's Save was tapped with this text. */
+    data class OnLabelChanged(val label: String) : AlarmDetailsEvent
 
     /** Persist the current draft. */
     data object OnSaveClick : AlarmDetailsEvent
