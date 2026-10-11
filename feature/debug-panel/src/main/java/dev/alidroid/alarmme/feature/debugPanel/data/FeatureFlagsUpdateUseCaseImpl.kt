@@ -1,23 +1,21 @@
 package dev.alidroid.alarmme.feature.debugPanel.data
 
-import dev.alidroid.alarmme.featureFlags.FeatureFlags
 import dev.alidroid.alarmme.feature.debugPanel.domain.FeatureFlagsUpdateUseCase
-import dev.alidroid.alarmme.preferences.PreferencesRepository
-import dev.alidroid.alarmme.preferences.setPrefValue
+import dev.alidroid.alarmme.featureFlags.FeatureFlagsRepository
 
 class FeatureFlagsUpdateUseCaseImpl(
-    private val preferencesRepository: PreferencesRepository,
+    private val featureFlagsRepository: FeatureFlagsRepository,
 ) : FeatureFlagsUpdateUseCase {
 
     override suspend fun setGlobalMocks(enabled: Boolean) =
-        preferencesRepository.setPrefValue(FeatureFlags.GlobalMocks.preferences.key, enabled)
+        featureFlagsRepository.setGlobalMocks(enabled)
 
     override suspend fun setMockAlarms(enabled: Boolean) =
-        preferencesRepository.setPrefValue(FeatureFlags.MockAlarms.preferences.key, enabled)
+        featureFlagsRepository.setMockAlarms(enabled)
 
     override suspend fun setMockRingtones(enabled: Boolean) =
-        preferencesRepository.setPrefValue(FeatureFlags.MockRingtones.preferences.key, enabled)
+        featureFlagsRepository.setMockRingtones(enabled)
 
-    /** Clears the store so every flag falls back to the default declared in `FeatureFlags`. */
-    override suspend fun resetAllFlags() = preferencesRepository.clear()
+    /** Clears the store so every flag falls back to the default declared in `FeatureFlagsRepositoryImpl`. */
+    override suspend fun resetAllFlags() = featureFlagsRepository.clear()
 }

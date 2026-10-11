@@ -8,7 +8,11 @@ import dev.alidroid.alarmme.alarms.domain.AlarmsRepository
 import dev.alidroid.alarmme.alarms.domain.RingtoneRepository
 import dev.alidroid.alarmme.alarms.scheduler.AlarmScheduler
 import dev.alidroid.alarmme.alarms.scheduler.AlarmSchedulerImpl
+import dev.alidroid.alarmme.appSettings.AppSettingsRepository
+import dev.alidroid.alarmme.appSettings.AppSettingsRepositoryImpl
 import dev.alidroid.alarmme.featureFlags.DebugPanelFeatureFlag
+import dev.alidroid.alarmme.featureFlags.FeatureFlagsRepository
+import dev.alidroid.alarmme.featureFlags.FeatureFlagsRepositoryImpl
 import dev.alidroid.alarmme.preferences.PreferencesManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,4 +27,6 @@ val appDataModule = module {
     single<PreferencesManager> { PreferencesManager(androidContext(), CoroutineScope(SupervisorJob() + Dispatchers.Default)) }
     single<AlarmScheduler> { AlarmSchedulerImpl(androidContext(), AlarmReceiver::class.java) }
     single<DebugPanelFeatureFlag> { if (AlarmMeApplication.IS_DEV_FLAVOR) DebugPanelFeatureFlag.Enable else DebugPanelFeatureFlag.Disable }
+    single<AppSettingsRepository> { AppSettingsRepositoryImpl(get()) }
+    single<FeatureFlagsRepository> { FeatureFlagsRepositoryImpl(get()) }
 }

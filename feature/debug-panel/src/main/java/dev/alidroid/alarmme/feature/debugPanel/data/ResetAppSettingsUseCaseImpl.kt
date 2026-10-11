@@ -1,15 +1,15 @@
 package dev.alidroid.alarmme.feature.debugPanel.data
 
+import dev.alidroid.alarmme.appSettings.AppSettingsRepository
 import dev.alidroid.alarmme.feature.debugPanel.domain.ResetAppSettingsUseCase
-import dev.alidroid.alarmme.preferences.PreferencesRepository
 
 /**
  * Clears the app settings store rather than re-writing each default, so the defaults stay
- * declared in one place — `AppSettings`.
+ * declared in one place — `AppSettingsRepositoryImpl`.
  */
 class ResetAppSettingsUseCaseImpl(
-    private val appSettingsPreferences: PreferencesRepository,
+    private val appSettingsRepository: AppSettingsRepository,
 ) : ResetAppSettingsUseCase {
 
-    override suspend fun reset() = appSettingsPreferences.clear()
+    override suspend fun reset() = appSettingsRepository.clear()
 }

@@ -18,5 +18,5 @@ val alarmDetailsModule = module {
         )
     }
 
-    factory<DefaultAlarmRepository> { DefaultAlarmRepositoryImpl(get()) }
+    factory<DefaultAlarmRepository> { DefaultAlarmRepositoryImpl(get(), get()) }
 }
