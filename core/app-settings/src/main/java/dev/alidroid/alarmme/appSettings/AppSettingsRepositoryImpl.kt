@@ -3,6 +3,7 @@ package dev.alidroid.alarmme.appSettings
 import dev.alidroid.alarmme.preferences.PrefRepositoryKey
 import dev.alidroid.alarmme.preferences.PreferencesKey
 import dev.alidroid.alarmme.preferences.PreferencesManager
+import dev.alidroid.alarmme.preferences.PreferencesValue
 import dev.alidroid.alarmme.preferences.getPrefValue
 import dev.alidroid.alarmme.preferences.setPrefValue
 import kotlinx.coroutines.flow.Flow
@@ -13,16 +14,21 @@ class AppSettingsRepositoryImpl(preferencesManager: PreferencesManager) : AppSet
 
     private val preferences = preferencesManager.getPreferenceOf(AppSettingsPrefRepoKey)
 
-    private val ringtone = preferences.getPrefValue(PreferencesKey("ringtone"), RingtonePreferences.Default)
-    private val snooze = preferences.getPrefValue(PreferencesKey("snooze"), SnoozePreferences.NoSnooze)
-    private val gradualVolume = preferences.getPrefValue(PreferencesKey("gradual_volume"), GradualVolumePreferences.Disabled)
-    private val vibration = preferences.getPrefValue(PreferencesKey("vibration"), VibrationPreferences.Disabled)
-    private val alarmTimeout = preferences.getPrefValue(PreferencesKey("alarm_timeout"), AlarmTimeoutPreferences.NoTimeout)
-    private val volumeButtonsAction =
+    private val ringtone: PreferencesValue<RingtonePreferences> =
+        preferences.getPrefValue(PreferencesKey("ringtone"), RingtonePreferences.Default)
+    private val snooze:  PreferencesValue<SnoozePreferences> =
+        preferences.getPrefValue(PreferencesKey("snooze"), SnoozePreferences.NoSnooze)
+    private val gradualVolume: PreferencesValue<GradualVolumePreferences> =
+        preferences.getPrefValue(PreferencesKey("gradual_volume"), GradualVolumePreferences.Disabled)
+    private val vibration: PreferencesValue<VibrationPreferences> =
+        preferences.getPrefValue(PreferencesKey("vibration"), VibrationPreferences.Disabled)
+    private val alarmTimeout: PreferencesValue<AlarmTimeoutPreferences> =
+        preferences.getPrefValue(PreferencesKey("alarm_timeout"), AlarmTimeoutPreferences.NoTimeout)
+    private val volumeButtonsAction: PreferencesValue<VolumeButtonsActionPreferences> =
         preferences.getPrefValue(PreferencesKey("volume_buttons_action"), VolumeButtonsActionPreferences.Nothing)
-    private val twentyFourHourTime =
+    private val twentyFourHourTime: PreferencesValue<TwentyFourHourTimePreferences> =
         preferences.getPrefValue(PreferencesKey("twenty_four_hour_time"), TwentyFourHourTimePreferences.Disabled)
-    private val themePreference =
+    private val themePreference: PreferencesValue<ThemePreferencePreferences> =
         preferences.getPrefValue(PreferencesKey("theme_preference"), ThemePreferencePreferences.System)
 
     override fun observeRingtone(): Flow<RingtonePreferences> = ringtone
