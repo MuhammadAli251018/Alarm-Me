@@ -14,7 +14,7 @@ import org.koin.dsl.module
 val settingsModule = module {
     factory<SettingsReadUseCase> { SettingsReadUseCaseImpl(get()) }
     factory<SettingsUpdateUseCase> { SettingsUpdateUseCaseImpl(get()) }
-    factory<ResolveRingtoneTitleUseCase> { ResolveRingtoneTitleUseCaseImpl() }
+    factory<ResolveRingtoneTitleUseCase> { ResolveRingtoneTitleUseCaseImpl(get()) }
     factory<AppVersionInfoUseCase> { AppVersionInfoUseCaseImpl() }
 
     factory { SettingsScreenModel(get(), get(), get(), get()) }

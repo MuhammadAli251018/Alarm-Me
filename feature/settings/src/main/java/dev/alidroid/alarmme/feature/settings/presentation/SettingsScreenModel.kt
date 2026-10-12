@@ -2,6 +2,7 @@ package dev.alidroid.alarmme.feature.settings.presentation
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import dev.alidroid.alarmme.appSettings.GradualVolumePreferences
+import dev.alidroid.alarmme.appSettings.RingtonePreferences
 import dev.alidroid.alarmme.appSettings.TwentyFourHourTimePreferences
 import dev.alidroid.alarmme.appSettings.VibrationPreferences
 import dev.alidroid.alarmme.feature.settings.domain.AppVersionInfoUseCase
@@ -64,11 +65,14 @@ class SettingsScreenModel(
                 )
             }
 
+            is SettingsEvent.OnRingtoneUpdated -> screenModelScope.launch {
+                settingsUpdateUseCase.setRingtone(RingtonePreferences.Ringtone(event.ringtone.id.value))
+            }
+
             SettingsEvent.OnRetry -> loadSettings()
 
             // No destination exists yet for any of these — dispatch is wired, the
             // navigation/action itself is a follow-up once those screens exist.
-            SettingsEvent.OnSoundClick,
             SettingsEvent.OnSilenceAfterClick,
             SettingsEvent.OnVolumeButtonsClick,
             SettingsEvent.OnThemeClick,
