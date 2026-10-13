@@ -1,5 +1,6 @@
 package dev.alidroid.alarmme.feature.settings.presentation.model
 
+import dev.alidroid.alarmme.alarms.domain.Ringtone
 import dev.alidroid.alarmme.mvi.UiEvent
 
 sealed interface SettingsEvent : UiEvent {
@@ -10,12 +11,14 @@ sealed interface SettingsEvent : UiEvent {
     /** The snooze dialog's Save (or Turn off) was tapped with this selection. */
     data class OnSnoozeChanged(val lengthIndex: Int?, val limitIndex: Int?) : SettingsEvent
 
+    /** The ringtone picker came back with a choice. */
+    data class OnRingtoneUpdated(val ringtone: Ringtone) : SettingsEvent
+
     /** Retry after the settings flow failed to load. */
     data object OnRetry : SettingsEvent
 
     // Rows that need a picker/destination that doesn't exist yet — dispatched so the
     // wiring is in place, but currently no-ops in the ScreenModel.
-    data object OnSoundClick : SettingsEvent
     data object OnSilenceAfterClick : SettingsEvent
     data object OnVolumeButtonsClick : SettingsEvent
     data object OnThemeClick : SettingsEvent

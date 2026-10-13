@@ -41,6 +41,7 @@ val AppNavigationGraph = NavigationGraph { destination ->
 
         SettingsScreenId -> SettingsScreen(
             debugPanelDestination = DebugPanelDestination,
+            ringtonePickerDestination = RingtonePickerDestination,
         )
 
         DebugPanelScreenId -> DebugPanelScreen()

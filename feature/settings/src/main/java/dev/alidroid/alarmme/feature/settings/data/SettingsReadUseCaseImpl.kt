@@ -1,7 +1,7 @@
 package dev.alidroid.alarmme.feature.settings.data
 
 import dev.alidroid.alarmme.appSettings.AlarmTimeoutPreferences
-import dev.alidroid.alarmme.appSettings.AppSettings
+import dev.alidroid.alarmme.appSettings.AppSettingsRepository
 import dev.alidroid.alarmme.appSettings.GradualVolumePreferences
 import dev.alidroid.alarmme.appSettings.RingtonePreferences
 import dev.alidroid.alarmme.appSettings.SnoozePreferences
@@ -29,23 +29,25 @@ private data class LastThree(
     val themePreference: ThemePreferencePreferences,
 )
 
-class SettingsReadUseCaseImpl : SettingsReadUseCase {
+class SettingsReadUseCaseImpl(
+    private val appSettingsRepository: AppSettingsRepository,
+) : SettingsReadUseCase {
 
     override fun observeSettings(): Flow<SettingsSnapshot> {
         val firstFive = combine(
-            AppSettings.Ringtone.preferences,
-            AppSettings.Snooze.preferences,
-            AppSettings.GradualVolume.preferences,
-            AppSettings.Vibration.preferences,
-            AppSettings.AlarmTimeout.preferences,
+            appSettingsRepository.observeRingtone(),
+            appSettingsRepository.observeSnooze(),
+            appSettingsRepository.observeGradualVolume(),
+            appSettingsRepository.observeVibration(),
+            appSettingsRepository.observeAlarmTimeout(),
         ) { ringtone, snooze, gradualVolume, vibration, alarmTimeout ->
             FirstFive(ringtone, snooze, gradualVolume, vibration, alarmTimeout)
         }
 
         val lastThree = combine(
-            AppSettings.VolumeButtonsAction.preferences,
-            AppSettings.TwentyFourHourTime.preferences,
-            AppSettings.ThemePreference.preferences,
+            appSettingsRepository.observeVolumeButtonsAction(),
+            appSettingsRepository.observeTwentyFourHourTime(),
+            appSettingsRepository.observeThemePreference(),
         ) { volumeButtonsAction, twentyFourHourTime, themePreference ->
             LastThree(volumeButtonsAction, twentyFourHourTime, themePreference)
         }

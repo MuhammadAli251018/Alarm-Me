@@ -1,9 +1,14 @@
 package dev.alidroid.alarmme.feature.debugPanel.data
 
+import dev.alidroid.alarmme.appSettings.AppInfoRepository
 import dev.alidroid.alarmme.feature.debugPanel.domain.AppBuildInfoUseCase
 
-/** Mocked: real info needs :app's BuildConfig, which feature:debug-panel can't depend on. */
-class AppBuildInfoUseCaseImpl : AppBuildInfoUseCase {
+class AppBuildInfoUseCaseImpl(
+    private val appInfoRepository: AppInfoRepository,
+) : AppBuildInfoUseCase {
 
-    override suspend fun getBuildInfo(): String = "v1.0.0-debug · build 142 · a3f9c21"
+    override suspend fun getBuildInfo(): String {
+        val appInfo = appInfoRepository.getAppInfo()
+        return "v${appInfo.appVersion} · build ${appInfo.appVersionCode} · ${appInfo.gitHashName}"
+    }
 }

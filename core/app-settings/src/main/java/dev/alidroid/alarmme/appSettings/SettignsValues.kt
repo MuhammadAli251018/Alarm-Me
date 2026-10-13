@@ -9,7 +9,7 @@ sealed interface RingtonePreferences {
     data object Default : RingtonePreferences
 
     @Serializable
-    data class Ringtone(val uri: String) : RingtonePreferences
+    data class Ringtone(val id: String) : RingtonePreferences
 }
 
 @Serializable

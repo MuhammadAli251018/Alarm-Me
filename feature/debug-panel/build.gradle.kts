@@ -40,7 +40,6 @@ dependencies {
     implementation(projects.core.alarms.scheduler)
     implementation(projects.core.featureFlags)
     implementation(projects.core.appSettings)
-    implementation(projects.core.preferences)
 
     // Serialization
     implementation(libs.kotlinx.serialization.json)

@@ -25,7 +25,7 @@ android {
 
 dependencies {
     // Internal project dependencies
-    api(projects.core.preferences)
+    implementation(projects.core.preferences)
     implementation(projects.core.alarms.domain)
 
     // Serialization
@@ -37,10 +37,6 @@ dependencies {
     // Coroutines
     implementation(platform(libs.kotlinx.coroutines.bom))
     implementation(libs.kotlinx.coroutines.core)
-
-    // Koin
-    implementation(platform(libs.koin.bom))
-    implementation(libs.koin.core)
 
     testImplementation(platform(libs.kotest.bom))
     testImplementation(platform(libs.koin.bom))

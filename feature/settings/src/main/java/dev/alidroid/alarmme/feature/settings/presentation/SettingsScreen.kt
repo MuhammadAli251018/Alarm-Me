@@ -24,6 +24,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import dev.alidroid.alarmme.feature.settings.presentation.component.SettingsTopBar
+import dev.alidroid.alarmme.navigation.AwaitNavResult
 import dev.alidroid.alarmme.navigation.NavDestination
 import dev.alidroid.alarmme.navigation.navigateTo
 import dev.alidroid.alarmme.feature.settings.presentation.model.SettingsEvent
@@ -36,6 +37,7 @@ import dev.alidroid.alarmme.ui.component.AmSectionLabel
 import dev.alidroid.alarmme.ui.component.AmSectionedCard
 import dev.alidroid.alarmme.ui.component.AmToggleDisclosureRow
 import dev.alidroid.alarmme.ui.component.ErrorScreenContent
+import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.RingtonePickerScreen
 import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerDialog
 import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerOptions
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
@@ -46,7 +48,10 @@ import kotlinx.parcelize.Parcelize
 import kotlin.time.Duration
 
 @Parcelize
-class SettingsScreen(private val debugPanelDestination: NavDestination) : Screen, Parcelable {
+class SettingsScreen(
+    private val debugPanelDestination: NavDestination,
+    private val ringtonePickerDestination: NavDestination,
+) : Screen, Parcelable {
 
     @Composable
     override fun Content() {
@@ -56,6 +61,10 @@ class SettingsScreen(private val debugPanelDestination: NavDestination) : Screen
         val navigator = LocalNavigator.current
         val navGraph = LocalNavGraph.current
 
+        AwaitNavResult(RingtonePickerScreen.RINGTONE_NAV_RESULT_KEY) { result ->
+            dispatch(SettingsEvent.OnRingtoneUpdated(result.ringtone))
+        }
+
         SettingsScreenContent(
             modifier = Modifier
                 .imePadding()
@@ -64,7 +73,7 @@ class SettingsScreen(private val debugPanelDestination: NavDestination) : Screen
             state = state,
             onBackClick = { navigator?.pop() },
             onRetry = { dispatch(SettingsEvent.OnRetry) },
-            onSoundClick = { dispatch(SettingsEvent.OnSoundClick) },
+            onSoundClick = { navigator?.navigateTo(ringtonePickerDestination, navGraph) },
             onSnoozeChanged = { lengthIndex, limitIndex -> dispatch(SettingsEvent.OnSnoozeChanged(lengthIndex, limitIndex)) },
             onGradualVolumeToggle = { dispatch(SettingsEvent.OnGradualVolumeToggle(it)) },
             onVibrateToggle = { dispatch(SettingsEvent.OnVibrateToggle(it)) },
