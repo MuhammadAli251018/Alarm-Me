@@ -31,6 +31,8 @@ interface AppSettingsRepository {
     suspend fun clear()
 }
 
+suspend fun AppSettingsRepository.getRingtone(): RingtonePreferences = observeRingtone().first()
+
 suspend fun AppSettingsRepository.getVibration(): VibrationPreferences = observeVibration().first()
 suspend fun AppSettingsRepository.getGradualVolume(): GradualVolumePreferences = observeGradualVolume().first()
 suspend fun AppSettingsRepository.getSnooze(): SnoozePreferences = observeSnooze().first()
