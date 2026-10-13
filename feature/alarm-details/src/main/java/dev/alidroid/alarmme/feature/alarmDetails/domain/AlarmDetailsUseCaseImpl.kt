@@ -4,9 +4,11 @@ import dev.alidroid.alarmme.alarms.domain.Alarm
 import dev.alidroid.alarmme.alarms.domain.AlarmId
 import dev.alidroid.alarmme.alarms.domain.AlarmsRepository
 import dev.alidroid.alarmme.utility.kotlinDateTime.now
+import dev.alidroid.alarmme.utility.kotlinDateTime.plus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDateTime
+import kotlin.time.Duration.Companion.minutes
 
 private const val NEW_ALARM_LABEL = "Untitled"
 
@@ -30,14 +32,18 @@ class AlarmDetailsUseCaseImpl(
                 schedule != savedAlarm.schedule || preferences != savedAlarm.preferences
     }
 
-    override suspend fun newAlarmDraft(): Alarm = Alarm(
-        id = AlarmId.random(),
-        enabled = false,
-        label = NEW_ALARM_LABEL,
-        time = LocalDateTime.now().time,
-        schedule = defaultAlarmRepository.getAlarmSchedule(),
-        preferences = defaultAlarmRepository.getAlarmSettings()
-    )
+    override suspend fun newAlarmDraft(): Alarm {
+        val (time, schedule) = defaultAlarmRepository.getAlarmTimeAndSchedule()
+
+        return Alarm(
+            id = AlarmId.random(),
+            enabled = false,
+            label = NEW_ALARM_LABEL,
+            time = time,
+            schedule = schedule,
+            preferences = defaultAlarmRepository.getAlarmSettings()
+        )
+    }
 
     override suspend fun saveAlarm(alarm: Alarm) = alarmsRepository.insertOrUpdate(alarm)
 

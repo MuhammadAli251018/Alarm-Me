@@ -17,7 +17,10 @@ import dev.alidroid.alarmme.appSettings.getSnooze
 import dev.alidroid.alarmme.appSettings.getVibration
 import dev.alidroid.alarmme.feature.alarmDetails.domain.DefaultAlarmRepository
 import dev.alidroid.alarmme.utility.kotlinDateTime.now
+import dev.alidroid.alarmme.utility.kotlinDateTime.plus
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlin.time.Duration.Companion.minutes
 
 private typealias DomainSnoozeSettings = dev.alidroid.alarmme.alarms.domain.SnoozePreferences
 
@@ -37,9 +40,17 @@ class DefaultAlarmRepositoryImpl(
         )
     }
 
-    override suspend fun getAlarmSchedule(): AlarmSchedule {
-        val today = LocalDateTime.now().dayOfWeek
+    private fun defaultDateTime(): LocalDateTime {
+        return LocalDateTime.now() + 2.minutes
+    }
+
+    override fun getAlarmSchedule(): AlarmSchedule {
+        val today = defaultDateTime().dayOfWeek
         return AlarmSchedule.Repeat(today)
+    }
+
+    override fun getAlarmTime(): LocalTime {
+        return defaultDateTime().time
     }
 
 }
