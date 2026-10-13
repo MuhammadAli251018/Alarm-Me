@@ -17,6 +17,10 @@ object AppConfig {
             "$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
 }
 
+fun gitHash(): String =
+    providers.exec { commandLine("git", "rev-parse", "--short", "HEAD") }
+        .standardOutput.asText.get().trim()
+
 android {
     namespace = libs.versions.packageName.get()
     compileSdk {
@@ -29,6 +33,8 @@ android {
         targetSdk = 37
         versionCode = AppConfig.VERSION_CODE
         versionName = AppConfig.getVersionName()
+
+        buildConfigField("String", "GIT_HASH_NAME", "\"${gitHash()}\"")
     }
 
     buildTypes {

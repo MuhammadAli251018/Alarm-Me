@@ -28,7 +28,7 @@ val debugPanelModule = module {
     factory<FeatureFlagsUpdateUseCase> { FeatureFlagsUpdateUseCaseImpl(get()) }
     factory<ScheduledAlarmsCountUseCase> { ScheduledAlarmsCountUseCaseImpl(get()) }
     factory<ResolveExactAlarmPermissionUseCase> { ResolveExactAlarmPermissionUseCaseImpl() }
-    factory<AppBuildInfoUseCase> { AppBuildInfoUseCaseImpl() }
+    factory<AppBuildInfoUseCase> { AppBuildInfoUseCaseImpl(get()) }
     factory<AlarmsWriteUseCase> { AlarmsWriteUseCaseImpl(get(), get()) }
 
     factory<ResetAppSettingsUseCase> { ResetAppSettingsUseCaseImpl(get<AppSettingsRepository>()) }

@@ -1,13 +1,18 @@
 package dev.alidroid.alarmme.feature.settings.data
 
+import dev.alidroid.alarmme.appSettings.AppInfoRepository
 import dev.alidroid.alarmme.feature.settings.domain.AppVersionInfo
 import dev.alidroid.alarmme.feature.settings.domain.AppVersionInfoUseCase
 
-/** Mocked: real info needs :app's BuildConfig, which feature:settings can't depend on. */
-class AppVersionInfoUseCaseImpl : AppVersionInfoUseCase {
+class AppVersionInfoUseCaseImpl(
+    private val appInfoRepository: AppInfoRepository,
+) : AppVersionInfoUseCase {
 
-    override suspend fun getAppVersionInfo(): AppVersionInfo = AppVersionInfo(
-        versionLabel = "1.0.0",
-        showDeveloperSection = true
-    )
+    override suspend fun getAppVersionInfo(): AppVersionInfo {
+        val appInfo = appInfoRepository.getAppInfo()
+        return AppVersionInfo(
+            versionLabel = "${appInfo.appVersion} (${appInfo.appVersionCode}) · ${appInfo.gitHashName}",
+            showDeveloperSection = true
+        )
+    }
 }
