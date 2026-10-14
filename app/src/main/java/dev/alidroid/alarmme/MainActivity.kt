@@ -13,27 +13,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.navigator.Navigator
-import dev.alidroid.alarmme.di.GlobalCoroutineScopeId
 import dev.alidroid.alarmme.navigation.AlarmListDestination
 import dev.alidroid.alarmme.navigation.ProvideNavGraph
 import dev.alidroid.alarmme.navigation.ProvideNavResultRepository
 import dev.alidroid.alarmme.ui.theme.AlarmMeTheme
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.get
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         installSplashScreen().setKeepOnScreenCondition { !AppStartupInitializer.isReady.value }
 
-        val globalScope = get<CoroutineScope>(GlobalCoroutineScopeId)
-
-        globalScope.launch {
-            if (!AppStartupInitializer.isReady.value)
-                AppStartupInitializer.initialize()
-        }
+        AppStartupInitializer.start()
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
