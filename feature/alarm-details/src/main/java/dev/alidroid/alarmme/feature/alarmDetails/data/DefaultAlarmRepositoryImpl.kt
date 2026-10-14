@@ -12,7 +12,7 @@ import dev.alidroid.alarmme.appSettings.RingtonePreferences
 import dev.alidroid.alarmme.appSettings.SnoozePreferences
 import dev.alidroid.alarmme.appSettings.VibrationPreferences
 import dev.alidroid.alarmme.appSettings.getGradualVolume
-import dev.alidroid.alarmme.appSettings.getRingtone
+import dev.alidroid.alarmme.appSettings.awaitRingtone
 import dev.alidroid.alarmme.appSettings.getSnooze
 import dev.alidroid.alarmme.appSettings.getVibration
 import dev.alidroid.alarmme.feature.alarmDetails.domain.DefaultAlarmRepository
@@ -30,7 +30,7 @@ class DefaultAlarmRepositoryImpl(
 ) : DefaultAlarmRepository {
 
     override suspend fun getAlarmSettings(): AlarmPreferences {
-        val ringtone = appSettingsRepository.getRingtone().toDomain(ringtoneRepository)
+        val ringtone = appSettingsRepository.awaitRingtone().toDomain(ringtoneRepository)
 
         return AlarmPreferences(
             ringtone = ringtone,

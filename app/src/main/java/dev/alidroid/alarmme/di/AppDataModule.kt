@@ -26,36 +26,17 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-/** Qualifiers for the two interchangeable implementations of a repository. */
 private val Real = named("real")
 private val Mock = named("mock")
 
-val appDataModule = module {
-    // Both implementations stay registered. The unqualified binding below is a factory that reads
-    // the feature flag on every resolution, so toggling a mock flag takes effect on the next screen
-    // instead of requiring a process restart.
-    single<AlarmsRepository>(Real) { provideAlarmsRepository(androidContext(), get(Real)) }
-    single<RingtoneRepository>(Real) { RingtoneRepositoryImpl(androidContext()) }
-
-    if (AlarmMeApplication.IS_DEV_FLAVOR) {
-        single<AlarmsRepository>(Mock) { MockAlarmsRepository() }
-        single<RingtoneRepository>(Mock) { MockRingtoneRepository() }
-    }
-
-    factory<AlarmsRepository> {
-        val useMock = AlarmMeApplication.IS_DEV_FLAVOR &&
-            get<FeatureFlagsRepository>().observeMockAlarms().value
-        if (useMock) get<AlarmsRepository>(Mock) else get<AlarmsRepository>(Real)
-    }
-
-    factory<RingtoneRepository> {
-        val useMock = AlarmMeApplication.IS_DEV_FLAVOR &&
-            get<FeatureFlagsRepository>().observeMockRingtones().value
-        if (useMock) get<RingtoneRepository>(Mock) else get<RingtoneRepository>(Real)
-    }
-
-    single<PreferencesManager> { PreferencesManager(androidContext(), CoroutineScope(SupervisorJob() + Dispatchers.Default)) }
+val appModule = module {
     single<AlarmScheduler> { AlarmSchedulerImpl(androidContext(), AlarmReceiver::class.java) }
+}
+
+val GlobalCoroutineScopeId = named("global-scope")
+val appPreferencesModule = module {
+    single<CoroutineScope>(GlobalCoroutineScopeId) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+    single<PreferencesManager> { PreferencesManager(androidContext(), get(named("global-scope"))) }
     single<DebugPanelFeatureFlag> { if (AlarmMeApplication.IS_DEV_FLAVOR) DebugPanelFeatureFlag.Enable else DebugPanelFeatureFlag.Disable }
     single<AppSettingsRepository> { AppSettingsRepositoryImpl(get()) }
     single<FeatureFlagsRepository> { FeatureFlagsRepositoryImpl(get()) }
@@ -69,3 +50,24 @@ val appDataModule = module {
         }
     }
 }
+
+fun appDataModule(mockAlarms: Boolean, mockRingtones: Boolean) = module {
+    single<AlarmsRepository>(Real) { provideAlarmsRepository(androidContext(), get()) }
+    single<RingtoneRepository>(Real) { RingtoneRepositoryImpl(androidContext()) }
+
+    if (AlarmMeApplication.IS_DEV_FLAVOR) {
+        single<AlarmsRepository>(Mock) { MockAlarmsRepository() }
+        single<RingtoneRepository>(Mock) { MockRingtoneRepository() }
+    }
+
+    factory<AlarmsRepository> {
+        val useMock = AlarmMeApplication.IS_DEV_FLAVOR && mockAlarms
+        if (useMock) get<AlarmsRepository>(Mock) else get<AlarmsRepository>(Real)
+    }
+
+    factory<RingtoneRepository> {
+        val useMock = AlarmMeApplication.IS_DEV_FLAVOR && mockRingtones
+        if (useMock) get<RingtoneRepository>(Mock) else get<RingtoneRepository>(Real)
+    }
+}
+
