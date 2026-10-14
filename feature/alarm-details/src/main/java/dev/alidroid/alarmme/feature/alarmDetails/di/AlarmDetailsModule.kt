@@ -9,7 +9,7 @@ import dev.alidroid.alarmme.feature.alarmDetails.presentation.AlarmDetailsScreen
 import org.koin.dsl.module
 
 val alarmDetailsModule = module {
-    factory<AlarmDetailsUseCase> { AlarmDetailsUseCaseImpl(get(), get()) }
+    factory<AlarmDetailsUseCase> { AlarmDetailsUseCaseImpl(get(), get(), get()) }
 
     factory { (startMode: AlarmDetailsScreen.StartMode) ->
         AlarmDetailsScreenModel(

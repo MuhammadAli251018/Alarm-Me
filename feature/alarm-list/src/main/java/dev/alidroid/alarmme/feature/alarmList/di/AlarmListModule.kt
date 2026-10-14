@@ -6,7 +6,7 @@ import dev.alidroid.alarmme.feature.alarmList.presentation.AlarmsListScreenModel
 import org.koin.dsl.module
 
 val alarmListModule = module {
-    factory<AlarmsProvideUseCase> { AlarmsProvideUseCaseImpl(get()) }
+    factory<AlarmsProvideUseCase> { AlarmsProvideUseCaseImpl(get(), get()) }
 
     factory { AlarmsListScreenModel(get()) }
 }
