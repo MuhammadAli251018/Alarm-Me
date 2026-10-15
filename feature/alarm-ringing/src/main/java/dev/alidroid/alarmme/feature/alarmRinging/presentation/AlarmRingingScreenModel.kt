@@ -3,6 +3,7 @@ package dev.alidroid.alarmme.feature.alarmRinging.presentation
 import cafe.adriel.voyager.core.model.screenModelScope
 import dev.alidroid.alarmme.alarms.domain.AlarmId
 import dev.alidroid.alarmme.feature.alarmRinging.domain.AlarmRingingUseCase
+import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.AlarmRingingEffect
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.AlarmRingingEvent
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.AlarmRingingState
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.toRingingUiState
@@ -16,7 +17,7 @@ import kotlinx.datetime.LocalDateTime
 class AlarmRingingScreenModel(
     private val alarmId: AlarmId,
     private val alarmRingingUseCase: AlarmRingingUseCase,
-) : BaseScreenModel<AlarmRingingState, AlarmRingingEvent, Nothing>(
+) : BaseScreenModel<AlarmRingingState, AlarmRingingEvent, AlarmRingingEffect>(
     initialState = AlarmRingingState.Initial
 ) {
 
@@ -28,9 +29,15 @@ class AlarmRingingScreenModel(
         when (event) {
             AlarmRingingEvent.OnRetry -> loadRingingAlarm()
 
-            // Nothing rings or snoozes yet, so neither action has anywhere to go.
-            AlarmRingingEvent.OnSnoozeClick,
-            AlarmRingingEvent.OnDismiss -> Unit
+            // The effect goes out only once the next occurrence is armed, so the host does not
+            // finish — and take this scope down with it — mid-write.
+            AlarmRingingEvent.OnDismiss -> screenModelScope.launch {
+                alarmRingingUseCase.dismissRingingAlarm(alarmId)
+                sendEffect(AlarmRingingEffect.Dismissed)
+            }
+
+            // Nothing snoozes yet, so the action has nowhere to go.
+            AlarmRingingEvent.OnSnoozeClick -> Unit
         }
     }
 

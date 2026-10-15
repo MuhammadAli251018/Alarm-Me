@@ -36,7 +36,9 @@ dependencies {
     implementation(projects.core.utility.compose)
     implementation(projects.core.utility.kotlinDateTime)
     implementation(projects.core.alarms.domain)
+    implementation(projects.core.preferences)
     implementation(projects.core.appSettings)
+    implementation(projects.core.featureFlags)
     implementation(projects.core.ui.screen.snoozePicker)
     implementation(projects.core.ui.screen.ringtonePicker)
 

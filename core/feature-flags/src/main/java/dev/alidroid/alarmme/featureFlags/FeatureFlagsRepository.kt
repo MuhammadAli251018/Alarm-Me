@@ -1,16 +1,35 @@
 package dev.alidroid.alarmme.featureFlags
 
-import kotlinx.coroutines.flow.Flow
+import dev.alidroid.alarmme.featureFlags.FeatureFlagsRepository.Companion.DefaultTimeoutDuration
+import dev.alidroid.alarmme.preferences.PreferencesValue
+import dev.alidroid.alarmme.preferences.awaitFirstRealValue
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 interface FeatureFlagsRepository {
-    fun observeGlobalMocks(): Flow<Boolean>
+
+    companion object {
+        val DefaultTimeoutDuration = 5.minutes
+    }
+
+    fun observeGlobalMocks(): PreferencesValue<Boolean>
     suspend fun setGlobalMocks(enabled: Boolean)
 
-    fun observeMockAlarms(): Flow<Boolean>
+    fun observeMockAlarms(): PreferencesValue<Boolean>
     suspend fun setMockAlarms(enabled: Boolean)
 
-    fun observeMockRingtones(): Flow<Boolean>
+    fun observeMockRingtones(): PreferencesValue<Boolean>
     suspend fun setMockRingtones(enabled: Boolean)
 
     suspend fun clear()
 }
+
+
+suspend fun FeatureFlagsRepository.awaitGlobalMocks(timeout: Duration = DefaultTimeoutDuration): Boolean =
+    observeGlobalMocks().awaitFirstRealValue(timeout)
+
+suspend fun FeatureFlagsRepository.awaitMockAlarms(timeout: Duration = DefaultTimeoutDuration): Boolean =
+    observeMockAlarms().awaitFirstRealValue(timeout)
+
+suspend fun FeatureFlagsRepository.awaitMockRingtones(timeout: Duration = DefaultTimeoutDuration): Boolean =
+    observeMockRingtones().awaitFirstRealValue(timeout)

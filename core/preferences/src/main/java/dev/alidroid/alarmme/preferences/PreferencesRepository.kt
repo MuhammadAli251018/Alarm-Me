@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
@@ -61,6 +62,7 @@ internal class PreferencesRepositoryImpl(
             scope.launch {
                 getString(key.value)
                     .map { it?.let { Json.decodeFromString(serializer, it) } ?: defaultValue }
+                    .catch { emit(defaultValue) }
                     .collect { emission -> value.set(emission) }
             }
         }

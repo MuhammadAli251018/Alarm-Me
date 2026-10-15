@@ -3,18 +3,17 @@ package dev.alidroid.alarmme.feature.alarmDetails.domain
 import dev.alidroid.alarmme.alarms.domain.Alarm
 import dev.alidroid.alarmme.alarms.domain.AlarmId
 import dev.alidroid.alarmme.alarms.domain.AlarmsRepository
-import dev.alidroid.alarmme.utility.kotlinDateTime.now
-import dev.alidroid.alarmme.utility.kotlinDateTime.plus
+import dev.alidroid.alarmme.alarms.scheduler.AlarmScheduler
+import dev.alidroid.alarmme.alarms.scheduler.scheduleNextOccurrence
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalDateTime
-import kotlin.time.Duration.Companion.minutes
 
 private const val NEW_ALARM_LABEL = "Untitled"
 
 class AlarmDetailsUseCaseImpl(
     private val alarmsRepository: AlarmsRepository,
-    private val defaultAlarmRepository: DefaultAlarmRepository
+    private val defaultAlarmRepository: DefaultAlarmRepository,
+    private val alarmScheduler: AlarmScheduler,
 ) : AlarmDetailsUseCase {
 
     override fun getAlarm(id: AlarmId): Flow<Alarm?> = alarmsRepository.observeAlarm(id)
@@ -45,7 +44,16 @@ class AlarmDetailsUseCaseImpl(
         )
     }
 
-    override suspend fun saveAlarm(alarm: Alarm) = alarmsRepository.insertOrUpdate(alarm)
+
+    override suspend fun saveAlarm(alarm: Alarm) {
+        alarmsRepository.insertOrUpdate(alarm)
+
+        if (alarm.enabled) {
+            alarmScheduler.scheduleNextOccurrence(alarm)
+        } else {
+            alarmScheduler.cancelAlarm(alarm.id)
+        }
+    }
 
     override suspend fun deleteAlarm(id: AlarmId) = alarmsRepository.delete(setOf(id))
 }

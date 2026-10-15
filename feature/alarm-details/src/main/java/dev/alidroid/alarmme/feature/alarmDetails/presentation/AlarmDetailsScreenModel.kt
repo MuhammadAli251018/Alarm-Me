@@ -80,7 +80,7 @@ class AlarmDetailsScreenModel(
                 draft.copy(label = event.label)
             }
 
-            AlarmDetailsEvent.OnSaveClick -> {
+            AlarmDetailsEvent.OnSaveClick -> screenModelScope.launch {
                 saveDraft()
                 sendEffect(AlarmDetailsEffect.NavigateBack)
             }
@@ -107,13 +107,15 @@ class AlarmDetailsScreenModel(
         }
     }
 
-    private fun saveDraft() {
+    private suspend fun saveDraft() {
         val loaded = state.value as? AlarmDetailsState.Loaded ?: return
-        screenModelScope.launch {
-            alarmDetailsUseCase.saveAlarm(
-                loaded.details.toAlarm(isAlarmEnabled, loaded.lengthOptions, loaded.limitOptions)
-            )
-        }
+
+        // A newly created alarm arms itself on save; an edit keeps whatever it already was.
+        val enabled = isAlarmEnabled || startMode is AlarmDetailsScreen.StartMode.New
+
+        alarmDetailsUseCase.saveAlarm(
+            loaded.details.toAlarm(enabled, loaded.lengthOptions, loaded.limitOptions)
+        )
     }
 
     private suspend fun updateSaveButton(isAlarmEnabled: Boolean) {

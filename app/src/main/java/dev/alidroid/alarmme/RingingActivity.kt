@@ -8,6 +8,8 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.navigator.Navigator
 import dev.alidroid.alarmme.alarms.domain.AlarmId
 import dev.alidroid.alarmme.alarms.scheduler.alarmIdOrNull
@@ -37,11 +39,17 @@ class RingingActivity : ComponentActivity() {
             return
         }
 
+        AppStartupInitializer.start()
+
         setContent {
+            val isReady by AppStartupInitializer.isReady.collectAsStateWithLifecycle()
+
             AlarmMeThemeProvider {
-                ProvideNavGraph(AppNavigationGraph) {
-                    AlarmMeScaffold {
-                        Navigator(screen = AppNavigationGraph.getScreen(alarmRingingDestination(alarmId)))
+                AlarmMeScaffold {
+                    if (isReady) {
+                        ProvideNavGraph(AppNavigationGraph) {
+                            Navigator(screen = AppNavigationGraph.getScreen(alarmRingingDestination(alarmId)))
+                        }
                     }
                 }
             }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.navigator.Navigator
 import dev.alidroid.alarmme.navigation.AlarmListDestination
 import dev.alidroid.alarmme.navigation.ProvideNavGraph
@@ -20,21 +21,22 @@ import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Before super.onCreate: this swaps the launch theme out for postSplashScreenTheme, and it
-        // has to happen while the window is still being created.
-        installSplashScreen()
+
+        installSplashScreen().setKeepOnScreenCondition { !AppStartupInitializer.isReady.value }
+
+        AppStartupInitializer.start()
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // AlarmMeScaffold paints every inset itself, so the system's contrast scrim is not needed.
-        // Left on, it tints the 3-button navigation bar a cooler shade than the background behind
-        // it — a visible band down the side of the window in landscape.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
 
         setContent {
-            AlarmMeApp()
+            val isReady = AppStartupInitializer.isReady.collectAsStateWithLifecycle()
+            if (isReady.value) {
+                AlarmMeApp()
+            }
         }
     }
 }

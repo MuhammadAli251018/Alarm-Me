@@ -1,29 +1,50 @@
 package dev.alidroid.alarmme.preferences
 
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Duration
 
 @JvmInline
 value class PreferencesKey(val value: String)
 
-interface PreferencesValue<T> : StateFlow<T> {
+@OptIn(ExperimentalForInheritanceCoroutinesApi::class)
+interface PreferencesValue<T> : SharedFlow<T> {
     val key: PreferencesKey
+
+    /** What this preference reads as when nothing is stored for [key]. */
+    val defaultValue: T
+
+    /** The first value that reached this object from storage, or null if [timeout] elapsed first. */
+    suspend fun awaitFirstRealValueOrNull(timeout: Duration): T?
 }
+
+/** [awaitFirstRealValueOrNull], falling back to [PreferencesValue.defaultValue] on timeout. */
+suspend fun <T> PreferencesValue<T>.awaitFirstRealValue(timeout: Duration): T =
+    awaitFirstRealValueOrNull(timeout) ?: defaultValue
 
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)
-internal class PreferencesValueImpl <T> private constructor(
-    private val internalState: MutableStateFlow<T>,
+internal class PreferencesValueImpl<T> private constructor(
+    private val mutableFlow: MutableSharedFlow<T>,
+    override val defaultValue: T,
     override val key: PreferencesKey
-) : PreferencesValue<T>, StateFlow<T> by internalState {
+) : PreferencesValue<T>, SharedFlow<T> by mutableFlow {
 
-    constructor(initialValue: T, key: PreferencesKey) : this(MutableStateFlow(initialValue), key)
+    constructor(defaultValue: T, key: PreferencesKey) :
+        this(MutableSharedFlow(replay = 1), defaultValue, key)
 
-    internal fun set(value: T) {
-        internalState.update { value }
+    private val storedValueArrived = CompletableDeferred<Unit>()
+
+    internal suspend fun set(value: T) {
+        mutableFlow.emit(value)
+        storedValueArrived.complete(Unit)
     }
-}
 
-fun <T> PreferencesValue(initialValue: T, key: PreferencesKey): PreferencesValue<T> =
-    PreferencesValueImpl(initialValue, key)
+    override suspend fun awaitFirstRealValueOrNull(timeout: Duration): T? =
+        withTimeoutOrNull(timeout) {
+            storedValueArrived.await()
+            mutableFlow.replayCache.lastOrNull() ?: defaultValue
+        }
+}

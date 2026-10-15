@@ -201,6 +201,7 @@ fun DebugPanelScreenContent(
                             text = "Mock alarms",
                             description = "mock_alarms_feature_flag",
                             checked = mockAlarmsEnabled,
+                            enabled = globalMocksEnabled,
                             onCheckedChange = onMockAlarmsToggle
                         )
 
@@ -208,6 +209,7 @@ fun DebugPanelScreenContent(
                             text = "Mock ringtones",
                             description = "mock_ringtones_feature_flag",
                             checked = mockRingtonesEnabled,
+                            enabled = globalMocksEnabled,
                             onCheckedChange = onMockRingtonesToggle
                         )
 

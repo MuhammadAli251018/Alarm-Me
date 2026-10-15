@@ -6,7 +6,6 @@ import dev.alidroid.alarmme.preferences.PreferencesManager
 import dev.alidroid.alarmme.preferences.PreferencesValue
 import dev.alidroid.alarmme.preferences.getPrefValue
 import dev.alidroid.alarmme.preferences.setPrefValue
-import kotlinx.coroutines.flow.Flow
 
 private val AppSettingsPrefRepoKey = PrefRepositoryKey("app_settings")
 
@@ -31,32 +30,32 @@ class AppSettingsRepositoryImpl(preferencesManager: PreferencesManager) : AppSet
     private val themePreference: PreferencesValue<ThemePreferencePreferences> =
         preferences.getPrefValue(PreferencesKey("theme_preference"), ThemePreferencePreferences.System)
 
-    override fun observeRingtone(): Flow<RingtonePreferences> = ringtone
+    override fun observeRingtone(): PreferencesValue<RingtonePreferences> = ringtone
     override suspend fun setRingtone(value: RingtonePreferences) = preferences.setPrefValue(ringtone.key, value)
 
-    override fun observeSnooze(): Flow<SnoozePreferences> = snooze
+    override fun observeSnooze(): PreferencesValue<SnoozePreferences> = snooze
     override suspend fun setSnooze(value: SnoozePreferences) = preferences.setPrefValue(snooze.key, value)
 
-    override fun observeGradualVolume(): Flow<GradualVolumePreferences> = gradualVolume
+    override fun observeGradualVolume(): PreferencesValue<GradualVolumePreferences> = gradualVolume
     override suspend fun setGradualVolume(value: GradualVolumePreferences) =
         preferences.setPrefValue(gradualVolume.key, value)
 
-    override fun observeVibration(): Flow<VibrationPreferences> = vibration
+    override fun observeVibration(): PreferencesValue<VibrationPreferences> = vibration
     override suspend fun setVibration(value: VibrationPreferences) = preferences.setPrefValue(vibration.key, value)
 
-    override fun observeAlarmTimeout(): Flow<AlarmTimeoutPreferences> = alarmTimeout
+    override fun observeAlarmTimeout(): PreferencesValue<AlarmTimeoutPreferences> = alarmTimeout
     override suspend fun setAlarmTimeout(value: AlarmTimeoutPreferences) =
         preferences.setPrefValue(alarmTimeout.key, value)
 
-    override fun observeVolumeButtonsAction(): Flow<VolumeButtonsActionPreferences> = volumeButtonsAction
+    override fun observeVolumeButtonsAction(): PreferencesValue<VolumeButtonsActionPreferences> = volumeButtonsAction
     override suspend fun setVolumeButtonsAction(value: VolumeButtonsActionPreferences) =
         preferences.setPrefValue(volumeButtonsAction.key, value)
 
-    override fun observeTwentyFourHourTime(): Flow<TwentyFourHourTimePreferences> = twentyFourHourTime
+    override fun observeTwentyFourHourTime(): PreferencesValue<TwentyFourHourTimePreferences> = twentyFourHourTime
     override suspend fun setTwentyFourHourTime(value: TwentyFourHourTimePreferences) =
         preferences.setPrefValue(twentyFourHourTime.key, value)
 
-    override fun observeThemePreference(): Flow<ThemePreferencePreferences> = themePreference
+    override fun observeThemePreference(): PreferencesValue<ThemePreferencePreferences> = themePreference
     override suspend fun setThemePreference(value: ThemePreferencePreferences) =
         preferences.setPrefValue(themePreference.key, value)
 

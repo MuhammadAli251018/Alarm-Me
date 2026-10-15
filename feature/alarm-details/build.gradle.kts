@@ -42,6 +42,7 @@ dependencies {
     implementation(projects.core.ui.screen.snoozePicker)
     implementation(projects.core.ui.screen.labelPicker)
     implementation(projects.core.alarms.domain)
+    implementation(projects.core.alarms.scheduler)
 
 
     // Compose
