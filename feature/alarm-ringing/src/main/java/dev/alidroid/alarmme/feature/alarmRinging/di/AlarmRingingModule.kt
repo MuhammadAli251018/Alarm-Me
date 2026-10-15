@@ -7,7 +7,7 @@ import dev.alidroid.alarmme.feature.alarmRinging.presentation.AlarmRingingScreen
 import org.koin.dsl.module
 
 val alarmRingingModule = module {
-    factory<AlarmRingingUseCase> { AlarmRingingUseCaseImpl(get()) }
+    factory<AlarmRingingUseCase> { AlarmRingingUseCaseImpl(get(), get()) }
 
     factory { (alarmId: AlarmId) ->
         AlarmRingingScreenModel(
