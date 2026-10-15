@@ -1,5 +1,6 @@
 package dev.alidroid.alarmme.feature.alarmDetails.presentation
 
+import android.os.Parcelable
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -73,14 +74,16 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.parcelize.Parcelize
 import org.koin.core.parameter.parametersOf
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
+@Parcelize
 class AlarmDetailsScreen(
     val params: AlarmDetailsParams,
     val ringtonePickerDestination: NavDestination
-) : Screen {
+) : Screen, Parcelable {
 
     sealed interface StartMode {
         data object New : StartMode
