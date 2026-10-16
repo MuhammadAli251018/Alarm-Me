@@ -33,7 +33,7 @@ Android 7.0 (API 24) or newer.
 
 ## License
 
-Alarm Me is licensed under the [MIT License](LICENSE).
+Alarm Me is licensed under the [Apache License 2.0](LICENSE).
 
 ## Contributing
 

@@ -62,4 +62,4 @@ this file won't repeat them:
 ## License
 
 By contributing, you agree that your contributions will be licensed under the project's
-[MIT License](LICENSE).
+[Apache License 2.0](LICENSE).
