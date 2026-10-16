@@ -8,3 +8,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Signing material — never commit the upload key or anything it can be rebuilt from
+/secret/
+*.jks
+*.keystore
+*.b64
