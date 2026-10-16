@@ -27,8 +27,9 @@ Or open the project root in Android Studio and run the `app` configuration direc
 ./gradlew :core:alarms:domain:test --tests "dev.alidroid.alarmme.alarms.domain.AlarmOccurrenceTest"
 ```
 
-Unit tests use Kotest (`StringSpec`) on the JUnit Platform. There's no CI configured yet, so make
-sure tests pass locally before opening a PR.
+Unit tests use Kotest (`StringSpec`) on the JUnit Platform. CI runs them on every pull request,
+but running the affected ones locally first saves you a round trip.
+
 
 ## Architecture
 
@@ -53,7 +54,8 @@ this file won't repeat them:
 
 ## Before opening a PR
 
-- Run the relevant tests locally (see above) — there's no CI to catch regressions for you yet.
+- Run the relevant tests locally (see above) — CI runs `./gradlew test` and
+  `./gradlew :app:assembleDebug` on every PR to `main`, and both have to pass.
 - Follow the module and naming conventions in the docs linked above rather than introducing new
   patterns.
 

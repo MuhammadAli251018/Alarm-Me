@@ -4,6 +4,8 @@
 
 # Alarm Me
 
+[![CI](https://github.com/MuhammadAli251018/Alarm-Me/actions/workflows/ci.yml/badge.svg)](https://github.com/MuhammadAli251018/Alarm-Me/actions/workflows/ci.yml)
+
 A clean, no-nonsense alarm clock for Android.
 
 ## Features

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -21,6 +23,23 @@ fun gitHash(): String =
     providers.exec { commandLine("git", "rev-parse", "--short", "HEAD") }
         .standardOutput.asText.get().trim()
 
+object SigningKeys {
+    const val CONFIG_NAME = "release"
+    const val KEYSTORE_PATH = "ANDROID_KEYSTORE_PATH"
+    const val KEYSTORE_PASSWORD = "ANDROID_KEYSTORE_PASSWORD"
+    const val KEY_ALIAS = "ANDROID_KEY_ALIAS"
+    const val KEY_PASSWORD = "ANDROID_KEY_PASSWORD"
+}
+
+val localProperties: Properties? =
+    providers.fileContents(rootProject.layout.projectDirectory.file("local.properties"))
+        .asText.orNull
+        ?.let { text -> Properties().apply { load(text.reader()) } }
+
+fun signingValue(name: String): String? =
+    (localProperties?.getProperty(name) ?: providers.environmentVariable(name).orNull)
+        ?.takeIf { it.isNotBlank() }
+
 android {
     namespace = libs.versions.packageName.get()
     compileSdk {
@@ -37,8 +56,27 @@ android {
         buildConfigField("String", "GIT_HASH_NAME", "\"${gitHash()}\"")
     }
 
+    signingConfigs {
+        val keystorePath = signingValue(SigningKeys.KEYSTORE_PATH)
+        val keystorePassword = signingValue(SigningKeys.KEYSTORE_PASSWORD)
+        val releaseKeyAlias = signingValue(SigningKeys.KEY_ALIAS)
+
+        if (keystorePath != null && keystorePassword != null && releaseKeyAlias != null) {
+            create(SigningKeys.CONFIG_NAME) {
+                // Absolute paths pass through; relative ones resolve against the repository root.
+                storeFile = rootProject.file(keystorePath)
+                storePassword = keystorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = signingValue(SigningKeys.KEY_PASSWORD) ?: keystorePassword
+            }
+        }
+    }
+
     buildTypes {
         release {
+            // Absent on a contributor machine without the keystore: release stays buildable, unsigned.
+            signingConfigs.findByName(SigningKeys.CONFIG_NAME)?.let { signingConfig = it }
+
             optimization {
                 enable = true
             }
