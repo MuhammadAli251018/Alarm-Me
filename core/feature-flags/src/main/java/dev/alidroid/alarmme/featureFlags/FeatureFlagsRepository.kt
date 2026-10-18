@@ -12,6 +12,8 @@ interface FeatureFlagsRepository {
         val DefaultTimeoutDuration = 5.minutes
     }
 
+    fun isDebugPanelEnabled(): Boolean
+
     fun observeGlobalMocks(): PreferencesValue<Boolean>
     suspend fun setGlobalMocks(enabled: Boolean)
 

@@ -15,7 +15,7 @@ val settingsModule = module {
     factory<SettingsReadUseCase> { SettingsReadUseCaseImpl(get()) }
     factory<SettingsUpdateUseCase> { SettingsUpdateUseCaseImpl(get()) }
     factory<ResolveRingtoneTitleUseCase> { ResolveRingtoneTitleUseCaseImpl(get()) }
-    factory<AppVersionInfoUseCase> { AppVersionInfoUseCaseImpl(get()) }
+    factory<AppVersionInfoUseCase> { AppVersionInfoUseCaseImpl(get(), get()) }
 
     factory { SettingsScreenModel(get(), get(), get(), get()) }
 }

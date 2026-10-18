@@ -39,7 +39,7 @@ val appPreferencesModule = module {
     single<PreferencesManager> { PreferencesManager(androidContext(), get(named("global-scope"))) }
     single<DebugPanelFeatureFlag> { if (AlarmMeApplication.IS_DEV_FLAVOR) DebugPanelFeatureFlag.Enable else DebugPanelFeatureFlag.Disable }
     single<AppSettingsRepository> { AppSettingsRepositoryImpl(get()) }
-    single<FeatureFlagsRepository> { FeatureFlagsRepositoryImpl(get()) }
+    single<FeatureFlagsRepository> { FeatureFlagsRepositoryImpl(get(), get()) }
     single<AppInfoRepository> {
         AppInfoRepository {
             AppInfo(
