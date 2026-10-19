@@ -12,6 +12,8 @@ private class RecordingFeatureFlagsRepository(
     var mockRingtones: Boolean = true,
 ) : FeatureFlagsRepository {
 
+    override fun isDebugPanelEnabled(): Boolean = false
+
     override fun observeGlobalMocks(): PreferencesValue<Boolean> = error("reads are not under test")
     override suspend fun setGlobalMocks(enabled: Boolean) { globalMocks = enabled }
 
