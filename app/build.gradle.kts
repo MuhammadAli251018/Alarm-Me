@@ -124,11 +124,14 @@ dependencies {
     implementation(projects.core.alarms.dataMocks)
     implementation(projects.core.alarms.scheduler)
     implementation(projects.core.preferences)
+    implementation(projects.core.utility.kotlinDateTime)
     implementation(projects.feature.alarmList)
     implementation(projects.feature.alarmDetails)
     implementation(projects.feature.settings)
     implementation(projects.feature.debugPanel)
     implementation(projects.feature.alarmRinging)
+
+    implementation(libs.kotlinx.datetime)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)

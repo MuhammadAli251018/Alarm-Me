@@ -8,6 +8,12 @@
     <!-- The ringing screen is brought up by a full-screen-intent notification. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <!-- The ringtone and the vibration outlive the receiver that started them. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
+    <!-- An alarm has to keep the CPU up while it rings, and has to buzz. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".AlarmMeApplication"
@@ -43,8 +49,13 @@
             android:theme="@style/Theme.AlarmMe" />
 
         <receiver
-            android:name=".AlarmReceiver"
+            android:name=".ringing.AlarmReceiver"
             android:exported="false" />
+
+        <service android:name=".ringing.AlarmRingingService"
+            android:exported="false"
+            android:foregroundServiceType="systemExempted"
+            />
     </application>
 
 </manifest>
