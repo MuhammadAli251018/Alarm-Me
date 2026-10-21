@@ -4,6 +4,7 @@ import dev.alidroid.alarmme.alarms.domain.Alarm
 import dev.alidroid.alarmme.alarms.domain.AlarmId
 import dev.alidroid.alarmme.alarms.domain.AlarmsRepository
 import dev.alidroid.alarmme.alarms.domain.getAlarm
+import dev.alidroid.alarmme.alarms.scheduler.AlarmRingingController
 import dev.alidroid.alarmme.alarms.scheduler.AlarmScheduler
 import dev.alidroid.alarmme.alarms.scheduler.scheduleNextOccurrence
 import dev.alidroid.alarmme.feature.alarmRinging.domain.AlarmRingingUseCase
@@ -14,12 +15,16 @@ import kotlinx.datetime.LocalDateTime
 class AlarmRingingUseCaseImpl(
     private val alarmsRepository: AlarmsRepository,
     private val alarmScheduler: AlarmScheduler,
+    private val alarmRingingController: AlarmRingingController,
 ) : AlarmRingingUseCase {
 
     override fun observeRingingAlarm(id: AlarmId): Flow<Alarm?> =
         alarmsRepository.observeAlarm(id)
 
     override suspend fun dismissRingingAlarm(id: AlarmId) {
+        // Ahead of the guard below: an alarm deleted while it rang still has to be silenced.
+        alarmRingingController.stopRinging(id)
+
         val alarm = alarmsRepository.getAlarm(id) ?: return
 
         // Counted from the occurrence that just rang rather than straight off the clock: a delivery
