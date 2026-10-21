@@ -8,10 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Debug Panel is accessible in production flavor.
+- Alarms now ring. When an alarm goes off its ringtone plays and the device vibrates until the
+    alarm is dismissed. Vibration follows the alarm's own vibration setting.
+- Other audio pauses while an alarm is ringing.
 
-## [0.1.0-beta] - 2026-10-16
+## [v0.1.0-beta] - 2026-10-16
 
 Initial release 🎉
 
-[Unreleased]: https://github.com/MuhammadAli251018/Alarm-Me/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/MuhammadAli251018/Alarm-Me/releases/tag/v0.1.0
+[Unreleased]: https://github.com/MuhammadAli251018/Alarm-Me/compare/v0.1.0-beta...HEAD
+[v0.1.0-beta]: https://github.com/MuhammadAli251018/Alarm-Me/releases/tag/v0.1.0-beta
