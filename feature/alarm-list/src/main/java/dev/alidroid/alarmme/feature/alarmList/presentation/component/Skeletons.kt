@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -27,6 +28,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,6 +36,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isFinite
+import dev.alidroid.alarmme.feature.alarmList.R
 import dev.alidroid.alarmme.feature.alarmList.presentation.alarmsListHorizontalPaddings
 import dev.alidroid.alarmme.ui.component.AmFabExtendedButtonDefaults
 import dev.alidroid.alarmme.ui.component.AmIconDefaults
@@ -91,7 +94,9 @@ private const val TIME_SAMPLE = "00:00"
  * A representative eyebrow, built by the real formatter rather than typed out, so the placeholder
  * tracks the string the top bar actually renders. Only its measured size is used.
  */
-private val EyebrowSample: String = LocalDateTime(2026, 1, 1, 13, 26).toTopBarEyebrow(
+@Composable
+@ReadOnlyComposable
+private fun eyebrowSample(): String = LocalDateTime(2026, 1, 1, 13, 26).toTopBarEyebrow(
     now = LocalDateTime(2026, 1, 1, 6, 0),
     timeZone = TimeZone.UTC
 )
@@ -227,12 +232,12 @@ private fun TopBarSkeletonCompactHeight(modifier: Modifier) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
         ) {
-            SkeletonTextBlock(TOP_BAR_TITLE, typography.headlineSmall)
-            SkeletonTextBlock(EyebrowSample, typography.labelSmall)
+            SkeletonTextBlock(stringResource(R.string.alarm_list_topbar_title), typography.headlineSmall)
+            SkeletonTextBlock(eyebrowSample(), typography.labelSmall)
         }
 
-        SkeletonTextButton(TOP_BAR_SELECT_LABEL)
-        SkeletonFabExtendedButton(TOP_BAR_NEW_ALARM_LABEL)
+        SkeletonTextButton(stringResource(R.string.alarm_list_topbar_settings))
+        SkeletonFabExtendedButton(stringResource(R.string.alarm_list_new_alarm))
     }
 }
 
@@ -247,16 +252,16 @@ private fun TopBarSkeletonCompactAndMediumWidth(modifier: Modifier) {
             vertical = TopBarContentVerticalPadding
         )
     ) {
-        SkeletonTextBlock(EyebrowSample, typography.labelSmall)
+        SkeletonTextBlock(eyebrowSample(), typography.labelSmall)
 
         Box(modifier = Modifier.fillMaxWidth()) {
             SkeletonTextBlock(
-                text = TOP_BAR_TITLE,
+                text = stringResource(R.string.alarm_list_topbar_title),
                 style = typography.headlineSmall,
                 modifier = Modifier.align(Alignment.CenterStart)
             )
             SkeletonTextButton(
-                label = TOP_BAR_SELECT_LABEL,
+                label = stringResource(R.string.alarm_list_topbar_settings),
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
@@ -274,11 +279,11 @@ private fun TopBarSkeletonExpandedAndBiggerWidth(modifier: Modifier) {
             vertical = TopBarContentVerticalPadding
         )
     ) {
-        SkeletonTextBlock(EyebrowSample, typography.labelSmall)
+        SkeletonTextBlock(eyebrowSample(), typography.labelSmall)
 
         Box(modifier = Modifier.fillMaxWidth()) {
             SkeletonTextBlock(
-                text = TOP_BAR_TITLE,
+                text = stringResource(R.string.alarm_list_topbar_title),
                 style = typography.headlineSmall,
                 modifier = Modifier.align(Alignment.CenterStart)
             )
@@ -288,8 +293,8 @@ private fun TopBarSkeletonExpandedAndBiggerWidth(modifier: Modifier) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
             ) {
-                SkeletonTextButton(TOP_BAR_SELECT_LABEL)
-                SkeletonFabExtendedButton(TOP_BAR_NEW_ALARM_LABEL)
+                SkeletonTextButton(stringResource(R.string.alarm_list_topbar_settings))
+                SkeletonFabExtendedButton(stringResource(R.string.alarm_list_new_alarm))
             }
         }
     }

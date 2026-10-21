@@ -17,10 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.alidroid.alarmme.ui.component.AmFilledTextButton
 import dev.alidroid.alarmme.ui.component.AmPlainTextButton
+import dev.alidroid.alarmme.ui.components.R as ComponentsR
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
@@ -61,8 +63,8 @@ fun TimePickerBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
             ) {
-                AmPlainTextButton(text = "Cancel", onClick = onDismiss)
-                AmFilledTextButton(text = "Save", onClick = onSave)
+                AmPlainTextButton(text = stringResource(ComponentsR.string.common_cancel), onClick = onDismiss)
+                AmFilledTextButton(text = stringResource(ComponentsR.string.common_save), onClick = onSave)
             }
         }
     }

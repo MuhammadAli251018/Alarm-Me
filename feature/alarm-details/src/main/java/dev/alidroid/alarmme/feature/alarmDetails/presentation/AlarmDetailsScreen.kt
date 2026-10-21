@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -38,6 +41,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import dev.alidroid.alarmme.alarms.domain.AlarmId
 import dev.alidroid.alarmme.alarms.domain.Ringtone
 import dev.alidroid.alarmme.alarms.domain.RingtoneId
+import dev.alidroid.alarmme.feature.alarmDetails.R
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.component.AlarmSettingsDetails
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.component.AlarmTimeDetails
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.component.ScheduleDetails
@@ -61,6 +65,7 @@ import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerDialog
 import dev.alidroid.alarmme.ui.screen.timePicker.TimePickerBottomSheet
 import dev.alidroid.alarmme.ui.screen.timePicker.TimePickerDialog
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.screenCategory.ScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.currentScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.isExpandedWidthOrWider
@@ -182,8 +187,8 @@ fun AlarmDetailsScreenContent(
 
         AlarmDetailsState.Error -> ErrorScreenContent(
             modifier = modifier,
-            errorHeading = "Couldn't load this alarm",
-            errorDescription = "Something went wrong while loading it. Nothing was changed.",
+            errorHeading = stringResource(R.string.alarm_details_error_heading),
+            errorDescription = stringResource(R.string.alarm_details_error_description),
             onRetry = onRetry,
             onDismiss = onDismiss
         )
@@ -331,7 +336,7 @@ fun AlarmDetailsLoadedContent(
         var draftLimitIndex by remember { mutableStateOf(details.snoozeLimitIndex) }
 
         SnoozePickerDialog(
-            title = "Snooze",
+            title = stringResource(R.string.alarm_details_snooze_dialog_title),
             snoozeLengthOptions = state.lengthOptions,
             snoozeLimitOptions = state.limitOptions,
             selectedLengthIndex = draftLengthIndex,
@@ -354,10 +359,10 @@ fun AlarmDetailsLoadedContent(
         var draftLabel by remember { mutableStateOf(details.label) }
 
         LabelPickerDialog(
-            label = "Label",
+            label = stringResource(R.string.alarm_details_label_dialog_title),
             value = draftLabel,
             onValueChange = { draftLabel = it },
-            suggestionsLabel = "Ideas",
+            suggestionsLabel = stringResource(R.string.alarm_details_label_suggestions),
             suggestions = LabelIdeas,
             onSave = {
                 onLabelChanged(draftLabel.trim())
@@ -490,7 +495,7 @@ private fun AlarmDetailsVerticalContent(
         )
 
         AmPlainTextButton(
-            text = "Delete alarm",
+            text = stringResource(R.string.alarm_details_delete_alarm),
             contentColor = LocalAlarmMeColors.current.error,
             onClick = onDeleteClick
         )
@@ -519,14 +524,16 @@ private fun AlarmDetailsHorizontalContent(
     Row(modifier = modifier) {
         Column(
             modifier = Modifier
-                .leftPaneWidth(screenCategory)
+                .primaryPaneWidth(screenCategory)
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
                 .drawBehind {
+                    // The divider belongs on the pane's inner edge, which mirrors with the Row.
+                    val x = if (layoutDirection == LayoutDirection.Ltr) size.width else 0f
                     drawLine(
                         color = colors.outline.copy(0.5f),
-                        start = Offset(size.width, 0f),
-                        end = Offset(size.width, size.height),
+                        start = Offset(x, 0f),
+                        end = Offset(x, size.height),
                         strokeWidth = 1f
                     )
                 }
@@ -575,25 +582,31 @@ private fun AlarmDetailsHorizontalContent(
     }
 }
 
-/** Left-pane width in [AlarmDetailsHorizontalContent], keyed off the same breakpoint the design uses. */
-private val LandscapePhoneLeftPaneWidth = 352.dp
-private val ExpandedLeftPaneWidth = 480.dp
+/** Leading-pane width in [AlarmDetailsHorizontalContent], keyed off the same breakpoint the design uses. */
+private val LandscapePhonePrimaryPaneWidth = 352.dp
+private val ExpandedPrimaryPaneWidth = 480.dp
 
 
-private fun Modifier.leftPaneWidth(screenCategory: ScreenCategory): Modifier {
+private fun Modifier.primaryPaneWidth(screenCategory: ScreenCategory): Modifier {
     val width = if (screenCategory.isExpandedWidthOrWider)
-        ExpandedLeftPaneWidth
+        ExpandedPrimaryPaneWidth
     else
-        LandscapePhoneLeftPaneWidth
+        LandscapePhonePrimaryPaneWidth
 
     return this.width(width)
 }
 
+@Composable
+@ReadOnlyComposable
 private fun AlarmDetailsUiState.toSnoozeLabel(lengthOptions: List<Duration>, limitOptions: List<Int?>): String {
-    val lengthIndex = snoozeLengthIndex ?: return "Off"
+    val lengthIndex = snoozeLengthIndex ?: return stringResource(R.string.alarm_details_snooze_off)
     val minutes = lengthOptions[lengthIndex].inWholeMinutes
     val limitValue = snoozeLimitIndex?.let { limitOptions[it] }
-    return if (limitValue == null) "$minutes min · no limit" else "$minutes min · $limitValue times"
+    return if (limitValue == null) {
+        stringResource(R.string.alarm_details_snooze_no_limit, minutes)
+    } else {
+        stringResource(R.string.alarm_details_snooze_limited, minutes, limitValue)
+    }
 }
 
 private fun List<LocalDate>.toCustomDateLabel(): String =
@@ -676,6 +689,7 @@ private fun PreviewAlarmDetailsScreen(state: AlarmDetailsState) {
  * compact height (two-pane split), and expanded width (wider two-pane split).
  */
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun AlarmDetailsScreenContentPreview() {
     PreviewAlarmDetailsScreen(AlarmDetailsState.Loaded(details = previewDetails(), canSave = false))

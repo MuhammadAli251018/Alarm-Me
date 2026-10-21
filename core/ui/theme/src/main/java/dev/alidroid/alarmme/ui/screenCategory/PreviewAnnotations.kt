@@ -292,3 +292,28 @@ annotation class AllScreenCategoriesPreview
 @MediumWidthCompactHeightPreview
 @ExpandedWidthMediumHeightPreview
 annotation class CommonScreenCategoriesPreview
+
+/**
+ * One compact bucket in RTL, both themes - **2 renders**. Opt in on screens, and on the components
+ * whose layout actually mirrors; [CommonScreenCategoriesPreview] stays the size/theme default.
+ *
+ * `locale = "ar"` is here to flip the layout direction, not to preview Arabic text - the app's
+ * strings are not localized yet, and the bundled fonts carry no Arabic glyphs.
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Preview(
+    name = "RTL - Light",
+    group = "RTL",
+    device = "spec:width=412dp,height=700dp,dpi=420",
+    locale = "ar",
+    showBackground = true,
+)
+@Preview(
+    name = "RTL - Dark",
+    group = "RTL",
+    device = "spec:width=412dp,height=700dp,dpi=420",
+    locale = "ar",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+annotation class RtlPreview

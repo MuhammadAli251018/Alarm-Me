@@ -11,7 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.ui.components.R as ComponentsR
+import dev.alidroid.alarmme.ui.screen.ringtonePicker.R
 import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.hasCustomSoundInTopBar
 import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.screenConstraints
 import dev.alidroid.alarmme.ui.component.AmIcon
@@ -47,13 +50,13 @@ fun RingtonePickerTopBar(
         AmIconButton(onClick = onBackClick) {
             AmIcon(
                 painter = AlarmMeIcons.ArrowBack,
-                contentDescription = "Go back",
+                contentDescription = stringResource(ComponentsR.string.common_go_back),
                 tint = colors.onSurfaceVariant
             )
         }
 
         Text(
-            text = "Ringtones",
+            text = stringResource(R.string.sound_screen_title),
             color = colors.onSurface,
             style = typography.titleMedium
         )
@@ -65,7 +68,7 @@ fun RingtonePickerTopBar(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 AmPlainTextButton(
-                    text = "Save",
+                    text = stringResource(ComponentsR.string.common_save),
                     contentColor = colors.primary,
                     enabled = canSave,
                     onClick = onSaveClick
@@ -73,7 +76,7 @@ fun RingtonePickerTopBar(
 
                 if (currentScreenCategory().hasCustomSoundInTopBar()) {
                     AmOutlineButtonWithIcon(
-                        text = "Custom Sound",
+                        text = stringResource(R.string.ringtone_picker_custom_sound_title),
                         icon = {
                             AmIcon(
                                 painter = AlarmMeIcons.Add,

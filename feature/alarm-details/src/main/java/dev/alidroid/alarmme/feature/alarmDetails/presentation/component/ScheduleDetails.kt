@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.feature.alarmDetails.R
 import dev.alidroid.alarmme.ui.component.AmDaysRepeatPicker
 import dev.alidroid.alarmme.ui.component.AmDisclosureRow
 import dev.alidroid.alarmme.ui.component.AmIcon
@@ -52,7 +54,7 @@ fun ScheduleDetails(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "SCHEDULE",
+                text = stringResource(R.string.schedule_details_title),
                 style = typography.labelSmall,
                 color = colors.onSurfaceVariant
             )
@@ -62,7 +64,7 @@ fun ScheduleDetails(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(
-                    text = "Custom date",
+                    text = stringResource(R.string.schedule_details_custom_date),
                     style = typography.bodyMedium,
                     color = if (customDateEnabled) colors.onSurface else colors.onSurfaceVariant
                 )

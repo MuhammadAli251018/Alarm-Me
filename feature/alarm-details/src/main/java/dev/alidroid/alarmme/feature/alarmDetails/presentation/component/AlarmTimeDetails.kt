@@ -7,17 +7,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.alidroid.alarmme.feature.alarmDetails.R
 import dev.alidroid.alarmme.ui.component.AmSectionCard
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeShapes
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeTypography
+import dev.alidroid.alarmme.utility.compose.LtrContent
 import dev.alidroid.alarmme.utility.kotlinDateTime.now
 import dev.alidroid.alarmme.utility.kotlinDateTime.toClockLabel
 import kotlinx.datetime.LocalDateTime
@@ -26,9 +30,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
-
-// TODO: move to get from string resources
-private const val NOT_SCHEDULED_LABEL = "NOT SCHEDULED"
 
 @Composable
 fun AlarmTimeDetails(
@@ -52,7 +53,7 @@ fun AlarmTimeDetails(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            val eyebrow = remember(nextOccurrence) { nextOccurrence.toRingsInLabel() }
+            val eyebrow = nextOccurrence.toRingsInLabel()
 
             Text(
                 text = eyebrow,
@@ -60,29 +61,34 @@ fun AlarmTimeDetails(
                 color = colors.primary
             )
 
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 16.dp)
-                    .padding(bottom = 8.dp),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                val timeString = remember(time) { time.toClockLabel() }
-                val meridiem = remember(time) { if (time.hour < 12) "AM" else "PM" }
+            // The time and its meridiem read in the same order in every locale.
+            LtrContent {
+                // Centred via the arrangement rather than ColumnScope.align, which is not in
+                // scope inside LtrContent; the parent Column already fills the width.
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                        .padding(bottom = 8.dp),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)
+                ) {
+                    val timeString = remember(time) { time.toClockLabel() }
+                    val meridiem = remember(time) { if (time.hour < 12) "AM" else "PM" }
 
-                Text(
-                    text = timeString,
-                    style = typography.alarmRow.copy(fontSize = 56.sp),
-                    color = colors.onSurface
-                )
+                    Text(
+                        text = timeString,
+                        style = typography.alarmRow.copy(fontSize = 56.sp),
+                        color = colors.onSurface
+                    )
 
-                Text(
-                    modifier = Modifier.padding(bottom = 6.dp),
-                    text = meridiem,
-                    style = typography.meridiem,
-                    color = colors.onSurfaceVariant
-                )
+                    Text(
+                        modifier = Modifier.padding(bottom = 6.dp),
+                        text = meridiem,
+                        style = typography.meridiem,
+                        color = colors.onSurfaceVariant
+                    )
+                }
             }
         }
     }
@@ -94,18 +100,24 @@ fun AlarmTimeDetails(
  * out, not the same evening.
  */
 @OptIn(ExperimentalTime::class)
+@Composable
+@ReadOnlyComposable
 private fun LocalDateTime?.toRingsInLabel(
     now: LocalDateTime = LocalDateTime.now(),
     timeZone: TimeZone = TimeZone.currentSystemDefault()
 ): String {
-    if (this == null) return NOT_SCHEDULED_LABEL
+    if (this == null) return stringResource(R.string.alarm_details_not_scheduled)
 
     // Subtract instants, not individual fields: per-field subtraction goes negative whenever the
     // alarm's minute is below the current minute, and breaks entirely across midnight. Clamped at
     // zero so an alarm that has just fired never counts backwards.
     val remaining = (toInstant(timeZone) - now.toInstant(timeZone)).coerceAtLeast(Duration.ZERO)
 
-    return "RINGS IN · ${remaining.inWholeHours}H ${remaining.inWholeMinutes % 60}M"
+    return stringResource(
+        R.string.alarm_details_rings_in,
+        remaining.inWholeHours,
+        remaining.inWholeMinutes % 60
+    )
 }
 
 @Preview(name = "Light Mode", showBackground = true)

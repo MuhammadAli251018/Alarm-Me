@@ -18,11 +18,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.alidroid.alarmme.ui.component.AmChoiceGroup
 import dev.alidroid.alarmme.ui.component.AmFilledTextButton
 import dev.alidroid.alarmme.ui.component.AmPlainTextButton
 import dev.alidroid.alarmme.ui.component.Orientation
+import dev.alidroid.alarmme.ui.components.R as ComponentsR
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
@@ -66,7 +68,7 @@ fun SnoozePickerDialog(
                 }
 
                 AmChoiceGroup(
-                    label = "Snooze for",
+                    label = stringResource(R.string.snooze_picker_length_label),
                     options = snoozeLengthOptions.map { "${it.inWholeMinutes} min" },
                     selectedOption = selectedLengthIndex,
                     orientation = Orientation.Vertical,
@@ -74,7 +76,7 @@ fun SnoozePickerDialog(
                 )
 
                 AmChoiceGroup(
-                    label = "At most",
+                    label = stringResource(R.string.snooze_picker_limit_label),
                     options = snoozeLimitOptions.map { it?.toString() ?: "∞" },
                     selectedOption = selectedLimitIndex,
                     orientation = Orientation.Horizontal,
@@ -88,7 +90,7 @@ fun SnoozePickerDialog(
                     if (selectedLengthIndex != null) {
                         AmPlainTextButton(
                             modifier = Modifier.align(Alignment.CenterStart),
-                            text = "Turn off",
+                            text = stringResource(R.string.snooze_picker_turn_off),
                             contentColor = colors.primary,
                             onClick = onTurnOff
                         )
@@ -98,8 +100,8 @@ fun SnoozePickerDialog(
                         modifier = Modifier.align(Alignment.CenterEnd),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        AmPlainTextButton(text = "Cancel", onClick = onDismiss)
-                        AmFilledTextButton(text = "Save", onClick = onSave)
+                        AmPlainTextButton(text = stringResource(ComponentsR.string.common_cancel), onClick = onDismiss)
+                        AmFilledTextButton(text = stringResource(ComponentsR.string.common_save), onClick = onSave)
                     }
                 }
             }

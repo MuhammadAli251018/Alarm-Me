@@ -22,14 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.ui.screen.timePicker.R
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeShapes
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeTypography
+import dev.alidroid.alarmme.utility.compose.LtrContent
 import dev.alidroid.alarmme.utility.compose.modifyIfElse
 
 private const val DisabledFieldAlpha = 0.4f
@@ -62,63 +66,66 @@ fun AmTimePicker(
     val minuteState =
         rememberDigitFieldState(value = minute, minValue = MinMinute, maxValue = MaxMinute)
 
-    Row(
-        modifier = modifier
-            .alpha(if (enabled) 1f else DisabledFieldAlpha)
-            .height(IntrinsicSize.Min),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(FieldGap)
-    ) {
-        DigitField(
-            state = hourState,
-            value = hour,
-            label = "HOUR",
-            enabled = enabled,
-            imeAction = ImeAction.Next,
-            focusRequester = hourFocusRequester,
-            onDigitsComplete = { minuteFocusRequester.requestFocus() },
-            onValueChange = onHourChange
-        )
-
-        Box(
-            modifier = Modifier.fillMaxHeight(),
-            contentAlignment = Alignment.Center
+    // HOUR : MINUTE and the AM/PM pills read in the same order in every locale.
+    LtrContent {
+        Row(
+            modifier = modifier
+                .alpha(if (enabled) 1f else DisabledFieldAlpha)
+                .height(IntrinsicSize.Min),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(FieldGap)
         ) {
-            Text(
-                text = ":",
-                style = typography.alarmWheelNeighbor,
-                color = colors.onSurfaceVariant
-            )
-        }
-
-        DigitField(
-            state = minuteState,
-            value = minute,
-            label = "MINUTE",
-            enabled = enabled,
-            imeAction = ImeAction.Done,
-            focusRequester = minuteFocusRequester,
-            onDeleteAtStart = { hourFocusRequester.requestFocus() },
-            onValueChange = onMinuteChange
-        )
-
-        Column(
-            modifier = Modifier.padding(start = FieldGap / 2),
-            verticalArrangement = Arrangement.spacedBy(PillGap)
-        ) {
-            MeridiemPill(
-                text = "AM",
-                selected = isAm,
+            DigitField(
+                state = hourState,
+                value = hour,
+                label = stringResource(R.string.time_picker_hour_label),
                 enabled = enabled,
-                onClick = { if (!isAm) onAmPmChange(true) }
+                imeAction = ImeAction.Next,
+                focusRequester = hourFocusRequester,
+                onDigitsComplete = { minuteFocusRequester.requestFocus() },
+                onValueChange = onHourChange
             )
 
-            MeridiemPill(
-                text = "PM",
-                selected = !isAm,
+            Box(
+                modifier = Modifier.fillMaxHeight(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = ":",
+                    style = typography.alarmWheelNeighbor,
+                    color = colors.onSurfaceVariant
+                )
+            }
+
+            DigitField(
+                state = minuteState,
+                value = minute,
+                label = stringResource(R.string.time_picker_minute_label),
                 enabled = enabled,
-                onClick = { if (isAm) onAmPmChange(false) }
+                imeAction = ImeAction.Done,
+                focusRequester = minuteFocusRequester,
+                onDeleteAtStart = { hourFocusRequester.requestFocus() },
+                onValueChange = onMinuteChange
             )
+
+            Column(
+                modifier = Modifier.padding(start = FieldGap / 2),
+                verticalArrangement = Arrangement.spacedBy(PillGap)
+            ) {
+                MeridiemPill(
+                    text = stringResource(R.string.time_picker_meridiem_am),
+                    selected = isAm,
+                    enabled = enabled,
+                    onClick = { if (!isAm) onAmPmChange(true) }
+                )
+
+                MeridiemPill(
+                    text = stringResource(R.string.time_picker_meridiem_pm),
+                    selected = !isAm,
+                    enabled = enabled,
+                    onClick = { if (isAm) onAmPmChange(false) }
+                )
+            }
         }
     }
 }
@@ -161,6 +168,7 @@ private fun MeridiemPill(
 }
 
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun AmTimePickerPreview() {
     AlarmMeThemeProvider {

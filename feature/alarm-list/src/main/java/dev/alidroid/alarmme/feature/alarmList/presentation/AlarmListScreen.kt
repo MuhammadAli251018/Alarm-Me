@@ -20,12 +20,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import dev.alidroid.alarmme.alarms.domain.AlarmId
+import dev.alidroid.alarmme.feature.alarmList.R
 import dev.alidroid.alarmme.feature.alarmList.presentation.component.AlarmItemsList
 import dev.alidroid.alarmme.feature.alarmList.presentation.component.AlarmItemsListState
 import dev.alidroid.alarmme.feature.alarmList.presentation.component.AlarmsListSkeleton
@@ -49,6 +52,7 @@ import dev.alidroid.alarmme.ui.component.ErrorScreenContent
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
 import dev.alidroid.alarmme.ui.screenCategory.MediumWidthMediumHeightPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.screenCategory.WidthCategory
 import dev.alidroid.alarmme.ui.screenCategory.currentScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.isExpandedWidthOrWider
@@ -203,11 +207,15 @@ fun NewAlarmFabButton(modifier: Modifier = Modifier, onNewAlarmClick: () -> Unit
             modifier = modifier.padding(end = 22.dp, bottom = 26.dp),
             onClick = onNewAlarmClick
         ) {
-            AmIcon(AlarmMeIcons.Add, contentDescription = "New alarm", size = AmIconDefaults.Large)
+            AmIcon(
+                AlarmMeIcons.Add,
+                contentDescription = stringResource(R.string.alarm_list_new_alarm),
+                size = AmIconDefaults.Large
+            )
         }
 
         screenCategory.width == WidthCategory.Medium && !screenCategory.isLandscapePhone -> AmFabExtendedButton(
-            text = "New alarm",
+            text = stringResource(R.string.alarm_list_new_alarm),
             modifier = modifier.padding(end = 32.dp, bottom = 30.dp),
             icon = { AmIcon(AlarmMeIcons.Add, null) },
             onClick = onNewAlarmClick
@@ -254,12 +262,12 @@ private fun SelectionActionBar(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             AmOutlineTextButton(
-                text = "Disable $selectedCount",
+                text = pluralStringResource(R.plurals.alarm_list_disable_count, selectedCount, selectedCount),
                 modifier = Modifier.weight(1f),
                 onClick = onDisable
             )
             AmDestructiveTextButton(
-                text = "Delete $selectedCount",
+                text = pluralStringResource(R.plurals.alarm_list_delete_count, selectedCount, selectedCount),
                 modifier = Modifier.weight(1f),
                 onClick = onDelete
             )
@@ -293,9 +301,8 @@ fun ErrorAlarmListScreenContent(
 ) {
     ErrorScreenContent(
         modifier = modifier,
-        errorHeading = "Couldn't load your alarms",
-        errorDescription = "The alarm database didn't open. Your alarms are still saved — " +
-            "nothing was deleted.",
+        errorHeading = stringResource(R.string.alarm_list_error_heading),
+        errorDescription = stringResource(R.string.alarm_list_error_description),
         onRetry = onRetry,
         onDismiss = onDismiss
     )
@@ -372,6 +379,7 @@ private fun PreviewLoaded(
  * landscape and expanded get nothing because their top bar already carries "New alarm".
  */
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun LoadedAlarmListScreenContentPreview() {
     PreviewLoaded()

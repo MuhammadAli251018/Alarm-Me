@@ -17,12 +17,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import dev.alidroid.alarmme.feature.settings.R
 import dev.alidroid.alarmme.feature.settings.presentation.component.SettingsTopBar
 import dev.alidroid.alarmme.navigation.AwaitNavResult
 import dev.alidroid.alarmme.navigation.NavDestination
@@ -41,6 +43,7 @@ import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.RingtonePicker
 import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerDialog
 import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerOptions
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeTypography
@@ -117,8 +120,8 @@ fun SettingsScreenContent(
 
         SettingsState.Error -> ErrorScreenContent(
             modifier = modifier.fillMaxSize(),
-            errorHeading = "Couldn't load settings",
-            errorDescription = "Something went wrong reading your settings.",
+            errorHeading = stringResource(R.string.settings_error_heading),
+            errorDescription = stringResource(R.string.settings_error_description),
             onRetry = onRetry,
             onDismiss = onBackClick
         )
@@ -209,25 +212,25 @@ fun SettingsScreenContent(
                 sections(count = 4) { index ->
                     when (index) {
                         0 -> AmNavigationDisclosureRow(
-                            text = "Sound",
+                            text = stringResource(R.string.settings_sound),
                             value = soundLabel,
                             onClick = onSoundClick
                         )
 
                         1 -> AmNavigationDisclosureRow(
-                            text = "Snooze",
+                            text = stringResource(R.string.settings_snooze),
                             value = snoozeLabel,
                             onClick = { showSnoozePicker = true }
                         )
 
                         2 -> AmToggleDisclosureRow(
-                            text = "Gradual volume",
+                            text = stringResource(R.string.settings_gradual_volume),
                             checked = gradualVolumeEnabled,
                             onCheckedChange = onGradualVolumeToggle,
                         )
 
                         else -> AmToggleDisclosureRow(
-                            text = "Vibrate",
+                            text = stringResource(R.string.settings_vibrate),
                             checked = vibrateEnabled,
                             onCheckedChange = onVibrateToggle
                         )
@@ -235,18 +238,18 @@ fun SettingsScreenContent(
                 }
             }
 
-            AmLabeledSectionCard(label = "Ringing") {
+            AmLabeledSectionCard(label = stringResource(R.string.settings_section_ringing)) {
                 sections(count = 2) { index ->
                     when (index) {
                         0 -> AmNavigationDisclosureRow(
-                            text = "Silence after",
+                            text = stringResource(R.string.settings_silence_after),
                             value = silenceAfterLabel,
                             onClick = onSilenceAfterClick,
                             enabled = false // TODO: Enable this
                         )
 
                         else -> AmNavigationDisclosureRow(
-                            text = "Volume buttons",
+                            text = stringResource(R.string.settings_volume_buttons),
                             value = volumeButtonsLabel,
                             onClick = onVolumeButtonsClick,
                             enabled = false // TODO: Enable this
@@ -255,18 +258,18 @@ fun SettingsScreenContent(
                 }
             }
 
-            AmLabeledSectionCard(label = "General") {
+            AmLabeledSectionCard(label = stringResource(R.string.settings_section_general)) {
                 sections(count = 2) { index ->
                     when (index) {
                         0 -> AmToggleDisclosureRow(
-                            text = "24-hour time",
+                            text = stringResource(R.string.settings_24_hour_time),
                             checked = is24HourTimeEnabled,
                             onCheckedChange = on24HourTimeToggle,
                             enabled = false // TODO: Enable this
                         )
 
                         else -> AmNavigationDisclosureRow(
-                            text = "Theme",
+                            text = stringResource(R.string.settings_theme),
                             value = themeLabel,
                             onClick = onThemeClick,
                             enabled = false // TODO: Enable this
@@ -275,11 +278,11 @@ fun SettingsScreenContent(
                 }
             }
 
-            AmLabeledSectionCard(label = "About") {
+            AmLabeledSectionCard(label = stringResource(R.string.settings_section_about)) {
                 sections(count = 3) { index ->
                     when (index) {
                         0 -> AmDisclosureRow(
-                            text = "Version",
+                            text = stringResource(R.string.settings_version),
                             onClick = null
                         ) {
                             Text(
@@ -290,7 +293,7 @@ fun SettingsScreenContent(
                         }
 
                         1 -> AmDisclosureRow(
-                            text = "Source code",
+                            text = stringResource(R.string.settings_source_code),
                             onClick = onSourceCodeClick
                         ) {
                             Text(
@@ -301,7 +304,7 @@ fun SettingsScreenContent(
                         }
 
                         else -> AmNavigationDisclosureRow(
-                            text = "Open-source licences",
+                            text = stringResource(R.string.settings_open_source_licences),
                             onClick = onLicencesClick
                         )
                     }
@@ -309,10 +312,10 @@ fun SettingsScreenContent(
             }
 
             if (showDeveloperSection) {
-                AmLabeledSectionCard(label = "Developer", labelColor = colors.primary) {
+                AmLabeledSectionCard(label = stringResource(R.string.settings_section_developer), labelColor = colors.primary) {
                     sections(count = 1) {
                         AmNavigationDisclosureRow(
-                            text = "Debug panel",
+                            text = stringResource(R.string.settings_debug_panel),
                             onClick = onDebugPanelClick
                         )
                     }
@@ -327,8 +330,8 @@ fun SettingsScreenContent(
         val defaultLimitIndex = remember(limitOptions) { limitOptions.indexOf(3) }
 
         SnoozePickerDialog(
-            title = "Default snooze",
-            subtitle = "New alarms start with this. Existing alarms don't change.",
+            title = stringResource(R.string.settings_default_snooze_title),
+            subtitle = stringResource(R.string.settings_default_snooze_subtitle),
             snoozeLengthOptions = lengthOptions,
             snoozeLimitOptions = limitOptions,
             selectedLengthIndex = draftLengthIndex,
@@ -363,7 +366,7 @@ private fun DefaultAlarmPreferencesHeader(
         modifier = modifier.padding(horizontal = 4.dp, vertical = 2.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp)
     ) {
-        AmSectionLabel(text = "Default alarm preferences", color = colors.primary)
+        AmSectionLabel(text = stringResource(R.string.settings_default_alarm_preferences), color = colors.primary)
         Text(
             text = description,
             style = LocalAlarmMeTypography.current.bodySmall,
@@ -373,6 +376,7 @@ private fun DefaultAlarmPreferencesHeader(
 }
 
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun SettingsScreenContentPreview() {
     var gradualVolumeEnabled by remember { mutableStateOf(true) }

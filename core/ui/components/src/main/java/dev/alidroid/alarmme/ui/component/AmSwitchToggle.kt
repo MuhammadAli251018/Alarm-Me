@@ -26,11 +26,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.alidroid.alarmme.ui.components.R
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeShapes
@@ -112,10 +117,16 @@ fun AmSwitchToggle(
             label = "thumbOffset"
         )
 
+        // `translationX` is a physical offset, but `CenterStart` has already mirrored the thumb's
+        // origin to the track's right edge, so in RTL the thumb has to travel the other way.
+        // Kept on `graphicsLayer` rather than `Modifier.offset` so the animation stays a draw-phase
+        // invalidation instead of relaying out every frame.
+        val thumbTravelSign = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1 else 1
+
         Box(
             modifier = Modifier
                 .graphicsLayer {
-                    translationX = thumbOffset.toPx()
+                    translationX = thumbOffset.toPx() * thumbTravelSign
                 }
                 .size(ThumbSize)
                 .clip(shape)
@@ -128,7 +139,7 @@ fun AmSwitchToggle(
                 exit = fadeOut(tween(LabelFadeMillis))
             ) {
                 Text(
-                    text = "ON",
+                    text = stringResource(R.string.switch_toggle_on),
                     style = LocalAlarmMeTypography.current
                         .labelSmall.copy(letterSpacing = 0.1.sp),
                     color = colors.onPrimaryContainer
@@ -161,6 +172,7 @@ private fun AmSwitchToggleUncheckedPreview() {
     name = "Dark Mode--Checked",
     uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
+@RtlPreview
 @Composable
 private fun AmSwitchToggleCheckedPreview() {
     var isChecked by remember { mutableStateOf(true) }

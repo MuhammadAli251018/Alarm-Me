@@ -21,11 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.alidroid.alarmme.ui.component.AmFilledTextButton
 import dev.alidroid.alarmme.ui.component.AmHeroTextField
 import dev.alidroid.alarmme.ui.component.AmPlainTextButton
 import dev.alidroid.alarmme.ui.component.AmSuggestionList
+import dev.alidroid.alarmme.ui.components.R as ComponentsR
+import dev.alidroid.alarmme.ui.screen.labelPicker.R
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
@@ -43,7 +46,7 @@ fun LabelPickerDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    placeholder: String = "What's it for?",
+    placeholder: String = stringResource(R.string.label_picker_placeholder),
     maxCharCount: Int = 30,
     onSuggestionLongClick: ((String) -> Unit)? = null,
 ) {
@@ -93,8 +96,8 @@ fun LabelPickerDialog(
                         modifier = Modifier.align(Alignment.CenterEnd),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        AmPlainTextButton(text = "Cancel", onClick = onDismiss)
-                        AmFilledTextButton(text = "Save", onClick = onSave)
+                        AmPlainTextButton(text = stringResource(ComponentsR.string.common_cancel), onClick = onDismiss)
+                        AmFilledTextButton(text = stringResource(ComponentsR.string.common_save), onClick = onSave)
                     }
                 }
             }

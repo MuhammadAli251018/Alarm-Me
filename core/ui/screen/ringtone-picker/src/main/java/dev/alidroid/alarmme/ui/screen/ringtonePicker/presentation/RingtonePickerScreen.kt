@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -28,6 +29,7 @@ import dev.alidroid.alarmme.alarms.domain.RingtoneId
 import dev.alidroid.alarmme.navigation.LocalNavResultRepository
 import dev.alidroid.alarmme.navigation.NavResultKey
 import dev.alidroid.alarmme.navigation.NavigationResult
+import dev.alidroid.alarmme.ui.screen.ringtonePicker.R
 import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.component.RingtoneItemsList
 import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.component.RingtonePickerTopBar
 import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.component.previewRingtones
@@ -39,6 +41,7 @@ import dev.alidroid.alarmme.ui.component.AmOutlineButtonBar
 import dev.alidroid.alarmme.ui.component.ErrorScreenContent
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.screenCategory.MediumWidthExpandedHeightPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.screenCategory.currentScreenCategory
 import dev.alidroid.alarmme.ui.theme.AlarmMeIcons
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
@@ -109,8 +112,8 @@ fun RingtonePickerScreenContent(
 
         RingtonePickerState.Error -> ErrorScreenContent(
             modifier = modifier,
-            errorHeading = "Couldn't load ringtones",
-            errorDescription = "Something went wrong while loading the sounds. Nothing was changed.",
+            errorHeading = stringResource(R.string.ringtone_picker_error_heading),
+            errorDescription = stringResource(R.string.ringtone_picker_error_description),
             onRetry = onRetry,
             onDismiss = onDismiss
         )
@@ -206,7 +209,7 @@ fun RingtoneScreenContent(
                     modifier = Modifier
                         .screenConstraints(screenCategory)
                         .padding(top = 16.dp, bottom = 22.dp),
-                    text = "Add custom sound",
+                    text = stringResource(R.string.ringtone_picker_add_custom_sound),
                     icon = { AmIcon(AlarmMeIcons.Add, null, tint = colors.primary) },
                     onClick = onCustomSoundClick
                 )
@@ -244,6 +247,7 @@ private fun PreviewRingtoneScreen(
  * height (top-bar chip), and expanded width (top-bar chip).
  */
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun RingtoneScreenContentPreview() {
     PreviewRingtoneScreen()

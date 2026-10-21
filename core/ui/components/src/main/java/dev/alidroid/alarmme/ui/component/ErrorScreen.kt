@@ -18,9 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.ui.components.R
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.screenCategory.currentScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.isExpandedWidthOrWider
@@ -64,7 +66,7 @@ fun ErrorScreenContent(
             ) {
                 AmIcon(
                     painter = AlarmMeIcons.Close,
-                    contentDescription = "Dismiss",
+                    contentDescription = stringResource(R.string.common_dismiss),
                     tint = colors.outline
                 )
             }
@@ -85,7 +87,7 @@ fun ErrorScreenContent(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            AmFilledTextButton(text = "Try again", onClick = onRetry)
+            AmFilledTextButton(text = stringResource(R.string.common_try_again), onClick = onRetry)
         }
     }
 }

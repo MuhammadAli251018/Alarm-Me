@@ -29,6 +29,7 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import kotlinx.coroutines.launch
@@ -133,6 +134,7 @@ fun AmHorizontalDatePicker(
 }
 
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun AmHorizontalDatePickerPreview() {
     AlarmMeThemeProvider {

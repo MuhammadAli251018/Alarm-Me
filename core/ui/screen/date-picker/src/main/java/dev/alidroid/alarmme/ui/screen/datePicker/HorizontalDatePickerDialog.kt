@@ -11,10 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.CalendarState
 import dev.alidroid.alarmme.ui.component.AmPlainTextButton
 import dev.alidroid.alarmme.ui.component.AmSquaryFilledTextButton
+import dev.alidroid.alarmme.ui.components.R as ComponentsR
+import dev.alidroid.alarmme.ui.screen.datePicker.R
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
@@ -35,7 +38,7 @@ fun HorizontalDatePickerDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier.padding(horizontal = 16.dp),
-        title = { Text(text = "Set Time", style = typography.titleLarge) },
+        title = { Text(text = stringResource(R.string.date_picker_dialog_title), style = typography.titleLarge) },
         text = {
             AmHorizontalDatePicker(
                 modifier = Modifier.height(300.dp),
@@ -45,10 +48,10 @@ fun HorizontalDatePickerDialog(
             )
         },
         confirmButton = {
-            AmSquaryFilledTextButton(text = "Save", onClick = { onSave(selectedDates) })
+            AmSquaryFilledTextButton(text = stringResource(ComponentsR.string.common_save), onClick = { onSave(selectedDates) })
         },
         dismissButton = {
-            AmPlainTextButton(text = "Cancel", onClick = onDismiss)
+            AmPlainTextButton(text = stringResource(ComponentsR.string.common_cancel), onClick = onDismiss)
         }
     )
 }

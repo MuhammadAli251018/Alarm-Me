@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,8 +26,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.ui.screen.ringtonePicker.R
 import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.model.RingtoneItemState
 import dev.alidroid.alarmme.ui.component.AmBadge
 import dev.alidroid.alarmme.ui.component.AmIcon
@@ -145,7 +148,10 @@ fun RingtoneItem(
 
             AmIcon(
                 painter = if (playing) AlarmMeIcons.Pause else AlarmMeIcons.Play,
-                contentDescription = if (playing) "Stop preview" else "Preview sound",
+                contentDescription = stringResource(
+                    if (playing) R.string.ringtone_item_stop_preview
+                    else R.string.ringtone_item_preview_sound
+                ),
                 size = AmIconDefaults.Small,
                 tint = colors.primary
             )
@@ -153,10 +159,12 @@ fun RingtoneItem(
     }
 }
 
+@Composable
+@ReadOnlyComposable
 private fun getRingtoneStatusBadge(isPlaying: Boolean, selected: Boolean): String {
     return when {
-        selected -> "SELECTED"
-        isPlaying -> "PLAYING"
+        selected -> stringResource(R.string.ringtone_item_badge_selected)
+        isPlaying -> stringResource(R.string.ringtone_item_badge_playing)
         else -> ""
     }
 }
