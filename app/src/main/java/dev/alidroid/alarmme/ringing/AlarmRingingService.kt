@@ -78,16 +78,14 @@ class AlarmRingingService : Service() {
             return
         }
 
-        // Two alarms due in the same minute: the later one takes over, rather than ringing on top
-        // of a ringtone nothing is holding on to any more. Only one is dismissable either way.
+        // In case two alarms where fired at the same time, the later one takes over.
         if (ringingAlarmId != null) silence()
 
         runWithAlarmWakeLock(this) {
             postRingingNotification(alarmId)
             ringingAlarmId = alarmId
+            ringingJob = ringingCoroutineScope.launch { ring(alarmId) }
         }
-
-        ringingJob = ringingCoroutineScope.launch { ring(alarmId) }
     }
 
     private suspend fun ring(alarmId: AlarmId) {
