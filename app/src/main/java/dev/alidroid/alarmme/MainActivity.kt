@@ -1,16 +1,23 @@
 package dev.alidroid.alarmme
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.navigator.Navigator
 import dev.alidroid.alarmme.navigation.AlarmListDestination
@@ -43,6 +50,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AlarmMeApp() {
+    RequestNotificationPermission()
+
     AlarmMeThemeProvider {
         ProvideNavResultRepository {
             ProvideNavGraph(AppNavigationGraph) {
@@ -51,6 +60,33 @@ fun AlarmMeApp() {
                 }
             }
         }
+    }
+}
+
+// The ringing screen is raised by a full-screen-intent notification, so without this grant an alarm
+// never rings. It lives here rather than in a feature because it belongs to the Activity hosting
+// the app UI — RingingActivity deliberately doesn't ask, as a permission dialog over the lockscreen
+// is useless.
+
+@Composable
+private fun RequestNotificationPermission() {
+    // POST_NOTIFICATIONS only exists on 33+; below that the grant is implicit.
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        // The system suppresses the dialog once denied, so there is nothing to react to.
+        onResult = {}
+    )
+
+    LaunchedEffect(Unit) {
+        val isGranted = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!isGranted) launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 }
 

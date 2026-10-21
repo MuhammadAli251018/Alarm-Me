@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- The app now asks for notification permission when it launches. Alarms ring through a
+    notification, so they stay silent without it.
+
 ### Changed
 - User-facing text now comes from string resources rather than being hardcoded, so the app can be
     translated. No translations ship yet.
