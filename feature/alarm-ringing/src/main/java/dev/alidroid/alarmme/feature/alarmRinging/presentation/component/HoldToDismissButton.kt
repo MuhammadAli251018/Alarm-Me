@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -42,10 +43,12 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import dev.alidroid.alarmme.feature.alarmRinging.R
 import dev.alidroid.alarmme.ui.component.AmIcon
 import dev.alidroid.alarmme.ui.component.AmIconDefaults
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeIcons
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
@@ -199,7 +202,13 @@ internal fun HoldToDismissSurface(
                 drawRect(color = container)
                 val swept = size.width * progress().coerceIn(0f, 1f)
                 if (swept > 0f) {
-                    drawRect(color = fill, size = Size(swept, size.height))
+                    // The sweep grows from the start edge, so it begins on the right in RTL.
+                    val left = if (layoutDirection == LayoutDirection.Ltr) 0f else size.width - swept
+                    drawRect(
+                        color = fill,
+                        topLeft = Offset(left, 0f),
+                        size = Size(swept, size.height)
+                    )
                 }
             }
             .padding(horizontal = 32.dp),
@@ -266,6 +275,7 @@ private fun HoldToDismissEarlyPreview() {
 
 @Preview(name = "Light Mode--85% held", showBackground = true)
 @Preview(name = "Dark Mode--85% held", uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@RtlPreview
 @Composable
 private fun HoldToDismissLatePreview() {
     PreviewHoldToDismiss(progress = 0.85f, phase = HoldPhase.Holding)

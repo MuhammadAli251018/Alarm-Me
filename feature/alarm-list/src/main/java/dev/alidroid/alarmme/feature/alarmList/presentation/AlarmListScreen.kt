@@ -52,6 +52,7 @@ import dev.alidroid.alarmme.ui.component.ErrorScreenContent
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.screenCategory.CompactWidthMediumHeightPreview
 import dev.alidroid.alarmme.ui.screenCategory.MediumWidthMediumHeightPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.screenCategory.WidthCategory
 import dev.alidroid.alarmme.ui.screenCategory.currentScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.isExpandedWidthOrWider
@@ -378,6 +379,7 @@ private fun PreviewLoaded(
  * landscape and expanded get nothing because their top bar already carries "New alarm".
  */
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun LoadedAlarmListScreenContentPreview() {
     PreviewLoaded()

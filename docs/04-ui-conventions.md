@@ -42,3 +42,8 @@ both the real screen and every one of its previews — if something UI-visible o
   - `@AllScreenCategoriesPreview` — all 15 width × height buckets in both themes (30 renders) —
     exhaustive and slow; reach for it when a layout's correctness genuinely depends on screen
     size, not by default.
+- `@RtlPreview` is a separate, opt-in axis: one compact bucket in both themes with `locale = "ar"`,
+  so the layout renders right-to-left (2 renders). It is deliberately *not* folded into the two
+  annotations above, which would double their render counts. Add it to a screen, and to any
+  component whose layout actually mirrors — it is the only place RTL gets verified, since previews
+  stand in for UI tests here.

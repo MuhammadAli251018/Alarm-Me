@@ -43,6 +43,7 @@ import dev.alidroid.alarmme.ui.screen.ringtonePicker.presentation.RingtonePicker
 import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerDialog
 import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerOptions
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeTypography
@@ -375,6 +376,7 @@ private fun DefaultAlarmPreferencesHeader(
 }
 
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun SettingsScreenContentPreview() {
     var gradualVolumeEnabled by remember { mutableStateOf(true) }

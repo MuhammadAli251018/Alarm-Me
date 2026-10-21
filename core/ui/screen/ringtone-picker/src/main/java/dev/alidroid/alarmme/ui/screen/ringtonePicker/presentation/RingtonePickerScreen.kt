@@ -41,6 +41,7 @@ import dev.alidroid.alarmme.ui.component.AmOutlineButtonBar
 import dev.alidroid.alarmme.ui.component.ErrorScreenContent
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.screenCategory.MediumWidthExpandedHeightPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.screenCategory.currentScreenCategory
 import dev.alidroid.alarmme.ui.theme.AlarmMeIcons
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
@@ -246,6 +247,7 @@ private fun PreviewRingtoneScreen(
  * height (top-bar chip), and expanded width (top-bar chip).
  */
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun RingtoneScreenContentPreview() {
     PreviewRingtoneScreen()

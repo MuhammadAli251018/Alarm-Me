@@ -32,10 +32,12 @@ import dev.alidroid.alarmme.ui.component.AmCheckBox
 import dev.alidroid.alarmme.ui.component.AmSectionCard
 import dev.alidroid.alarmme.ui.component.AmSwitchToggle
 import dev.alidroid.alarmme.ui.component.AmBadge
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeShapes
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeTypography
+import dev.alidroid.alarmme.utility.compose.LtrContent
 import kotlinx.datetime.LocalTime
 
 internal const val ALARM_ITEM_HEIGHT = 90
@@ -156,19 +158,22 @@ fun AlarmItem(
 
 @Composable
 fun AlarmItemTime(time: LocalTime, enabled: Boolean, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.spacedBy(TIME_MERIDIEM_GAP.dp)
-    ) {
-        AlarmTimeText(time, enabled)
+    // The time, its meridiem and the badge read in the same order in every locale.
+    LtrContent {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(TIME_MERIDIEM_GAP.dp)
+        ) {
+            AlarmTimeText(time, enabled)
 
-        if (!enabled) {
-            AmBadge(
-                modifier = Modifier.padding(bottom = TIME_MERIDIEM_GAP.dp),
-                text = stringResource(R.string.alarm_item_off_badge),
-                enabled = false
-            )
+            if (!enabled) {
+                AmBadge(
+                    modifier = Modifier.padding(bottom = TIME_MERIDIEM_GAP.dp),
+                    text = stringResource(R.string.alarm_item_off_badge),
+                    enabled = false
+                )
+            }
         }
     }
 }
@@ -235,6 +240,7 @@ private fun AlarmItemDefaultEnabledPreview() {
     name = "Dark Mode--Default Disabled",
     uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
+@RtlPreview
 @Composable
 private fun AlarmItemDefaultDisabledPreview() {
     var isEnabled by remember { mutableStateOf(false) }

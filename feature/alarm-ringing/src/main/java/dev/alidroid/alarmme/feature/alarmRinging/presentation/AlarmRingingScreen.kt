@@ -44,6 +44,7 @@ import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.AlarmRinging
 import dev.alidroid.alarmme.navigation.AlarmRingingParams
 import dev.alidroid.alarmme.ui.component.ErrorScreenContent
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.screenCategory.ScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.WidthCategory
 import dev.alidroid.alarmme.ui.screenCategory.currentScreenCategory
@@ -439,6 +440,7 @@ private fun previewRingingAlarm(
 )
 
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun AlarmRingingScreenContentPreview() {
     PreviewAlarmRinging(previewRingingAlarm())

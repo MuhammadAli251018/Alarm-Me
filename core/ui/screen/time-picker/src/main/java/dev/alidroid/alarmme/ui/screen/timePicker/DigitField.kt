@@ -65,11 +65,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.alidroid.alarmme.ui.component.rememberFocusedInteractionSource
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeShapes
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeTypography
 import kotlinx.coroutines.flow.drop
+import kotlin.math.max
+import kotlin.math.min
 
 private const val DefaultDigitCount = 2
 private const val PlaceholderChar = '–'
@@ -350,10 +353,15 @@ internal fun DigitField(
                                 val endBox = layout.getBoundingBox(cells.last)
                                 val y = startBox.bottom + UnderlineGap.toPx()
 
+                                // `cells` are logical indices but the boxes are visual, so take the
+                                // outer bounds rather than assuming first-is-leftmost.
+                                val left = min(startBox.left, endBox.left)
+                                val right = max(startBox.right, endBox.right)
+
                                 drawLine(
                                     color = colors.primary,
-                                    start = Offset(startBox.left, y),
-                                    end = Offset(endBox.right, y),
+                                    start = Offset(left, y),
+                                    end = Offset(right, y),
                                     strokeWidth = UnderlineThickness.toPx(),
                                     cap = StrokeCap.Round
                                 )
@@ -411,6 +419,7 @@ private fun DigitFieldPreview() {
 }
 
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun DigitFieldFocusedPreview() {
     AlarmMeThemeProvider {

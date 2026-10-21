@@ -21,6 +21,7 @@ import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeShapes
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeTypography
+import dev.alidroid.alarmme.utility.compose.LtrContent
 import dev.alidroid.alarmme.utility.kotlinDateTime.now
 import dev.alidroid.alarmme.utility.kotlinDateTime.toClockLabel
 import kotlinx.datetime.LocalDateTime
@@ -60,29 +61,34 @@ fun AlarmTimeDetails(
                 color = colors.primary
             )
 
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 16.dp)
-                    .padding(bottom = 8.dp),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                val timeString = remember(time) { time.toClockLabel() }
-                val meridiem = remember(time) { if (time.hour < 12) "AM" else "PM" }
+            // The time and its meridiem read in the same order in every locale.
+            LtrContent {
+                // Centred via the arrangement rather than ColumnScope.align, which is not in
+                // scope inside LtrContent; the parent Column already fills the width.
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                        .padding(bottom = 8.dp),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)
+                ) {
+                    val timeString = remember(time) { time.toClockLabel() }
+                    val meridiem = remember(time) { if (time.hour < 12) "AM" else "PM" }
 
-                Text(
-                    text = timeString,
-                    style = typography.alarmRow.copy(fontSize = 56.sp),
-                    color = colors.onSurface
-                )
+                    Text(
+                        text = timeString,
+                        style = typography.alarmRow.copy(fontSize = 56.sp),
+                        color = colors.onSurface
+                    )
 
-                Text(
-                    modifier = Modifier.padding(bottom = 6.dp),
-                    text = meridiem,
-                    style = typography.meridiem,
-                    color = colors.onSurfaceVariant
-                )
+                    Text(
+                        modifier = Modifier.padding(bottom = 6.dp),
+                        text = meridiem,
+                        style = typography.meridiem,
+                        color = colors.onSurfaceVariant
+                    )
+                }
             }
         }
     }

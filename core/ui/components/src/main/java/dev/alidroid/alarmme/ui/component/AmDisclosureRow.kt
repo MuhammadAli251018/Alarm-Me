@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeIcons
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
@@ -138,6 +139,7 @@ private fun AmDisclosureRowPreview() {
     name = "Dark Mode--With Chevron",
     uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
+@RtlPreview
 @Composable
 private fun AmDisclosureRowWithChevronPreview() {
     AlarmMeThemeProvider {

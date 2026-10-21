@@ -44,6 +44,7 @@ import dev.alidroid.alarmme.ui.component.AmTwoLineDisclosureRow
 import dev.alidroid.alarmme.ui.component.ErrorScreenContent
 import dev.alidroid.alarmme.ui.components.R as ComponentsR
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeTypography
@@ -333,6 +334,7 @@ private fun ResetAllFlagsRow(
 }
 
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun DebugPanelScreenContentPreview() {
     var globalMocksEnabled by remember { mutableStateOf(true) }

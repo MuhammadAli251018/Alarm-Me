@@ -28,6 +28,7 @@ import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import com.kizitonwose.calendar.core.yearMonth
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import kotlinx.coroutines.launch
@@ -107,6 +108,7 @@ fun AmVerticalDatePicker(
 }
 
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun AmVerticalDatePickerPreview() {
     AlarmMeThemeProvider {

@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -64,6 +65,7 @@ import dev.alidroid.alarmme.ui.screen.snoozePicker.SnoozePickerDialog
 import dev.alidroid.alarmme.ui.screen.timePicker.TimePickerBottomSheet
 import dev.alidroid.alarmme.ui.screen.timePicker.TimePickerDialog
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
+import dev.alidroid.alarmme.ui.screenCategory.RtlPreview
 import dev.alidroid.alarmme.ui.screenCategory.ScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.currentScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.isExpandedWidthOrWider
@@ -522,14 +524,16 @@ private fun AlarmDetailsHorizontalContent(
     Row(modifier = modifier) {
         Column(
             modifier = Modifier
-                .leftPaneWidth(screenCategory)
+                .primaryPaneWidth(screenCategory)
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
                 .drawBehind {
+                    // The divider belongs on the pane's inner edge, which mirrors with the Row.
+                    val x = if (layoutDirection == LayoutDirection.Ltr) size.width else 0f
                     drawLine(
                         color = colors.outline.copy(0.5f),
-                        start = Offset(size.width, 0f),
-                        end = Offset(size.width, size.height),
+                        start = Offset(x, 0f),
+                        end = Offset(x, size.height),
                         strokeWidth = 1f
                     )
                 }
@@ -578,16 +582,16 @@ private fun AlarmDetailsHorizontalContent(
     }
 }
 
-/** Left-pane width in [AlarmDetailsHorizontalContent], keyed off the same breakpoint the design uses. */
-private val LandscapePhoneLeftPaneWidth = 352.dp
-private val ExpandedLeftPaneWidth = 480.dp
+/** Leading-pane width in [AlarmDetailsHorizontalContent], keyed off the same breakpoint the design uses. */
+private val LandscapePhonePrimaryPaneWidth = 352.dp
+private val ExpandedPrimaryPaneWidth = 480.dp
 
 
-private fun Modifier.leftPaneWidth(screenCategory: ScreenCategory): Modifier {
+private fun Modifier.primaryPaneWidth(screenCategory: ScreenCategory): Modifier {
     val width = if (screenCategory.isExpandedWidthOrWider)
-        ExpandedLeftPaneWidth
+        ExpandedPrimaryPaneWidth
     else
-        LandscapePhoneLeftPaneWidth
+        LandscapePhonePrimaryPaneWidth
 
     return this.width(width)
 }
@@ -685,6 +689,7 @@ private fun PreviewAlarmDetailsScreen(state: AlarmDetailsState) {
  * compact height (two-pane split), and expanded width (wider two-pane split).
  */
 @CommonScreenCategoriesPreview
+@RtlPreview
 @Composable
 private fun AlarmDetailsScreenContentPreview() {
     PreviewAlarmDetailsScreen(AlarmDetailsState.Loaded(details = previewDetails(), canSave = false))

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.alidroid.alarmme.ui.screenCategory.ScreenCategory
@@ -201,7 +202,8 @@ class RingingHaloScope internal constructor() {
  * layout — the design's animated pulse ring that sat on top of this is deliberately left out.
  *
  * [RingingHaloScope.centerY] is measured from the layout's top edge and is usually negative, because
- * the glow's origin sits above the screen.
+ * the glow's origin sits above the screen. [RingingHaloScope.centerX] is measured from the layout's
+ * *start* edge, so the glow follows the content under RTL.
  */
 fun Modifier.ringingHalo(block: RingingHaloScope.() -> Unit): Modifier {
     // Resolved once, when the modifier chain is built, not on every draw frame.
@@ -211,8 +213,12 @@ fun Modifier.ringingHalo(block: RingingHaloScope.() -> Unit): Modifier {
         val radius = halo.diameter.toPx() / 2f
         if (radius <= 0f) return@drawBehind
 
+        // `centerX` is measured from the layout's start edge, so it mirrors with the content.
+        val centerX = halo.centerX?.toPx()?.let { offset ->
+            if (layoutDirection == LayoutDirection.Ltr) offset else size.width - offset
+        }
         val center = Offset(
-            x = halo.centerX?.toPx() ?: (size.width / 2f),
+            x = centerX ?: (size.width / 2f),
             y = halo.centerY?.toPx() ?: (size.height / 2f),
         )
 
