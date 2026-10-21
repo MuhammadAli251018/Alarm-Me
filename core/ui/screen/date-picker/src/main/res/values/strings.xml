@@ -1,0 +1,14 @@
+<resources>
+    <string name="date_picker_previous_month">Previous month</string>
+    <string name="date_picker_next_month">Next month</string>
+    <string name="date_picker_no_dates_selected">NO DATES SELECTED</string>
+    <plurals name="date_picker_dates_selected">
+        <item quantity="one">%1$d DATE SELECTED</item>
+        <item quantity="other">%1$d DATES SELECTED</item>
+    </plurals>
+    <!--
+      Reads "Set Time" in the source this was extracted from, even though all three callers are
+      date pickers. Kept verbatim so this migration changes no copy; worth correcting separately.
+    -->
+    <string name="date_picker_dialog_title">Set Time</string>
+</resources>

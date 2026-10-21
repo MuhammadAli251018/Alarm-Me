@@ -26,11 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.alidroid.alarmme.ui.components.R
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeShapes
@@ -128,7 +130,7 @@ fun AmSwitchToggle(
                 exit = fadeOut(tween(LabelFadeMillis))
             ) {
                 Text(
-                    text = "ON",
+                    text = stringResource(R.string.switch_toggle_on),
                     style = LocalAlarmMeTypography.current
                         .labelSmall.copy(letterSpacing = 0.1.sp),
                     color = colors.onPrimaryContainer

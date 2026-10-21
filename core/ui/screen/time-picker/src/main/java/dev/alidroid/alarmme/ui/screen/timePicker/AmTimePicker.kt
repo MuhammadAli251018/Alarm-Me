@@ -22,9 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.ui.screen.timePicker.R
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
@@ -72,7 +74,7 @@ fun AmTimePicker(
         DigitField(
             state = hourState,
             value = hour,
-            label = "HOUR",
+            label = stringResource(R.string.time_picker_hour_label),
             enabled = enabled,
             imeAction = ImeAction.Next,
             focusRequester = hourFocusRequester,
@@ -94,7 +96,7 @@ fun AmTimePicker(
         DigitField(
             state = minuteState,
             value = minute,
-            label = "MINUTE",
+            label = stringResource(R.string.time_picker_minute_label),
             enabled = enabled,
             imeAction = ImeAction.Done,
             focusRequester = minuteFocusRequester,
@@ -107,14 +109,14 @@ fun AmTimePicker(
             verticalArrangement = Arrangement.spacedBy(PillGap)
         ) {
             MeridiemPill(
-                text = "AM",
+                text = stringResource(R.string.time_picker_meridiem_am),
                 selected = isAm,
                 enabled = enabled,
                 onClick = { if (!isAm) onAmPmChange(true) }
             )
 
             MeridiemPill(
-                text = "PM",
+                text = stringResource(R.string.time_picker_meridiem_pm),
                 selected = !isAm,
                 enabled = enabled,
                 onClick = { if (isAm) onAmPmChange(false) }

@@ -1,3 +1,30 @@
 <resources>
     <string name="alarm_item_off_badge">OFF</string>
+
+    <string name="alarm_list_topbar_title">Alarms</string>
+    <string name="alarm_list_topbar_settings">Settings</string>
+    <string name="alarm_list_new_alarm">New alarm</string>
+    <string name="alarm_list_select_all">Select all</string>
+    <string name="alarm_list_exit_selection">Exit selection</string>
+
+    <!-- English reads the same for both quantities; split so translators can inflect. -->
+    <plurals name="alarm_list_selected_count">
+        <item quantity="one">%1$d selected</item>
+        <item quantity="other">%1$d selected</item>
+    </plurals>
+    <plurals name="alarm_list_disable_count">
+        <item quantity="one">Disable %1$d</item>
+        <item quantity="other">Disable %1$d</item>
+    </plurals>
+    <plurals name="alarm_list_delete_count">
+        <item quantity="one">Delete %1$d</item>
+        <item quantity="other">Delete %1$d</item>
+    </plurals>
+
+    <string name="alarm_list_error_heading">Couldn\'t load your alarms</string>
+    <string name="alarm_list_error_description">The alarm database didn\'t open. Your alarms are still saved — nothing was deleted.</string>
+
+    <string name="alarm_list_no_alarms_armed">NO ALARMS ARMED</string>
+    <!-- "NEXT · 6:40 PM · IN 2H 30M" — time, meridiem, then hours and minutes remaining. -->
+    <string name="alarm_list_next_alarm_eyebrow">NEXT · %1$s %2$s · IN %3$dH %4$dM</string>
 </resources>

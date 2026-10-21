@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">AlarmMe</string>
+
+    <!-- Shown in the notification shade, and in the system's per-channel notification settings. -->
+    <string name="alarm_notification_channel_name">Ringing alarms</string>
+    <string name="alarm_notification_channel_description">Full-screen alerts for alarms that are going off.</string>
+    <string name="alarm_notification_title">Alarm</string>
+    <string name="alarm_notification_text">Your alarm is ringing.</string>
 </resources>

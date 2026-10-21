@@ -23,10 +23,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import dev.alidroid.alarmme.feature.debugPanel.R
 import dev.alidroid.alarmme.feature.debugPanel.presentation.component.DebugPanelTopBar
 import dev.alidroid.alarmme.feature.debugPanel.presentation.model.DebugPanelEvent
 import dev.alidroid.alarmme.feature.debugPanel.presentation.model.DebugPanelState
@@ -40,6 +42,7 @@ import dev.alidroid.alarmme.ui.component.AmQuickActionButton
 import dev.alidroid.alarmme.ui.component.AmStatusPill
 import dev.alidroid.alarmme.ui.component.AmTwoLineDisclosureRow
 import dev.alidroid.alarmme.ui.component.ErrorScreenContent
+import dev.alidroid.alarmme.ui.components.R as ComponentsR
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
@@ -117,8 +120,8 @@ fun DebugPanelScreenContent(
 
         DebugPanelState.Error -> ErrorScreenContent(
             modifier = modifier.fillMaxSize(),
-            errorHeading = "Couldn't load the debug panel",
-            errorDescription = "Something went wrong reading debug state.",
+            errorHeading = stringResource(R.string.debug_panel_error_heading),
+            errorDescription = stringResource(R.string.debug_panel_error_description),
             onRetry = onRetry,
             onDismiss = onBackClick
         )
@@ -187,18 +190,18 @@ fun DebugPanelScreenContent(
         ) {
             AmBuildBanner(details = buildInfo)
 
-            AmLabeledSectionCard(label = "Feature flags") {
+            AmLabeledSectionCard(label = stringResource(R.string.debug_panel_section_feature_flags)) {
                 sections(count = 4) { index ->
                     when (index) {
                         0 -> AmFlagDisclosureRow(
-                            text = "Global mocks",
+                            text = stringResource(R.string.debug_panel_global_mocks),
                             description = "global_mocks_feature_flag",
                             checked = globalMocksEnabled,
                             onCheckedChange = onGlobalMocksToggle
                         )
 
                         1 -> AmFlagDisclosureRow(
-                            text = "Mock alarms",
+                            text = stringResource(R.string.debug_panel_mock_alarms),
                             description = "mock_alarms_feature_flag",
                             checked = mockAlarmsEnabled,
                             enabled = globalMocksEnabled,
@@ -206,7 +209,7 @@ fun DebugPanelScreenContent(
                         )
 
                         2 -> AmFlagDisclosureRow(
-                            text = "Mock ringtones",
+                            text = stringResource(R.string.debug_panel_mock_ringtones),
                             description = "mock_ringtones_feature_flag",
                             checked = mockRingtonesEnabled,
                             enabled = globalMocksEnabled,
@@ -218,18 +221,18 @@ fun DebugPanelScreenContent(
                 }
             }
 
-            AmLabeledSectionCard(label = "Triggers") {
+            AmLabeledSectionCard(label = stringResource(R.string.debug_panel_section_triggers)) {
                 sections(count = 3) { index ->
                     when (index) {
                         0 -> AmDisclosureRow(
-                            text = "Launch ringing screen",
+                            text = stringResource(R.string.debug_panel_launch_ringing_screen),
                             onClick = null
                         ) {
-                            AmQuickActionButton(text = "Run", onClick = onLaunchRingingScreenClick)
+                            AmQuickActionButton(text = stringResource(ComponentsR.string.common_run), onClick = onLaunchRingingScreenClick)
                         }
 
                         1 -> AmDisclosureRow(
-                            text = "Fire test alarm in",
+                            text = stringResource(R.string.debug_panel_fire_test_alarm_in),
                             onClick = null
                         ) {
                             TEST_ALARM_DELAYS.forEach { (delayLabel, duration) ->
@@ -241,27 +244,27 @@ fun DebugPanelScreenContent(
                         }
 
                         else -> AmDisclosureRow(
-                            text = "Seed 20 sample alarms",
+                            text = stringResource(R.string.debug_panel_seed_sample_alarms),
                             onClick = null
                         ) {
-                            AmQuickActionButton(text = "Run", onClick = onSeedSampleAlarmsClick)
+                            AmQuickActionButton(text = stringResource(ComponentsR.string.common_run), onClick = onSeedSampleAlarmsClick)
                         }
                     }
                 }
             }
 
-            AmLabeledSectionCard(label = "Diagnostics") {
+            AmLabeledSectionCard(label = stringResource(R.string.debug_panel_section_diagnostics)) {
                 sections(count = 2) { index ->
                     when (index) {
                         0 -> AmNavigationDisclosureRow(
-                            text = "Scheduled alarms",
+                            text = stringResource(R.string.debug_panel_scheduled_alarms),
                             value = scheduledAlarmsCount.toString(),
                             onClick = onScheduledAlarmsClick
                         )
 
                         // TODO: Add the other permissions
                         else -> AmDisclosureRow(
-                            text = "Exact-alarm permission",
+                            text = stringResource(R.string.debug_panel_exact_alarm_permission),
                             onClick = null
                         ) {
                             AmStatusPill(
@@ -274,31 +277,31 @@ fun DebugPanelScreenContent(
             }
 
             AmLabeledSectionCard(
-                label = "Danger zone",
+                label = stringResource(R.string.debug_panel_section_danger_zone),
                 labelColor = colors.error,
                 isDangerSection = true
             ) {
                 sections(count = 3) { index ->
                     when (index) {
                         0 -> AmTwoLineDisclosureRow(
-                            title = "Flush alarm database",
-                            subtitle = "Deletes every alarm"
+                            title = stringResource(R.string.debug_panel_flush_database_title),
+                            subtitle = stringResource(R.string.debug_panel_flush_database_subtitle)
                         ) {
-                            AmDestructiveTextButton(text = "Flush", onClick = onFlushDatabaseClick)
+                            AmDestructiveTextButton(text = stringResource(R.string.debug_panel_flush), onClick = onFlushDatabaseClick)
                         }
 
                         1 -> AmTwoLineDisclosureRow(
-                            title = "Clear preferences",
-                            subtitle = "Settings back to first launch"
+                            title = stringResource(R.string.debug_panel_clear_preferences_title),
+                            subtitle = stringResource(R.string.debug_panel_clear_preferences_subtitle)
                         ) {
-                            AmDestructiveTextButton(text = "Clear", onClick = onClearPreferencesClick)
+                            AmDestructiveTextButton(text = stringResource(ComponentsR.string.common_clear), onClick = onClearPreferencesClick)
                         }
 
                         else -> AmTwoLineDisclosureRow(
-                            title = "Reset onboarding",
-                            subtitle = "Show first-run flow again"
+                            title = stringResource(R.string.debug_panel_reset_onboarding_title),
+                            subtitle = stringResource(R.string.debug_panel_reset_onboarding_subtitle)
                         ) {
-                            AmDestructiveTextButton(text = "Reset", onClick = onResetOnboardingClick)
+                            AmDestructiveTextButton(text = stringResource(R.string.debug_panel_reset), onClick = onResetOnboardingClick)
                         }
                     }
                 }
@@ -322,7 +325,7 @@ private fun ResetAllFlagsRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Reset all flags",
+            text = stringResource(R.string.debug_panel_reset_all_flags),
             style = LocalAlarmMeTypography.current.labelLarge,
             color = LocalAlarmMeColors.current.primary
         )

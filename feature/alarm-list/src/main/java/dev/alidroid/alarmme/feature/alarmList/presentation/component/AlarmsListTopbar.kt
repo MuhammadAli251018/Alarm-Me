@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.feature.alarmList.R
 import dev.alidroid.alarmme.feature.alarmList.presentation.alarmsListHorizontalPaddings
 import dev.alidroid.alarmme.ui.component.AmFabExtendedButton
 import dev.alidroid.alarmme.ui.component.AmIcon
@@ -47,9 +51,6 @@ internal val TopBarContentHorizontalPadding: Dp = 8.dp
 internal val TopBarContentVerticalPadding: Dp = 12.dp
 internal val TopBarItemsSpacing: Dp = 8.dp
 
-internal const val TOP_BAR_TITLE = "Alarms"
-internal const val TOP_BAR_SELECT_LABEL = "Settings"
-internal const val TOP_BAR_NEW_ALARM_LABEL = "New alarm"
 
 @Composable
 fun AlarmsListTopBar(
@@ -121,11 +122,15 @@ fun AlarmsListTopBarSelectionMode(
             modifier = Modifier,
             onClick = onDismiss
         ) {
-            AmIcon(AlarmMeIcons.Close, contentDescription = "Exit selection")
+            AmIcon(AlarmMeIcons.Close, contentDescription = stringResource(R.string.alarm_list_exit_selection))
         }
 
         Text(
-            text = "$selectedAlarmsCount selected",
+            text = pluralStringResource(
+                R.plurals.alarm_list_selected_count,
+                selectedAlarmsCount,
+                selectedAlarmsCount
+            ),
             style = LocalAlarmMeTypography.current.titleMedium,
             color = colors.onSurfaceVariant
         )
@@ -133,7 +138,7 @@ fun AlarmsListTopBarSelectionMode(
         Box(modifier = Modifier.weight(1f)) {
            AmPlainTextButton(
                modifier = Modifier.align(Alignment.CenterEnd),
-               text = "Select all",
+               text = stringResource(R.string.alarm_list_select_all),
                onClick = onSelectAll
            )
         }
@@ -155,7 +160,7 @@ fun DefaultAlarmsListTopBarCompactAndMediumWidth(
                 vertical = TopBarContentVerticalPadding
             )
     ) {
-        val topBarEyebrow = remember(nextAlarmTime) { nextAlarmTime.toTopBarEyebrow() }
+        val topBarEyebrow = nextAlarmTime.toTopBarEyebrow()
         Text(
             text = topBarEyebrow,
             style = LocalAlarmMeTypography.current.labelSmall,
@@ -164,7 +169,7 @@ fun DefaultAlarmsListTopBarCompactAndMediumWidth(
 
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = TOP_BAR_TITLE,
+                text = stringResource(R.string.alarm_list_topbar_title),
                 style = LocalAlarmMeTypography.current.headlineSmall,
                 color = colors.onSurface,
                 modifier = Modifier.align(Alignment.CenterStart)
@@ -172,7 +177,7 @@ fun DefaultAlarmsListTopBarCompactAndMediumWidth(
 
             AmPlainTextButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
-                text = TOP_BAR_SELECT_LABEL,
+                text = stringResource(R.string.alarm_list_topbar_settings),
                 onClick = onSelectionClick
             )
         }
@@ -199,7 +204,7 @@ fun DefaultAlarmsListTopBarCompactHeight(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
     ) {
-        val topBarEyebrow = remember(nextAlarmTime) { nextAlarmTime.toTopBarEyebrow() }
+        val topBarEyebrow = nextAlarmTime.toTopBarEyebrow()
 
         Box(Modifier.weight(1f)){
             Row(
@@ -207,7 +212,7 @@ fun DefaultAlarmsListTopBarCompactHeight(
                 horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
             ) {
                 Text(
-                    text = TOP_BAR_TITLE,
+                    text = stringResource(R.string.alarm_list_topbar_title),
                     style = LocalAlarmMeTypography.current.headlineSmall,
                     color = colors.onSurface,
                     modifier = Modifier
@@ -222,12 +227,12 @@ fun DefaultAlarmsListTopBarCompactHeight(
         }
 
         AmPlainTextButton(
-            text = TOP_BAR_SELECT_LABEL,
+            text = stringResource(R.string.alarm_list_topbar_settings),
             onClick = onSelectionClick
         )
 
         AmFabExtendedButton(
-            text = TOP_BAR_NEW_ALARM_LABEL,
+            text = stringResource(R.string.alarm_list_new_alarm),
             icon = { AmIcon(AlarmMeIcons.Add, null) },
             onClick = onNewAlarmClick
         )
@@ -251,7 +256,7 @@ fun DefaultAlarmsListTopExpandedAndBiggerWidth(
                 vertical = TopBarContentVerticalPadding
             )
     ) {
-        val topBarEyebrow = remember(nextAlarmTime) { nextAlarmTime.toTopBarEyebrow() }
+        val topBarEyebrow = nextAlarmTime.toTopBarEyebrow()
         Text(
             text = topBarEyebrow,
             style = LocalAlarmMeTypography.current.labelSmall,
@@ -260,7 +265,7 @@ fun DefaultAlarmsListTopExpandedAndBiggerWidth(
 
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = TOP_BAR_TITLE,
+                text = stringResource(R.string.alarm_list_topbar_title),
                 style = LocalAlarmMeTypography.current.headlineSmall,
                 color = colors.onSurface,
                 modifier = Modifier.align(Alignment.CenterStart)
@@ -272,12 +277,12 @@ fun DefaultAlarmsListTopExpandedAndBiggerWidth(
                 horizontalArrangement = Arrangement.spacedBy(TopBarItemsSpacing)
             ){
                 AmPlainTextButton(
-                    text = TOP_BAR_SELECT_LABEL,
+                    text = stringResource(R.string.alarm_list_topbar_settings),
                     onClick = onSelectionClick
                 )
 
                 AmFabExtendedButton(
-                    text = TOP_BAR_NEW_ALARM_LABEL,
+                    text = stringResource(R.string.alarm_list_new_alarm),
                     icon = { AmIcon(AlarmMeIcons.Add, null) },
                     onClick = onNewAlarmClick
                 )
@@ -287,11 +292,13 @@ fun DefaultAlarmsListTopExpandedAndBiggerWidth(
 }
 
 @OptIn(ExperimentalTime::class)
+@Composable
+@ReadOnlyComposable
 fun LocalDateTime?.toTopBarEyebrow(
     now: LocalDateTime = LocalDateTime.now(),
     timeZone: TimeZone = TimeZone.currentSystemDefault()
 ): String {
-    if (this == null) return "NO ALARMS ARMED"
+    if (this == null) return stringResource(R.string.alarm_list_no_alarms_armed)
 
     // Subtract instants, not individual fields. Per-field subtraction goes negative whenever the
     // alarm's minute is below the current minute (6:40 vs 7:50 -> "-1H -10M") and breaks entirely
@@ -305,7 +312,13 @@ fun LocalDateTime?.toTopBarEyebrow(
     val minutes = minute.toString().padStart(2, '0')
     val meridiem = if (hour >= 12) "PM" else "AM"
 
-    return "NEXT · $hourInTwelves:$minutes $meridiem · IN ${remainingHours}H ${remainingMinutes}M"
+    return stringResource(
+        R.string.alarm_list_next_alarm_eyebrow,
+        "$hourInTwelves:$minutes",
+        meridiem,
+        remainingHours,
+        remainingMinutes
+    )
 }
 
 /**

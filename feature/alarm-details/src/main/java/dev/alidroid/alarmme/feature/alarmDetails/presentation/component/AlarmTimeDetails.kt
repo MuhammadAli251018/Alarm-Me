@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.alidroid.alarmme.feature.alarmDetails.R
 import dev.alidroid.alarmme.ui.component.AmSectionCard
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
@@ -26,9 +29,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
-
-// TODO: move to get from string resources
-private const val NOT_SCHEDULED_LABEL = "NOT SCHEDULED"
 
 @Composable
 fun AlarmTimeDetails(
@@ -52,7 +52,7 @@ fun AlarmTimeDetails(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            val eyebrow = remember(nextOccurrence) { nextOccurrence.toRingsInLabel() }
+            val eyebrow = nextOccurrence.toRingsInLabel()
 
             Text(
                 text = eyebrow,
@@ -94,18 +94,24 @@ fun AlarmTimeDetails(
  * out, not the same evening.
  */
 @OptIn(ExperimentalTime::class)
+@Composable
+@ReadOnlyComposable
 private fun LocalDateTime?.toRingsInLabel(
     now: LocalDateTime = LocalDateTime.now(),
     timeZone: TimeZone = TimeZone.currentSystemDefault()
 ): String {
-    if (this == null) return NOT_SCHEDULED_LABEL
+    if (this == null) return stringResource(R.string.alarm_details_not_scheduled)
 
     // Subtract instants, not individual fields: per-field subtraction goes negative whenever the
     // alarm's minute is below the current minute, and breaks entirely across midnight. Clamped at
     // zero so an alarm that has just fired never counts backwards.
     val remaining = (toInstant(timeZone) - now.toInstant(timeZone)).coerceAtLeast(Duration.ZERO)
 
-    return "RINGS IN · ${remaining.inWholeHours}H ${remaining.inWholeMinutes % 60}M"
+    return stringResource(
+        R.string.alarm_details_rings_in,
+        remaining.inWholeHours,
+        remaining.inWholeMinutes % 60
+    )
 }
 
 @Preview(name = "Light Mode", showBackground = true)

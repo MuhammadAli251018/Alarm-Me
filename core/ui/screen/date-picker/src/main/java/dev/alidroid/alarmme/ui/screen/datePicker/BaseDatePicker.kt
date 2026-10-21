@@ -17,6 +17,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.CalendarState
@@ -28,6 +30,7 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.yearMonth
 import dev.alidroid.alarmme.ui.component.AmIcon
 import dev.alidroid.alarmme.ui.component.AmIconDefaults
+import dev.alidroid.alarmme.ui.screen.datePicker.R
 import dev.alidroid.alarmme.ui.theme.AlarmMeIcons
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeShapes
@@ -94,13 +97,13 @@ internal fun DatePickerMonthHeader(
 
         DatePickerNavButton(
             icon = AlarmMeIcons.ChevronLeft,
-            contentDescription = "Previous month",
+            contentDescription = stringResource(R.string.date_picker_previous_month),
             enabled = enabled && canGoPrevious,
             onClick = onPreviousClick
         )
         DatePickerNavButton(
             icon = AlarmMeIcons.ChevronRight,
-            contentDescription = "Next month",
+            contentDescription = stringResource(R.string.date_picker_next_month),
             enabled = enabled && canGoNext,
             onClick = onNextClick
         )
@@ -216,7 +219,11 @@ internal fun SelectedDatesEyebrow(
     val typography = LocalAlarmMeTypography.current
 
     Text(
-        text = if (count == 0) "NO DATES SELECTED" else "$count DATES SELECTED",
+        text = if (count == 0) {
+            stringResource(R.string.date_picker_no_dates_selected)
+        } else {
+            pluralStringResource(R.plurals.date_picker_dates_selected, count, count)
+        },
         modifier = modifier,
         style = typography.labelSmall,
         color = colors.outline

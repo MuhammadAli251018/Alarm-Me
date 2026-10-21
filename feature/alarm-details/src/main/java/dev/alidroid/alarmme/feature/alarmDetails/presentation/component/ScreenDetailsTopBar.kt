@@ -14,12 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.alidroid.alarmme.ui.component.AmIcon
 import dev.alidroid.alarmme.ui.component.AmIconButton
 import dev.alidroid.alarmme.ui.component.AmPlainTextButton
 import dev.alidroid.alarmme.ui.component.AmSquaryFilledTextButton
+import dev.alidroid.alarmme.ui.components.R as ComponentsR
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.screenCategory.currentScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.isExpandedWidthOrWider
@@ -54,7 +56,7 @@ fun ScreenDetailsTopBar(
         AmIconButton(onClick = onBackClick) {
             AmIcon(
                 painter = AlarmMeIcons.ArrowBack,
-                contentDescription = "Go back",
+                contentDescription = stringResource(ComponentsR.string.common_go_back),
                 tint = colors.onSurfaceVariant
             )
         }
@@ -79,20 +81,20 @@ fun ScreenDetailsTopBar(
         if (currentScreenCategory.isExpandedWidthOrWider || currentScreenCategory.isLandscapePhone) {
 
             AmPlainTextButton(
-                text = "Delete",
+                text = stringResource(ComponentsR.string.common_delete),
                 contentColor = colors.error,
                 onClick = onDeleteButtonClick
             )
 
             AmSquaryFilledTextButton(
-                text = "Save",
+                text = stringResource(ComponentsR.string.common_save),
                 enabled = canSave,
                 onClick = onSaveButtonClick
             )
         }
         else {
             AmPlainTextButton(
-                text = "Save",
+                text = stringResource(ComponentsR.string.common_save),
                 contentColor = colors.primary,
                 enabled = canSave,
                 onClick = onSaveButtonClick

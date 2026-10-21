@@ -1,0 +1,5 @@
+<resources>
+    <string name="snooze_picker_length_label">Snooze for</string>
+    <string name="snooze_picker_limit_label">At most</string>
+    <string name="snooze_picker_turn_off">Turn off</string>
+</resources>

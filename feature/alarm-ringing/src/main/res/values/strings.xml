@@ -1,0 +1,30 @@
+<resources>
+    <string name="alarm_ringing_error_heading">Couldn\'t load the alarm</string>
+    <string name="alarm_ringing_error_description">Something went wrong reading the alarm that\'s ringing.</string>
+
+    <string name="alarm_ringing_snoozed_eyebrow">SNOOZED</string>
+    <!-- "AM · THURSDAY" — meridiem, then the day (or date) the alarm is for. -->
+    <string name="alarm_ringing_eyebrow">%1$s · %2$s</string>
+    <!-- "Back at 6:49 AM · 08:42 remaining" — time, meridiem, then mm:ss left. -->
+    <string name="alarm_ringing_back_at">Back at %1$s %2$s · %3$s remaining</string>
+
+    <string name="alarm_ringing_snooze">Snooze</string>
+    <string name="alarm_ringing_snooze_exhausted">No snoozes left</string>
+    <plurals name="alarm_ringing_snooze_again">
+        <item quantity="one">Snooze again (%1$d left)</item>
+        <item quantity="other">Snooze again (%1$d left)</item>
+    </plurals>
+    <string name="alarm_ringing_snooze_duration">%1$d min</string>
+    <string name="alarm_ringing_snooze_click_label">Snooze %1$d minutes</string>
+
+    <string name="alarm_ringing_hold_to_dismiss">Hold to dismiss</string>
+    <string name="alarm_ringing_hold_to_dismiss_for_good">Hold to dismiss for good</string>
+    <string name="alarm_ringing_hint">Snooze = one tap · dismiss = press and hold</string>
+    <string name="alarm_ringing_snoozed_hint">Snooze again, or hold to dismiss for good</string>
+
+    <string name="hold_to_dismiss_content_description">Dismiss alarm. Double tap and hold.</string>
+    <string name="hold_to_dismiss_action_label">Dismiss alarm</string>
+    <string name="hold_to_dismiss_state_dismissed">Dismissed</string>
+    <string name="hold_to_dismiss_keep_holding">Keep holding…</string>
+    <string name="hold_to_dismiss_press_and_hold">press and hold</string>
+</resources>

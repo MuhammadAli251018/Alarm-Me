@@ -13,11 +13,6 @@ import dev.alidroid.alarmme.alarms.domain.AlarmId
 import dev.alidroid.alarmme.alarms.scheduler.hashCode
 
 private const val ALARM_CHANNEL_ID = "alarm_ringing"
-private const val ALARM_CHANNEL_NAME = "Ringing alarms"
-private const val ALARM_CHANNEL_DESCRIPTION = "Full-screen alerts for alarms that are going off."
-private const val ALARM_NOTIFICATION_TITLE = "Alarm"
-private const val ALARM_NOTIFICATION_TEXT = "Your alarm is ringing."
-
 const val ALARM_NOTIFICATION_ID = 1
 
 class AlarmNotificationBuilder(context: Context) {
@@ -26,7 +21,7 @@ class AlarmNotificationBuilder(context: Context) {
     private val notificationManager = NotificationManagerCompat.from(appContext)
 
     init {
-        notificationManager.ensureAlarmChannel()
+        notificationManager.ensureAlarmChannel(appContext)
     }
 
     fun canPostAlarmNotification(): Boolean {
@@ -39,7 +34,7 @@ class AlarmNotificationBuilder(context: Context) {
     fun build(alarmId: AlarmId): Notification = appContext.ringingNotification(alarmId)
 }
 
-private fun NotificationManagerCompat.ensureAlarmChannel() {
+private fun NotificationManagerCompat.ensureAlarmChannel(context: Context) {
     val alarmAudio = AudioAttributes.Builder()
         .setUsage(AudioAttributes.USAGE_ALARM)
         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -50,8 +45,8 @@ private fun NotificationManagerCompat.ensureAlarmChannel() {
             ALARM_CHANNEL_ID,
             NotificationManagerCompat.IMPORTANCE_HIGH
         )
-            .setName(ALARM_CHANNEL_NAME)
-            .setDescription(ALARM_CHANNEL_DESCRIPTION)
+            .setName(context.getString(R.string.alarm_notification_channel_name))
+            .setDescription(context.getString(R.string.alarm_notification_channel_description))
             .setSound(null, alarmAudio)
             .build()
     )
@@ -67,8 +62,8 @@ private fun Context.ringingNotification(alarmId: AlarmId): Notification {
 
     return NotificationCompat.Builder(this, ALARM_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_launcher_monochrome)
-        .setContentTitle(ALARM_NOTIFICATION_TITLE)
-        .setContentText(ALARM_NOTIFICATION_TEXT)
+        .setContentTitle(getString(R.string.alarm_notification_title))
+        .setContentText(getString(R.string.alarm_notification_text))
         .setCategory(NotificationCompat.CATEGORY_ALARM)
         .setPriority(NotificationCompat.PRIORITY_MAX)
         .setOngoing(true)

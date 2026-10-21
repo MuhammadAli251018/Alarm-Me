@@ -3,7 +3,9 @@ package dev.alidroid.alarmme.feature.alarmDetails.presentation.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import dev.alidroid.alarmme.feature.alarmDetails.R
 import dev.alidroid.alarmme.ui.component.AmNavigationDisclosureRow
 import dev.alidroid.alarmme.ui.component.AmSectionedCard
 import dev.alidroid.alarmme.ui.component.AmToggleDisclosureRow
@@ -31,32 +33,32 @@ fun AlarmSettingsDetails(
         sections(count = 5) { index ->
             when (index) {
                 0 -> AmNavigationDisclosureRow(
-                    text = "Sound",
+                    text = stringResource(R.string.alarm_settings_sound),
                     value = soundLabel,
                     valueColor = colors.primary,
                     onClick = onSoundClick
                 )
 
                 1 -> AmNavigationDisclosureRow(
-                    text = "Snooze",
+                    text = stringResource(R.string.alarm_settings_snooze),
                     value = snoozeLabel,
                     onClick = onSnoozeClick
                 )
 
                 2 -> AmToggleDisclosureRow(
-                    text = "Gradual volume",
+                    text = stringResource(R.string.alarm_settings_gradual_volume),
                     checked = gradualVolumeEnabled,
                     onCheckedChange = onGradualVolumeToggle
                 )
 
                 3 -> AmToggleDisclosureRow(
-                    text = "Vibrate",
+                    text = stringResource(R.string.alarm_settings_vibrate),
                     checked = vibrateEnabled,
                     onCheckedChange = onVibrateToggle
                 )
 
                 else -> AmNavigationDisclosureRow(
-                    text = "Label",
+                    text = stringResource(R.string.alarm_settings_label),
                     value = alarmLabel,
                     onClick = onLabelClick
                 )

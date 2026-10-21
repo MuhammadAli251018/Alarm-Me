@@ -15,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.ui.components.R
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeShapes
@@ -28,7 +30,7 @@ import dev.alidroid.alarmme.ui.theme.PlexMono
 fun AmBuildBanner(
     details: String,
     modifier: Modifier = Modifier,
-    eyebrow: String = "DEBUG BUILD",
+    eyebrow: String = stringResource(R.string.build_banner_debug_build),
 ) {
     val colors = LocalAlarmMeColors.current
     val typography = LocalAlarmMeTypography.current

@@ -1,0 +1,7 @@
+<resources>
+    <string name="time_picker_hour_label">HOUR</string>
+    <string name="time_picker_minute_label">MINUTE</string>
+    <string name="time_picker_meridiem_am">AM</string>
+    <string name="time_picker_meridiem_pm">PM</string>
+    <string name="time_picker_dialog_title">Set Time</string>
+</resources>

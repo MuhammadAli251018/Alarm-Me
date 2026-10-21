@@ -10,9 +10,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.feature.settings.R
 import dev.alidroid.alarmme.ui.component.AmIcon
 import dev.alidroid.alarmme.ui.component.AmIconButton
+import dev.alidroid.alarmme.ui.components.R as ComponentsR
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeIcons
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
@@ -37,13 +40,13 @@ fun SettingsTopBar(
         AmIconButton(onClick = onBackClick) {
             AmIcon(
                 painter = AlarmMeIcons.ArrowBack,
-                contentDescription = "Go back",
+                contentDescription = stringResource(ComponentsR.string.common_go_back),
                 tint = colors.onSurfaceVariant
             )
         }
 
         Text(
-            text = "Settings",
+            text = stringResource(R.string.settings_screen_title),
             color = colors.onSurface,
             style = LocalAlarmMeTypography.current.titleMedium
         )

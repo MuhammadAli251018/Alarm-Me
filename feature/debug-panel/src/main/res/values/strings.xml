@@ -1,0 +1,30 @@
+<resources>
+    <string name="debug_panel_screen_title">Debug panel</string>
+    <string name="debug_panel_error_heading">Couldn\'t load the debug panel</string>
+    <string name="debug_panel_error_description">Something went wrong reading debug state.</string>
+
+    <string name="debug_panel_section_feature_flags">Feature flags</string>
+    <string name="debug_panel_global_mocks">Global mocks</string>
+    <string name="debug_panel_mock_alarms">Mock alarms</string>
+    <string name="debug_panel_mock_ringtones">Mock ringtones</string>
+
+    <string name="debug_panel_section_triggers">Triggers</string>
+    <string name="debug_panel_launch_ringing_screen">Launch ringing screen</string>
+    <string name="debug_panel_fire_test_alarm_in">Fire test alarm in</string>
+    <string name="debug_panel_seed_sample_alarms">Seed 20 sample alarms</string>
+
+    <string name="debug_panel_section_diagnostics">Diagnostics</string>
+    <string name="debug_panel_scheduled_alarms">Scheduled alarms</string>
+    <string name="debug_panel_exact_alarm_permission">Exact-alarm permission</string>
+
+    <string name="debug_panel_section_danger_zone">Danger zone</string>
+    <string name="debug_panel_flush_database_title">Flush alarm database</string>
+    <string name="debug_panel_flush_database_subtitle">Deletes every alarm</string>
+    <string name="debug_panel_flush">Flush</string>
+    <string name="debug_panel_clear_preferences_title">Clear preferences</string>
+    <string name="debug_panel_clear_preferences_subtitle">Settings back to first launch</string>
+    <string name="debug_panel_reset_onboarding_title">Reset onboarding</string>
+    <string name="debug_panel_reset_onboarding_subtitle">Show first-run flow again</string>
+    <string name="debug_panel_reset">Reset</string>
+    <string name="debug_panel_reset_all_flags">Reset all flags</string>
+</resources>

@@ -32,6 +32,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.alidroid.alarmme.feature.alarmRinging.R
 import dev.alidroid.alarmme.ui.component.AmIcon
 import dev.alidroid.alarmme.ui.component.AmIconDefaults
 import dev.alidroid.alarmme.ui.theme.AlarmMeIcons
@@ -110,6 +112,11 @@ fun HoldToDismissButton(
         onDismiss()
     }
 
+    // `semantics` is not a composable scope, so these are resolved before the modifier chain.
+    val dismissContentDescription = stringResource(R.string.hold_to_dismiss_content_description)
+    val dismissActionLabel = stringResource(R.string.hold_to_dismiss_action_label)
+    val dismissedStateDescription = stringResource(R.string.hold_to_dismiss_state_dismissed)
+
     /* The halfway tick. Only when going forward. */
     LaunchedEffect(Unit) {
         val initial = progress.value
@@ -152,9 +159,9 @@ fun HoldToDismissButton(
             }
             .semantics(mergeDescendants = true) {
                 role = Role.Button
-                contentDescription = "Dismiss alarm. Double tap and hold."
-                if (phase == HoldPhase.Dismissed) stateDescription = "Dismissed"
-                onClick(label = "Dismiss alarm") {
+                contentDescription = dismissContentDescription
+                if (phase == HoldPhase.Dismissed) stateDescription = dismissedStateDescription
+                onClick(label = dismissActionLabel) {
                     if (enabled && !completed) completed = true
                     true
                 }
@@ -180,8 +187,8 @@ internal fun HoldToDismissSurface(
 
     val text = when (phase) {
         HoldPhase.Rest -> label
-        HoldPhase.Holding -> "Keep holding…"
-        HoldPhase.Dismissed -> "Dismissed"
+        HoldPhase.Holding -> stringResource(R.string.hold_to_dismiss_keep_holding)
+        HoldPhase.Dismissed -> stringResource(R.string.hold_to_dismiss_state_dismissed)
     }
 
     Box(
@@ -214,7 +221,11 @@ internal fun HoldToDismissSurface(
                 )
 
                 if (phase == HoldPhase.Rest) {
-                    Text(text = "press and hold", style = typography.meridiem, color = content)
+                    Text(
+                        text = stringResource(R.string.hold_to_dismiss_press_and_hold),
+                        style = typography.meridiem,
+                        color = content
+                    )
                 }
             }
 

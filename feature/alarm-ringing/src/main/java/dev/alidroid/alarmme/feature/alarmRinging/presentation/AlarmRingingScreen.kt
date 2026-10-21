@@ -18,10 +18,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import dev.alidroid.alarmme.alarms.domain.AlarmId
+import dev.alidroid.alarmme.feature.alarmRinging.R
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.component.RingingActionStack
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.component.RingingHero
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.component.meridiem
@@ -57,10 +61,6 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import org.koin.core.parameter.parametersOf
 
-private const val SNOOZED_EYEBROW = "SNOOZED"
-private const val RINGING_HINT = "Snooze = one tap · dismiss = press and hold"
-private const val SNOOZED_HINT = "Snooze again, or hold to dismiss for good"
-
 private const val RINGING_HALO_ALPHA = 0.15f
 private const val SNOOZED_HALO_ALPHA = 0.09f
 
@@ -69,9 +69,6 @@ private val PortraitActionsBottomSpacing: Dp = 34.dp
 private val LandscapeVerticalPadding: Dp = 26.dp
 private val LandscapeActionsWidth: Dp = 300.dp
 private val ExpandedActionsMaxWidth: Dp = 480.dp
-
-private const val ERROR_HEADING = "Couldn't load the alarm"
-private const val ERROR_DESCRIPTION = "Something went wrong reading the alarm that's ringing."
 
 @Parcelize
 class AlarmRingingScreen(val params: AlarmRingingParams) : Screen, Parcelable {
@@ -122,8 +119,8 @@ fun AlarmRingingScreenContent(
 
         AlarmRingingState.Error -> ErrorScreenContent(
             modifier = modifier.fillMaxSize(),
-            errorHeading = ERROR_HEADING,
-            errorDescription = ERROR_DESCRIPTION,
+            errorHeading = stringResource(R.string.alarm_ringing_error_heading),
+            errorDescription = stringResource(R.string.alarm_ringing_error_description),
             onRetry = onRetry,
             onDismiss = onDismiss
         )
@@ -330,20 +327,30 @@ private fun ringingGutter(screenCategory: ScreenCategory): Dp {
 }
 
 /** `"AM · THURSDAY"`, `"AM · THURSDAY 10 SEPTEMBER"` on expanded, `"AM · SNOOZED"` once snoozed. */
+@Composable
+@ReadOnlyComposable
 private fun AlarmRingingUiState.eyebrow(dated: Boolean): String {
     val tail = when {
-        phase is AlarmRingingUiState.Phase.Snoozed -> SNOOZED_EYEBROW
+        phase is AlarmRingingUiState.Phase.Snoozed -> stringResource(R.string.alarm_ringing_snoozed_eyebrow)
+        // Still the raw enum name: localizing these needs `getDisplayName(locale)`, which is the
+        // separate locale-formatting task, not this string extraction.
         dated -> "${date.dayOfWeek.name} ${date.day} ${date.month.name}"
         else -> date.dayOfWeek.name
     }
-    return "${time.meridiem()} · $tail"
+    return stringResource(R.string.alarm_ringing_eyebrow, time.meridiem(), tail)
 }
 
 /** `"Back at 6:49 AM · 08:42 remaining"`, or null while the alarm is actually ringing. */
+@Composable
+@ReadOnlyComposable
 private fun AlarmRingingUiState.countdownLabel(): String? {
     val snoozed = phase as? AlarmRingingUiState.Phase.Snoozed ?: return null
-    return "Back at ${snoozed.nextRingAt.toClockLabel()} ${snoozed.nextRingAt.meridiem()} · " +
-        "${snoozed.remaining.toRemainingLabel()} remaining"
+    return stringResource(
+        R.string.alarm_ringing_back_at,
+        snoozed.nextRingAt.toClockLabel(),
+        snoozed.nextRingAt.meridiem(),
+        snoozed.remaining.toRemainingLabel()
+    )
 }
 
 /** `mm:ss`, zero-padded so tabular figures keep the line still as it ticks. */
@@ -358,33 +365,63 @@ private val AlarmRingingUiState.isSnoozeExhausted: Boolean
     get() = snooze is AlarmRingingUiState.Snooze.Exhausted
 
 /** Snooze is finite, and once it has been used the count is stated rather than implied. */
+@Composable
+@ReadOnlyComposable
 private fun AlarmRingingUiState.snoozeLabel(): String = when (val snooze = snooze) {
-    AlarmRingingUiState.Snooze.Exhausted -> "No snoozes left"
+    AlarmRingingUiState.Snooze.Exhausted -> stringResource(R.string.alarm_ringing_snooze_exhausted)
     is AlarmRingingUiState.Snooze.Available ->
         if (phase is AlarmRingingUiState.Phase.Snoozed) {
-            "Snooze again (${snooze.remainingCount} left)"
+            pluralStringResource(
+                R.plurals.alarm_ringing_snooze_again,
+                snooze.remainingCount,
+                snooze.remainingCount
+            )
         } else {
-            "Snooze"
+            stringResource(R.string.alarm_ringing_snooze)
         }
 }
 
 /** The duration meta answers "how long" on the first tap; the design drops it once snoozed. */
+@Composable
+@ReadOnlyComposable
 private fun AlarmRingingUiState.snoozeDurationLabel(): String? {
     if (phase is AlarmRingingUiState.Phase.Snoozed) return null
     val available = snooze as? AlarmRingingUiState.Snooze.Available ?: return null
-    return "${available.duration.inWholeMinutes} min"
+    return stringResource(
+        R.string.alarm_ringing_snooze_duration,
+        available.duration.inWholeMinutes
+    )
 }
 
+@Composable
+@ReadOnlyComposable
 private fun AlarmRingingUiState.snoozeOnClickLabel(): String? {
     val available = snooze as? AlarmRingingUiState.Snooze.Available ?: return null
-    return "Snooze ${available.duration.inWholeMinutes} minutes"
+    return stringResource(
+        R.string.alarm_ringing_snooze_click_label,
+        available.duration.inWholeMinutes
+    )
 }
 
-private fun AlarmRingingUiState.dismissLabel(): String =
-    if (phase is AlarmRingingUiState.Phase.Snoozed) "Hold to dismiss for good" else "Hold to dismiss"
+@Composable
+@ReadOnlyComposable
+private fun AlarmRingingUiState.dismissLabel(): String = stringResource(
+    if (phase is AlarmRingingUiState.Phase.Snoozed) {
+        R.string.alarm_ringing_hold_to_dismiss_for_good
+    } else {
+        R.string.alarm_ringing_hold_to_dismiss
+    }
+)
 
-private fun AlarmRingingUiState.hint(): String =
-    if (phase is AlarmRingingUiState.Phase.Snoozed) SNOOZED_HINT else RINGING_HINT
+@Composable
+@ReadOnlyComposable
+private fun AlarmRingingUiState.hint(): String = stringResource(
+    if (phase is AlarmRingingUiState.Phase.Snoozed) {
+        R.string.alarm_ringing_snoozed_hint
+    } else {
+        R.string.alarm_ringing_hint
+    }
+)
 
 
 // Previews

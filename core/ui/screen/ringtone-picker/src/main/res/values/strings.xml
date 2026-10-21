@@ -1,3 +1,11 @@
 <resources>
     <string name="sound_screen_title">Ringtones</string>
+    <string name="ringtone_picker_custom_sound_title">Custom Sound</string>
+    <string name="ringtone_picker_add_custom_sound">Add custom sound</string>
+    <string name="ringtone_picker_error_heading">Couldn\'t load ringtones</string>
+    <string name="ringtone_picker_error_description">Something went wrong while loading the sounds. Nothing was changed.</string>
+    <string name="ringtone_item_stop_preview">Stop preview</string>
+    <string name="ringtone_item_preview_sound">Preview sound</string>
+    <string name="ringtone_item_badge_selected">SELECTED</string>
+    <string name="ringtone_item_badge_playing">PLAYING</string>
 </resources>

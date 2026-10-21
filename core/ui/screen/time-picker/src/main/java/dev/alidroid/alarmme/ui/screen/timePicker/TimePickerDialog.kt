@@ -11,8 +11,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import dev.alidroid.alarmme.ui.component.AmFilledTextButton
 import dev.alidroid.alarmme.ui.component.AmPlainTextButton
+import dev.alidroid.alarmme.ui.components.R as ComponentsR
+import dev.alidroid.alarmme.ui.screen.timePicker.R
 import dev.alidroid.alarmme.ui.screenCategory.CommonScreenCategoriesPreview
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
@@ -37,7 +40,7 @@ fun TimePickerDialog(
         onDismissRequest = onDismiss,
         modifier = modifier,
         containerColor = LocalAlarmMeColors.current.surface,
-        title = { Text(text = "Set Time", style = typography.titleLarge) },
+        title = { Text(text = stringResource(R.string.time_picker_dialog_title), style = typography.titleLarge) },
         text = {
             AmTimePicker(
                 hour = hour,
@@ -49,10 +52,10 @@ fun TimePickerDialog(
             )
         },
         confirmButton = {
-            AmFilledTextButton(text = "Save", onClick = onSave)
+            AmFilledTextButton(text = stringResource(ComponentsR.string.common_save), onClick = onSave)
         },
         dismissButton = {
-            AmPlainTextButton(text = "Cancel", onClick = onDismiss)
+            AmPlainTextButton(text = stringResource(ComponentsR.string.common_cancel), onClick = onDismiss)
         }
     )
 }

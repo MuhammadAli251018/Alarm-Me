@@ -1,0 +1,26 @@
+<resources>
+    <string name="alarm_details_error_heading">Couldn\'t load this alarm</string>
+    <string name="alarm_details_error_description">Something went wrong while loading it. Nothing was changed.</string>
+
+    <string name="alarm_details_snooze_dialog_title">Snooze</string>
+    <string name="alarm_details_label_dialog_title">Label</string>
+    <string name="alarm_details_label_suggestions">Ideas</string>
+    <string name="alarm_details_delete_alarm">Delete alarm</string>
+
+    <string name="alarm_details_snooze_off">Off</string>
+    <string name="alarm_details_snooze_no_limit">%1$d min · no limit</string>
+    <string name="alarm_details_snooze_limited">%1$d min · %2$d times</string>
+
+    <string name="alarm_settings_sound">Sound</string>
+    <string name="alarm_settings_snooze">Snooze</string>
+    <string name="alarm_settings_gradual_volume">Gradual volume</string>
+    <string name="alarm_settings_vibrate">Vibrate</string>
+    <string name="alarm_settings_label">Label</string>
+
+    <string name="alarm_details_not_scheduled">NOT SCHEDULED</string>
+    <!-- "RINGS IN · 2H 30M" — hours then minutes until the alarm fires. -->
+    <string name="alarm_details_rings_in">RINGS IN · %1$dH %2$dM</string>
+
+    <string name="schedule_details_title">SCHEDULE</string>
+    <string name="schedule_details_custom_date">Custom date</string>
+</resources>

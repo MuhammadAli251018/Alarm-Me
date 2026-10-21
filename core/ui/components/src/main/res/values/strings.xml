@@ -1,0 +1,24 @@
+<resources>
+
+    <!--
+      Shared action and affordance copy. These live here, in the design-system module, because the
+      same word is used by several features and screens; every feature and `core:ui:screen:*`
+      module already depends on `core:ui:components`, so they reference these via
+      `dev.alidroid.alarmme.ui.component.R`.
+    -->
+    <string name="common_save">Save</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_run">Run</string>
+    <string name="common_clear">Clear</string>
+    <string name="common_dismiss">Dismiss</string>
+    <string name="common_try_again">Try again</string>
+    <string name="common_go_back">Go back</string>
+
+    <!-- Copy owned by a single component in this module. -->
+    <string name="switch_toggle_on">ON</string>
+    <string name="build_banner_debug_build">DEBUG BUILD</string>
+    <!-- Character counter on a hero text field: typed length over the limit, e.g. "12/40". -->
+    <string name="hero_text_field_counter">%1$d/%2$d</string>
+
+</resources>

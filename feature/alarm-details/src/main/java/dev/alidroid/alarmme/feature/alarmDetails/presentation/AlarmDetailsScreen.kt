@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -38,6 +40,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import dev.alidroid.alarmme.alarms.domain.AlarmId
 import dev.alidroid.alarmme.alarms.domain.Ringtone
 import dev.alidroid.alarmme.alarms.domain.RingtoneId
+import dev.alidroid.alarmme.feature.alarmDetails.R
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.component.AlarmSettingsDetails
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.component.AlarmTimeDetails
 import dev.alidroid.alarmme.feature.alarmDetails.presentation.component.ScheduleDetails
@@ -182,8 +185,8 @@ fun AlarmDetailsScreenContent(
 
         AlarmDetailsState.Error -> ErrorScreenContent(
             modifier = modifier,
-            errorHeading = "Couldn't load this alarm",
-            errorDescription = "Something went wrong while loading it. Nothing was changed.",
+            errorHeading = stringResource(R.string.alarm_details_error_heading),
+            errorDescription = stringResource(R.string.alarm_details_error_description),
             onRetry = onRetry,
             onDismiss = onDismiss
         )
@@ -331,7 +334,7 @@ fun AlarmDetailsLoadedContent(
         var draftLimitIndex by remember { mutableStateOf(details.snoozeLimitIndex) }
 
         SnoozePickerDialog(
-            title = "Snooze",
+            title = stringResource(R.string.alarm_details_snooze_dialog_title),
             snoozeLengthOptions = state.lengthOptions,
             snoozeLimitOptions = state.limitOptions,
             selectedLengthIndex = draftLengthIndex,
@@ -354,10 +357,10 @@ fun AlarmDetailsLoadedContent(
         var draftLabel by remember { mutableStateOf(details.label) }
 
         LabelPickerDialog(
-            label = "Label",
+            label = stringResource(R.string.alarm_details_label_dialog_title),
             value = draftLabel,
             onValueChange = { draftLabel = it },
-            suggestionsLabel = "Ideas",
+            suggestionsLabel = stringResource(R.string.alarm_details_label_suggestions),
             suggestions = LabelIdeas,
             onSave = {
                 onLabelChanged(draftLabel.trim())
@@ -490,7 +493,7 @@ private fun AlarmDetailsVerticalContent(
         )
 
         AmPlainTextButton(
-            text = "Delete alarm",
+            text = stringResource(R.string.alarm_details_delete_alarm),
             contentColor = LocalAlarmMeColors.current.error,
             onClick = onDeleteClick
         )
@@ -589,11 +592,17 @@ private fun Modifier.leftPaneWidth(screenCategory: ScreenCategory): Modifier {
     return this.width(width)
 }
 
+@Composable
+@ReadOnlyComposable
 private fun AlarmDetailsUiState.toSnoozeLabel(lengthOptions: List<Duration>, limitOptions: List<Int?>): String {
-    val lengthIndex = snoozeLengthIndex ?: return "Off"
+    val lengthIndex = snoozeLengthIndex ?: return stringResource(R.string.alarm_details_snooze_off)
     val minutes = lengthOptions[lengthIndex].inWholeMinutes
     val limitValue = snoozeLimitIndex?.let { limitOptions[it] }
-    return if (limitValue == null) "$minutes min · no limit" else "$minutes min · $limitValue times"
+    return if (limitValue == null) {
+        stringResource(R.string.alarm_details_snooze_no_limit, minutes)
+    } else {
+        stringResource(R.string.alarm_details_snooze_limited, minutes, limitValue)
+    }
 }
 
 private fun List<LocalDate>.toCustomDateLabel(): String =
