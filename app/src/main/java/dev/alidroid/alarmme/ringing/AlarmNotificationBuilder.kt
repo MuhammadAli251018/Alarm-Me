@@ -1,18 +1,15 @@
-package dev.alidroid.alarmme
+package dev.alidroid.alarmme.ringing
 
-import android.Manifest
 import android.app.Notification
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.media.AudioAttributes
-import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import dev.alidroid.alarmme.R
+import dev.alidroid.alarmme.RingingActivity
 import dev.alidroid.alarmme.alarms.domain.AlarmId
-import dev.alidroid.alarmme.alarms.scheduler.alarmIdOrNull
 import dev.alidroid.alarmme.alarms.scheduler.hashCode
 
 private const val ALARM_CHANNEL_ID = "alarm_ringing"
@@ -21,27 +18,27 @@ private const val ALARM_CHANNEL_DESCRIPTION = "Full-screen alerts for alarms tha
 private const val ALARM_NOTIFICATION_TITLE = "Alarm"
 private const val ALARM_NOTIFICATION_TEXT = "Your alarm is ringing."
 
-/**
- * Where a scheduled alarm lands. A receiver can't reliably start an activity from the
- * background, so it posts a full-screen-intent notification instead and lets the system bring
- * [RingingActivity] up — full screen when the device is locked, a heads-up notification when
- * it is in use.
- */
-class AlarmReceiver : BroadcastReceiver() {
+const val ALARM_NOTIFICATION_ID = 1
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    override fun onReceive(context: Context?, intent: Intent?) {
-        val appContext = context?.applicationContext ?: return
-        // Without an id there is no way to know which alarm went off, so there is nothing to show.
-        val alarmId = intent?.alarmIdOrNull() ?: return
+class AlarmNotificationBuilder(context: Context) {
 
-        val notificationManager = NotificationManagerCompat.from(appContext)
+    private val appContext = context.applicationContext
+    private val notificationManager = NotificationManagerCompat.from(appContext)
+
+    init {
         notificationManager.ensureAlarmChannel()
-        notificationManager.notify(alarmId.hashCode, appContext.ringingNotification(alarmId))
     }
+
+    fun canPostAlarmNotification(): Boolean {
+        if (!notificationManager.areNotificationsEnabled()) return false
+
+        val channel = notificationManager.getNotificationChannelCompat(ALARM_CHANNEL_ID)
+        return channel == null || channel.importance != NotificationManagerCompat.IMPORTANCE_NONE
+    }
+
+    fun build(alarmId: AlarmId): Notification = appContext.ringingNotification(alarmId)
 }
 
-/** Creating a channel that already exists only updates its name and description. */
 private fun NotificationManagerCompat.ensureAlarmChannel() {
     val alarmAudio = AudioAttributes.Builder()
         .setUsage(AudioAttributes.USAGE_ALARM)
@@ -55,7 +52,6 @@ private fun NotificationManagerCompat.ensureAlarmChannel() {
         )
             .setName(ALARM_CHANNEL_NAME)
             .setDescription(ALARM_CHANNEL_DESCRIPTION)
-            // Playback lands later; for now the ringing screen does the alerting, not the channel.
             .setSound(null, alarmAudio)
             .build()
     )
@@ -69,9 +65,7 @@ private fun Context.ringingNotification(alarmId: AlarmId): Notification {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
-    // No alarm is read here: a receiver has seconds to run, and the screen loads the alarm itself.
     return NotificationCompat.Builder(this, ALARM_CHANNEL_ID)
-        // The design system has no alarm glyph yet, so the monochrome launcher mark stands in.
         .setSmallIcon(R.drawable.ic_launcher_monochrome)
         .setContentTitle(ALARM_NOTIFICATION_TITLE)
         .setContentText(ALARM_NOTIFICATION_TEXT)

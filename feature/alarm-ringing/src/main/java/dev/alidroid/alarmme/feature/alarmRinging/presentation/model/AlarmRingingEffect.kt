@@ -4,6 +4,6 @@ import dev.alidroid.alarmme.mvi.UiEffect
 
 sealed interface AlarmRingingEffect : UiEffect {
 
-    /** The alarm is finished with: the host clears its notification and closes. */
+    /** The alarm is silenced and the next occurrence armed: the host closes. */
     data object Dismissed : AlarmRingingEffect
 }

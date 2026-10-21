@@ -1,7 +1,6 @@
 package dev.alidroid.alarmme.di
 
 import dev.alidroid.alarmme.AlarmMeApplication
-import dev.alidroid.alarmme.AlarmReceiver
 import dev.alidroid.alarmme.BuildConfig
 import dev.alidroid.alarmme.alarms.data.MockAlarmsRepository
 import dev.alidroid.alarmme.alarms.data.MockRingtoneRepository
@@ -9,6 +8,8 @@ import dev.alidroid.alarmme.alarms.data.RingtoneRepositoryImpl
 import dev.alidroid.alarmme.alarms.data.provideAlarmsRepository
 import dev.alidroid.alarmme.alarms.domain.AlarmsRepository
 import dev.alidroid.alarmme.alarms.domain.RingtoneRepository
+import dev.alidroid.alarmme.alarms.scheduler.AlarmRingingController
+import dev.alidroid.alarmme.alarms.scheduler.AlarmRingingControllerImpl
 import dev.alidroid.alarmme.alarms.scheduler.AlarmScheduler
 import dev.alidroid.alarmme.alarms.scheduler.AlarmSchedulerImpl
 import dev.alidroid.alarmme.appSettings.AppInfo
@@ -19,6 +20,8 @@ import dev.alidroid.alarmme.featureFlags.DebugPanelFeatureFlag
 import dev.alidroid.alarmme.featureFlags.FeatureFlagsRepository
 import dev.alidroid.alarmme.featureFlags.FeatureFlagsRepositoryImpl
 import dev.alidroid.alarmme.preferences.PreferencesManager
+import dev.alidroid.alarmme.ringing.AlarmReceiver
+import dev.alidroid.alarmme.ringing.AlarmRingingService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -31,6 +34,9 @@ private val Mock = named("mock")
 
 val appModule = module {
     single<AlarmScheduler> { AlarmSchedulerImpl(androidContext(), AlarmReceiver::class.java) }
+    single<AlarmRingingController> {
+        AlarmRingingControllerImpl(androidContext(), AlarmRingingService::class.java)
+    }
 }
 
 val GlobalCoroutineScopeId = named("global-scope")

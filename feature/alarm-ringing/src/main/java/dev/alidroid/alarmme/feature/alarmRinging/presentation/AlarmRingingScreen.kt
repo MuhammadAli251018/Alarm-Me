@@ -1,6 +1,5 @@
 package dev.alidroid.alarmme.feature.alarmRinging.presentation
 
-import android.app.NotificationManager
 import android.os.Parcelable
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.animateColorAsState
@@ -23,7 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
@@ -31,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import dev.alidroid.alarmme.alarms.domain.AlarmId
-import dev.alidroid.alarmme.alarms.scheduler.hashCode
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.component.RingingActionStack
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.component.RingingHero
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.component.meridiem
@@ -87,20 +84,12 @@ class AlarmRingingScreen(val params: AlarmRingingParams) : Screen, Parcelable {
         val state by screenModel.state.collectAsState()
         val dispatch = screenModel::handleEvent
 
-        val context = LocalContext.current
         val activity = LocalActivity.current
 
         LaunchedEffect(screenModel) {
             screenModel.effect.collect { effect ->
                 when (effect) {
-                    // Posted ongoing and non-auto-cancelling, so nothing else clears it. Cancelled
-                    // here rather than when the activity closes, so swiping the screen away leaves
-                    // the alarm reachable.
-                    AlarmRingingEffect.Dismissed -> {
-                        context.getSystemService(NotificationManager::class.java)
-                            ?.cancel(alarmId.hashCode)
-                        activity?.finish()
-                    }
+                    AlarmRingingEffect.Dismissed -> activity?.finish()
                 }
             }
         }

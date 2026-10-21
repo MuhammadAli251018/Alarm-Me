@@ -7,6 +7,7 @@ import dev.alidroid.alarmme.alarms.domain.AlarmSchedule
 import dev.alidroid.alarmme.alarms.domain.AlarmsRepository
 import dev.alidroid.alarmme.alarms.domain.Ringtone
 import dev.alidroid.alarmme.alarms.domain.RingtoneId
+import dev.alidroid.alarmme.alarms.scheduler.AlarmRingingController
 import dev.alidroid.alarmme.alarms.scheduler.AlarmScheduler
 import dev.alidroid.alarmme.utility.kotlinDateTime.now
 import io.kotest.core.spec.style.StringSpec
@@ -82,13 +83,22 @@ private class RecordingAlarmScheduler : AlarmScheduler {
     override suspend fun cancelAlarm(alarmId: AlarmId): Boolean = true
 }
 
+private class RecordingAlarmRingingController : AlarmRingingController {
+    val stopped = mutableListOf<AlarmId>()
+
+    override fun stopRinging(alarmId: AlarmId) {
+        stopped += alarmId
+    }
+}
+
 class AlarmRingingUseCaseImplTest : StringSpec({
 
     "dismissing re-arms the alarm at its next remaining occurrence" {
         val repository = FakeAlarmsRepository(listOf(alarm(dates = listOf(PAST_DATE, LATER_DATE))))
         val scheduler = RecordingAlarmScheduler()
 
-        AlarmRingingUseCaseImpl(repository, scheduler).dismissRingingAlarm(RINGING_ID)
+        AlarmRingingUseCaseImpl(repository, scheduler, RecordingAlarmRingingController())
+            .dismissRingingAlarm(RINGING_ID)
 
         scheduler.scheduled[RINGING_ID] shouldBe LocalDateTime(LATER_DATE, ALARM_TIME)
     }
@@ -100,7 +110,8 @@ class AlarmRingingUseCaseImplTest : StringSpec({
         val repository = FakeAlarmsRepository(listOf(alarm(dates = listOf(today))))
         val scheduler = RecordingAlarmScheduler()
 
-        AlarmRingingUseCaseImpl(repository, scheduler).dismissRingingAlarm(RINGING_ID)
+        AlarmRingingUseCaseImpl(repository, scheduler, RecordingAlarmRingingController())
+            .dismissRingingAlarm(RINGING_ID)
 
         scheduler.scheduled.isEmpty() shouldBe true
     }
@@ -109,7 +120,8 @@ class AlarmRingingUseCaseImplTest : StringSpec({
         val repository = FakeAlarmsRepository(listOf(alarm(dates = listOf(PAST_DATE))))
         val scheduler = RecordingAlarmScheduler()
 
-        AlarmRingingUseCaseImpl(repository, scheduler).dismissRingingAlarm(RINGING_ID)
+        AlarmRingingUseCaseImpl(repository, scheduler, RecordingAlarmRingingController())
+            .dismissRingingAlarm(RINGING_ID)
 
         scheduler.scheduled.isEmpty() shouldBe true
     }
@@ -118,8 +130,31 @@ class AlarmRingingUseCaseImplTest : StringSpec({
         val repository = FakeAlarmsRepository(emptyList())
         val scheduler = RecordingAlarmScheduler()
 
-        AlarmRingingUseCaseImpl(repository, scheduler).dismissRingingAlarm(RINGING_ID)
+        AlarmRingingUseCaseImpl(repository, scheduler, RecordingAlarmRingingController())
+            .dismissRingingAlarm(RINGING_ID)
 
         scheduler.scheduled.isEmpty() shouldBe true
+    }
+
+    "dismissing silences the alarm that is ringing" {
+        val repository = FakeAlarmsRepository(listOf(alarm(dates = listOf(LATER_DATE))))
+        val controller = RecordingAlarmRingingController()
+
+        AlarmRingingUseCaseImpl(repository, RecordingAlarmScheduler(), controller)
+            .dismissRingingAlarm(RINGING_ID)
+
+        controller.stopped shouldBe listOf(RINGING_ID)
+    }
+
+    // The order the impl relies on: silencing runs ahead of the lookup, so an alarm deleted while
+    // it rang goes quiet instead of being left playing by the early return below it.
+    "dismissing an id with no alarm behind it still silences it" {
+        val repository = FakeAlarmsRepository(emptyList())
+        val controller = RecordingAlarmRingingController()
+
+        AlarmRingingUseCaseImpl(repository, RecordingAlarmScheduler(), controller)
+            .dismissRingingAlarm(RINGING_ID)
+
+        controller.stopped shouldBe listOf(RINGING_ID)
     }
 })
