@@ -2,7 +2,6 @@ package dev.alidroid.alarmme.feature.alarmRinging.presentation
 
 import android.os.Parcelable
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,7 +35,6 @@ import dev.alidroid.alarmme.feature.alarmRinging.R
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.component.RingingActionStack
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.component.RingingHero
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.component.meridiem
-import dev.alidroid.alarmme.feature.alarmRinging.presentation.component.ringingHalo
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.AlarmRingingEffect
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.AlarmRingingEvent
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.AlarmRingingState
@@ -57,13 +55,10 @@ import dev.alidroid.alarmme.utility.kotlinDateTime.toClockLabel
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.parcelize.Parcelize
+import org.koin.core.parameter.parametersOf
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import org.koin.core.parameter.parametersOf
-
-private const val RINGING_HALO_ALPHA = 0.15f
-private const val SNOOZED_HALO_ALPHA = 0.09f
 
 private val PortraitHeroTopSpacing: Dp = 46.dp
 private val PortraitActionsBottomSpacing: Dp = 34.dp
@@ -93,7 +88,6 @@ class AlarmRingingScreen(val params: AlarmRingingParams) : Screen, Parcelable {
         }
 
         AlarmRingingScreenContent(
-            // Painted full-bleed first, so the colour runs under the system bars the content insets past.
             modifier = Modifier
                 .fillMaxSize()
                 .background(LocalAlarmMeColors.current.surfaceContainerLowest)
@@ -146,13 +140,6 @@ fun AlarmRingingScreenContent(
     val screenCategory = currentScreenCategory()
     val snoozed = state.phase as? AlarmRingingUiState.Phase.Snoozed
 
-    val haloColor by animateColorAsState(
-        targetValue = if (snoozed != null) {
-            colors.tertiary.copy(alpha = SNOOZED_HALO_ALPHA)
-        } else colors.primary.copy(alpha = RINGING_HALO_ALPHA),
-        label = "Ringing halo",
-    )
-
     val rootModifier = modifier.semantics { isTraversalGroup = true }
 
     when {
@@ -160,33 +147,21 @@ fun AlarmRingingScreenContent(
             state = state,
             onSnoozeClick = onSnoozeClick,
             onDismiss = onDismiss,
-            modifier = rootModifier.ringingHalo {
-                color = haloColor
-                diameter = 460.dp
-                centerX = 110.dp
-            },
+            modifier = rootModifier,
         )
 
         screenCategory.isExpandedWidthOrWider -> RingingExpandedContent(
             state = state,
             onSnoozeClick = onSnoozeClick,
             onDismiss = onDismiss,
-            modifier = rootModifier.ringingHalo {
-                color = haloColor
-                diameter = 760.dp
-                centerY = 120.dp
-            },
+            modifier = rootModifier,
         )
 
         else -> RingingPortraitContent(
             state = state,
             onSnoozeClick = onSnoozeClick,
             onDismiss = onDismiss,
-            modifier = rootModifier.ringingHalo {
-                color = haloColor
-                diameter = 520.dp
-                centerY = (-30).dp
-            },
+            modifier = rootModifier,
         )
     }
 }
