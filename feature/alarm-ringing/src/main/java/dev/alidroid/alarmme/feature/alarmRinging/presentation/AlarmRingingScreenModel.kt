@@ -8,9 +8,11 @@ import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.AlarmRinging
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.AlarmRingingState
 import dev.alidroid.alarmme.feature.alarmRinging.presentation.model.toRingingUiState
 import dev.alidroid.alarmme.mvi.BaseScreenModel
+import dev.alidroid.alarmme.utility.flow.onFailureOrTimeout
+import dev.alidroid.alarmme.utility.flow.onSuccess
 import dev.alidroid.alarmme.utility.kotlinDateTime.now
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 
@@ -29,14 +31,11 @@ class AlarmRingingScreenModel(
         when (event) {
             AlarmRingingEvent.OnRetry -> loadRingingAlarm()
 
-            // The effect goes out only once the next occurrence is armed, so the host does not
-            // finish — and take this scope down with it — mid-write.
             AlarmRingingEvent.OnDismiss -> screenModelScope.launch {
                 alarmRingingUseCase.dismissRingingAlarm(alarmId)
                 sendEffect(AlarmRingingEffect.Dismissed)
             }
 
-            // Nothing snoozes yet, so the action has nowhere to go.
             AlarmRingingEvent.OnSnoozeClick -> Unit
         }
     }
@@ -46,14 +45,12 @@ class AlarmRingingScreenModel(
         _state.value = AlarmRingingState.Loading
 
         observeJob = screenModelScope.launch {
-            alarmRingingUseCase.observeRingingAlarm(alarmId)
-                .catch { _state.value = AlarmRingingState.Error }
-                .collect { alarm ->
-                    // An id with no alarm behind it has nothing to ring about.
+            alarmRingingUseCase.getRingingAlarm(alarmId).first()
+                .onFailureOrTimeout { _state.value = AlarmRingingState.Error }
+                .onSuccess { alarm ->
                     _state.value = alarm
-                        ?.toRingingUiState(LocalDateTime.now().date)
-                        ?.let(AlarmRingingState::Loaded)
-                        ?: AlarmRingingState.Error
+                        .toRingingUiState(LocalDateTime.now().date)
+                        .let(AlarmRingingState::Loaded)
                 }
         }
     }
