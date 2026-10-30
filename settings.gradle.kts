@@ -45,6 +45,7 @@ include(":core:ui:screen:label-picker")
 
 // Utility
 include(":core:utility:compose")
+include(":core:utility:flow")
 include(":core:utility:kotlin-date-time")
 
 // Preferences

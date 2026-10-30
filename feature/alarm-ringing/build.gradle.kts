@@ -34,6 +34,7 @@ dependencies {
     implementation(projects.core.mvi)
     implementation(projects.core.navigation)
     implementation(projects.core.utility.compose)
+    implementation(projects.core.utility.flow)
     implementation(projects.core.utility.kotlinDateTime)
     implementation(projects.core.alarms.domain)
     implementation(projects.core.alarms.scheduler)

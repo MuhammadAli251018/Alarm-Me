@@ -1,37 +1,47 @@
 package dev.alidroid.alarmme.feature.alarmRinging.presentation.component
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.alidroid.alarmme.ui.screenCategory.ScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.currentScreenCategory
 import dev.alidroid.alarmme.ui.screenCategory.isExpandedWidthOrWider
 import dev.alidroid.alarmme.ui.screenCategory.isLandscapePhone
+import dev.alidroid.alarmme.ui.theme.AlarmMeColorScheme
 import dev.alidroid.alarmme.ui.theme.AlarmMeIcons
 import dev.alidroid.alarmme.ui.theme.AlarmMeThemeProvider
 import dev.alidroid.alarmme.ui.theme.AlarmMeTypography
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeColors
 import dev.alidroid.alarmme.ui.theme.LocalAlarmMeTypography
+import dev.alidroid.alarmme.utility.compose.modifyIf
 import dev.alidroid.alarmme.utility.kotlinDateTime.toClockLabel
 import kotlinx.datetime.LocalTime
 
@@ -50,10 +60,6 @@ private val MaxWidth: Dp = 480.dp
  */
 private const val TABULAR_FIGURES = "tnum"
 
-private const val HALO_FADE_STOP = 0.66f
-private const val PREVIEW_HALO_ALPHA = 0.15f
-private const val PREVIEW_SNOOZED_HALO_ALPHA = 0.09f
-
 private val ALARM_ME_LOGO_SIZE = 84.dp
 
 
@@ -70,63 +76,115 @@ fun RingingHero(
     val colors = LocalAlarmMeColors.current
     val typography = LocalAlarmMeTypography.current
     val timeLabel = remember(time) { time.toClockLabel() }
+    val density = LocalDensity.current
 
     val screenCategory = currentScreenCategory()
     val timeStyle = ringingTimeStyle(typography, screenCategory)
     val eyebrowStyle = ringingEyebrowStyle(typography, screenCategory)
     val labelStyle = ringingLabelStyle(typography, screenCategory)
+    val infiniteTransition = rememberInfiniteTransition("ring animation")
 
-    Column(
-        modifier = modifier.widthIn(max = MaxWidth),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        if (showMark) {
-            Image(
-                painter = AlarmMeIcons.LogoMark,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(bottom = 28.dp)
-                    .size(ALARM_ME_LOGO_SIZE),
-            )
-        }
+    val ringAnimation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "Ring animation"
+    )
 
-        if (eyebrowAboveTime) {
+    BoxWithConstraints(modifier) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = MaxWidth)
+                .drawBehind {
+                    val radius = size.width * 0.4f
+
+                    drawCircle(
+                        color = colors.secondary,
+                        radius = radius,
+                        style = Stroke(1f)
+                    )
+                }
+                .drawBehind {
+                    val radius = size.width * 0.4f
+
+                    drawCircle(
+                        color = colors.primary,
+                        radius = radius + (radius * 0.3f * ringAnimation),
+                        style = Stroke(2f * ringAnimation)
+                    )
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+
+            if (showMark) {
+                Image(
+                    modifier = Modifier
+                        .ringingHalo(
+                            colors,
+                            radius = with(density) {
+                                this@BoxWithConstraints.maxWidth.toPx()
+                            }
+                        )
+                        .padding(bottom = 28.dp)
+                        .size(ALARM_ME_LOGO_SIZE),
+                    painter = AlarmMeIcons.LogoMark,
+                    contentDescription = null
+                )
+            }
+
+            if (eyebrowAboveTime) {
+                Text(
+                    text = eyebrow,
+                    style = eyebrowStyle,
+                    color = colors.onSurfaceVariant
+                )
+            }
+
             Text(
-                text = eyebrow,
-                style = eyebrowStyle,
-                color = colors.onSurfaceVariant
+                modifier = Modifier.modifyIf(!showMark) {
+                    ringingHalo(
+                        colors,
+                        radius = with(density) {
+                            this@BoxWithConstraints.maxWidth.toPx()
+                        }
+                    )
+                },
+                text = timeLabel,
+                style = timeStyle, color = colors.onSurface
             )
-        }
 
-        Text(text = timeLabel, style = timeStyle, color = colors.onSurface)
+            if (!eyebrowAboveTime) {
+                Text(
+                    text = eyebrow,
+                    style = eyebrowStyle,
+                    color = colors.onSurfaceVariant
+                )
+            }
 
-        if (!eyebrowAboveTime) {
             Text(
-                text = eyebrow,
-                style = eyebrowStyle,
-                color = colors.onSurfaceVariant
-            )
-        }
-
-        Text(
-            text = label,
-            style = labelStyle,
-            color = colors.onSurface,
-            textAlign = TextAlign.Center,
-        )
-
-        if (countdown != null) {
-            Text(
-                modifier = Modifier.padding(top = 6.dp),
-                text = countdown,
-                style = typography.labelLarge.copy(
-                    letterSpacing = 1.sp,
-                    fontFeatureSettings = TABULAR_FIGURES,
-                ),
-                color = colors.onSurfaceVariant,
+                text = label,
+                style = labelStyle,
+                color = colors.onSurface,
                 textAlign = TextAlign.Center,
             )
+
+            if (countdown != null) {
+                Text(
+                    modifier = Modifier.padding(top = 6.dp),
+                    text = countdown,
+                    style = typography.labelLarge.copy(
+                        letterSpacing = 1.sp,
+                        fontFeatureSettings = TABULAR_FIGURES,
+                    ),
+                    color = colors.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
@@ -186,50 +244,17 @@ private fun ringingLabelStyle(
     )
 }
 
-
-class RingingHaloScope internal constructor() {
-    var color: Color = Color.Transparent
-    var diameter: Dp = 0.dp
-
-    /** Null centres that axis — every layout does this horizontally, landscape also vertically. */
-    var centerX: Dp? = null
-    var centerY: Dp? = null
-    var fadeStop: Float = HALO_FADE_STOP
-}
-
-/**
- * The warm glow behind the hero. A radial gradient, drawn behind everything and clipped to the
- * layout — the design's animated pulse ring that sat on top of this is deliberately left out.
- *
- * [RingingHaloScope.centerY] is measured from the layout's top edge and is usually negative, because
- * the glow's origin sits above the screen. [RingingHaloScope.centerX] is measured from the layout's
- * *start* edge, so the glow follows the content under RTL.
- */
-fun Modifier.ringingHalo(block: RingingHaloScope.() -> Unit): Modifier {
-    // Resolved once, when the modifier chain is built, not on every draw frame.
-    val halo = RingingHaloScope().apply(block)
-
+fun Modifier.ringingHalo(colors: AlarmMeColorScheme, radius: Float): Modifier {
     return drawBehind {
-        val radius = halo.diameter.toPx() / 2f
-        if (radius <= 0f) return@drawBehind
-
-        // `centerX` is measured from the layout's start edge, so it mirrors with the content.
-        val centerX = halo.centerX?.toPx()?.let { offset ->
-            if (layoutDirection == LayoutDirection.Ltr) offset else size.width - offset
-        }
-        val center = Offset(
-            x = centerX ?: (size.width / 2f),
-            y = halo.centerY?.toPx() ?: (size.height / 2f),
-        )
-
-        drawRect(
+        drawCircle(
             brush = Brush.radialGradient(
-                0f to halo.color,
-                halo.fadeStop to Color.Transparent,
+                0f to colors.primary.copy(0.4f),
+                0.15f to colors.primary.copy(alpha = 0.2f),
                 1f to Color.Transparent,
                 center = center,
-                radius = radius,
+                radius = radius * 0.75f,
             ),
+            radius = radius * 0.75f
         )
     }
 }
@@ -258,9 +283,7 @@ private fun RingingHeroSnoozedPreview() {
     PreviewRingingHero(
         eyebrow = "AM · SNOOZED",
         label = "Weekday mornings, gently",
-        countdown = "Back at 6:49 AM · 08:42 remaining",
-        haloAlpha = PREVIEW_SNOOZED_HALO_ALPHA,
-        sageHalo = true,
+        countdown = "Back at 6:49 AM · 08:42 remaining"
     )
 }
 
@@ -303,12 +326,9 @@ private fun PreviewRingingHero(
     countdown: String? = null,
     showMark: Boolean = true,
     eyebrowAboveTime: Boolean = false,
-    haloAlpha: Float = PREVIEW_HALO_ALPHA,
-    sageHalo: Boolean = false,
 ) {
     AlarmMeThemeProvider {
         val colors = LocalAlarmMeColors.current
-        val haloColor = if (sageHalo) colors.tertiary else colors.primary
 
         RingingHero(
             time = LocalTime(6, 40),
@@ -319,11 +339,6 @@ private fun PreviewRingingHero(
             eyebrowAboveTime = eyebrowAboveTime,
             modifier = Modifier
                 .background(colors.surfaceContainerLowest)
-                .ringingHalo {
-                    color = haloColor.copy(alpha = haloAlpha)
-                    diameter = 520.dp
-                    centerY = (-30).dp
-                }
                 .padding(horizontal = 20.dp, vertical = 24.dp),
         )
     }
