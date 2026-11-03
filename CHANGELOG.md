@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.3.0-beta] - 2026-11-03
 ### Added
 - The ringing screen now has a soft glow behind the alarm time and a ring that pulses outward while
     the alarm sounds.
@@ -36,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial release 🎉
 
-[Unreleased]: https://github.com/MuhammadAli251018/Alarm-Me/compare/v0.2.0-beta...HEAD
+[Unreleased]: https://github.com/MuhammadAli251018/Alarm-Me/compare/v0.3.0-beta...HEAD
+[0.3.0-beta]: https://github.com/MuhammadAli251018/Alarm-Me/releases/tag/v0.3.0-beta
 [0.2.0-beta]: https://github.com/MuhammadAli251018/Alarm-Me/releases/tag/v0.2.0-beta
 [0.1.0-beta]: https://github.com/MuhammadAli251018/Alarm-Me/releases/tag/v0.1.0-beta
