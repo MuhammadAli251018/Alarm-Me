@@ -8,9 +8,9 @@ plugins {
 object AppConfig {
     const val MAJOR_VERSION = 0
     const val MINOR_VERSION = 3
-    const val PATCH_VERSION = 0
+    const val PATCH_VERSION = 1
     const val VERSION_TAG = "beta"
-    const val VERSION_CODE = 3
+    const val VERSION_CODE = 4
 
     fun getVersionName() =
         if (VERSION_TAG.isNotEmpty())
