@@ -190,11 +190,12 @@ fun LoadedAlarmListScreenContent(
                 }
             )
         }
-
-        NewAlarmFabButton(
-            modifier = Modifier.align(Alignment.BottomEnd),
-            onNewAlarmClick = onNewAlarmClick
-        )
+        else {
+            NewAlarmFabButton(
+                modifier = Modifier.align(Alignment.BottomEnd),
+                onNewAlarmClick = onNewAlarmClick
+            )
+        }
     }
 }
 
